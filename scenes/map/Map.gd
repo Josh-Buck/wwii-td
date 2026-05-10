@@ -44,8 +44,13 @@ func _ready() -> void:
 
 	# Hook up slots. Use signal-based detection so robustness doesn't
 	# depend on the class_name resolving correctly.
+	print("[Map] available_towers.size=%d, selected_tower_stats=%s" % [available_towers.size(), str(selected_tower_stats)])
+	print("[Map] slots_container has %d children" % slots_container.get_child_count())
 	for slot in slots_container.get_children():
-		if slot is Area2D and slot.has_signal("slot_clicked"):
+		var is_area := slot is Area2D
+		var has_sig := slot.has_signal("slot_clicked") if is_area else false
+		print("  - %s: is_Area2D=%s has_slot_clicked=%s" % [slot.name, is_area, has_sig])
+		if is_area and has_sig:
 			slots.append(slot)
 			slot.slot_clicked.connect(_on_slot_clicked)
 
@@ -55,11 +60,20 @@ func _ready() -> void:
 		wave_director.start_next_wave()
 
 func _on_slot_clicked(slot) -> void:
+	print("[Map] _on_slot_clicked: gold=%d cost=%s selected=%s occupied=%s" % [
+		GameState.gold,
+		str(selected_tower_stats.cost) if selected_tower_stats else "n/a",
+		str(selected_tower_stats),
+		str(slot.occupied()),
+	])
 	if selected_tower_stats == null:
+		print("  -> abort: no tower selected")
 		return
 	if slot.occupied():
+		print("  -> abort: slot occupied")
 		return
 	if not GameState.spend_gold(selected_tower_stats.cost):
+		print("  -> abort: not enough gold")
 		return
 	var tower = tower_scene.instantiate()
 	tower.stats = selected_tower_stats
@@ -67,6 +81,7 @@ func _on_slot_clicked(slot) -> void:
 	towers_container.add_child(tower)
 	slot.set_tower(tower)
 	EventBus.tower_placed.emit(tower)
+	print("  -> placed %s" % selected_tower_stats.display_name)
 
 func _on_wave_ended(_idx: int) -> void:
 	# M0: chain into the next wave automatically with a 3s breather.

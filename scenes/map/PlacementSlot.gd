@@ -25,6 +25,7 @@ func set_tower(tower: Node) -> void:
 
 func _input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		print("[PlacementSlot] %s clicked at %s" % [name, str(global_position)])
 		slot_clicked.emit(self)
 
 func _draw() -> void:
