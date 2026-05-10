@@ -49,6 +49,28 @@ offset_bottom = 672.0
 mouse_filter = 2
 text = "Selected: —"
 
+[node name="Tooltip" type="PanelContainer" parent="."]
+visible = false
+mouse_filter = 2
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 360.0
+offset_bottom = 80.0
+
+[node name="VBox" type="VBoxContainer" parent="Tooltip"]
+mouse_filter = 2
+
+[node name="TitleLabel" type="Label" parent="Tooltip/VBox"]
+mouse_filter = 2
+text = ""
+theme_override_font_sizes/font_size = 16
+
+[node name="LoreLabel" type="Label" parent="Tooltip/VBox"]
+mouse_filter = 2
+text = ""
+autowrap_mode = 2
+custom_minimum_size = Vector2(340, 0)
+
 [node name="EndScreen" type="Control" parent="."]
 visible = false
 offset_right = 1280.0

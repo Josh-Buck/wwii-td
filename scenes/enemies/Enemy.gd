@@ -25,7 +25,18 @@ func _ready() -> void:
 	if health_bar:
 		health_bar.max_value = max_hp
 		health_bar.value = hp
+	if hitbox:
+		hitbox.input_pickable = true
+		hitbox.mouse_entered.connect(_on_hover_entered)
+		hitbox.mouse_exited.connect(_on_hover_exited)
 	queue_redraw()
+
+func _on_hover_entered() -> void:
+	if not dead:
+		EventBus.enemy_hovered.emit(self)
+
+func _on_hover_exited() -> void:
+	EventBus.enemy_unhovered.emit(self)
 
 func _process(delta: float) -> void:
 	if dead:

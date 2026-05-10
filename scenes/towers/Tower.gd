@@ -8,6 +8,7 @@ var active_buffs: Dictionary = {}  ## tag -> source tower (M2)
 
 @onready var range_area: Area2D = $RangeArea
 @onready var range_collision: CollisionShape2D = $RangeArea/CollisionShape2D
+@onready var hover_area: Area2D = $HoverArea
 @onready var fire_timer: Timer = $FireTimer
 
 func _ready() -> void:
@@ -29,7 +30,15 @@ func _ready() -> void:
 	range_area.body_exited.connect(_on_target_exited)
 	range_area.area_entered.connect(_on_target_area_entered)
 	range_area.area_exited.connect(_on_target_area_exited)
+	hover_area.mouse_entered.connect(_on_hover_entered)
+	hover_area.mouse_exited.connect(_on_hover_exited)
 	queue_redraw()
+
+func _on_hover_entered() -> void:
+	EventBus.tower_hovered.emit(self)
+
+func _on_hover_exited() -> void:
+	EventBus.tower_unhovered.emit(self)
 
 func effective_damage() -> float:
 	return stats.damage  # M2 will fold in adjacency buffs
