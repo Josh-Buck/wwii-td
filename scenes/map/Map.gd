@@ -35,6 +35,9 @@ func _ready() -> void:
 			load("res://data/towers/anne_frank.tres"),
 			load("res://data/towers/montgomery.tres"),
 			load("res://data/towers/pavlichenko.tres"),
+			load("res://data/towers/fdr.tres"),
+			load("res://data/towers/bletchley.tres"),
+			load("res://data/towers/airborne_101.tres"),
 		]
 	if enemy_set.is_empty():
 		enemy_set = {

@@ -29,9 +29,29 @@ func _resolve_path() -> Path2D:
 	return null
 
 func _ready() -> void:
+	add_to_group("wave_director")
 	_load_waves()
 	EventBus.enemy_killed.connect(_on_enemy_killed_for_count)
 	EventBus.enemy_reached_end.connect(_on_enemy_leaked)
+
+func get_next_wave_summary() -> String:
+	var next_idx: int = _current_wave_index + 1
+	if next_idx >= _waves.size():
+		return "(final wave cleared)"
+	var spawns: Array = _waves[next_idx].get("spawns", [])
+	var counts: Dictionary = {}
+	for s in spawns:
+		var enemy_id: String = s.get("enemy", "")
+		var count: int = int(s.get("count", 1))
+		counts[enemy_id] = counts.get(enemy_id, 0) + count
+	var parts: Array[String] = []
+	for enemy_id in counts:
+		parts.append("%dx %s" % [counts[enemy_id], _humanize(enemy_id)])
+	return ", ".join(parts)
+
+func _humanize(enemy_id: String) -> String:
+	var label := enemy_id.replace("_", " ")
+	return label.capitalize()
 
 func _load_waves() -> void:
 	var f := FileAccess.open(waves_json_path, FileAccess.READ)

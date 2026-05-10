@@ -100,6 +100,18 @@ offset_right = 1276.0
 offset_bottom = 100.0
 text = "◂"
 
+[node name="WavePreviewPanel" type="PanelContainer" parent="."]
+visible = false
+mouse_filter = 2
+offset_left = 16.0
+offset_top = 56.0
+offset_right = 480.0
+offset_bottom = 92.0
+
+[node name="Label" type="Label" parent="WavePreviewPanel"]
+mouse_filter = 2
+text = "Next wave: ?"
+
 [node name="DefenderInfoPanel" type="PanelContainer" parent="."]
 visible = false
 offset_left = 736.0

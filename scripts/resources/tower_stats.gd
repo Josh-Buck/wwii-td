@@ -26,6 +26,10 @@ class_name TowerStats extends Resource
 @export var aura_radius: float = 0.0  ## > 0 → tower projects an aura buff to all towers in radius
 @export var aura_fire_rate_bonus: float = 0.0  ## additive multiplier (e.g., 0.15 = +15%)
 
+@export_group("Specials")
+@export var gold_per_sec: float = 0.0  ## passive eco generation while alive
+@export var provides_wave_preview: bool = false  ## enables the next-wave HUD panel
+
 @export_group("Lore")
 @export_multiline var tooltip_lore: String = ""
 @export var codex_id: StringName

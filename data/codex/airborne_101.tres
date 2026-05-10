@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"airborne_101"
+title = "101st Airborne Division — \"Screaming Eagles\""
+body = "Activated 16 August 1942 at Camp Claiborne, Louisiana. The 101st was one of two American airborne divisions to drop into Normandy on the night of 5/6 June 1944, securing the western flank of the Utah Beach landings under heavy fire and scattered drops. The division jumped again into the Netherlands as part of Operation Market Garden in September 1944.
+
+In December 1944, during the Battle of the Bulge, the 101st was rushed into the road junction town of Bastogne and surrounded by elements of the German Fifth Panzer Army. Acting commander Brigadier General Anthony McAuliffe famously replied to a German surrender demand with a single word: \"NUTS!\" The division held the perimeter for eight days against repeated armored assaults until the relief by elements of Patton's Third Army on 26 December.
+
+Total Bastogne casualties: approximately 1,000 killed, 4,500 wounded, 1,000 missing or captured. The 101st was the first U.S. division to receive a Distinguished Unit Citation."
+sources = "Sources: U.S. Army Center of Military History, Bastogne: The First Eight Days (S.L.A. Marshall, 1946), Eisenhower Presidential Library, 101st Airborne Division Association."

@@ -29,6 +29,8 @@ extends CanvasLayer
 @onready var sidebar_list: VBoxContainer = $TowerSidebar/VBox/ScrollContainer/PaletteList
 @onready var sidebar_collapse_btn: Button = $TowerSidebar/VBox/HeaderRow/CollapseButton
 @onready var sidebar_tab: Button = $TowerSidebarTab
+@onready var wave_preview_panel: PanelContainer = $WavePreviewPanel
+@onready var wave_preview_label: Label = $WavePreviewPanel/Label
 @onready var def_info_panel: PanelContainer = $DefenderInfoPanel
 @onready var def_name: Label = $DefenderInfoPanel/VBox/HeaderRow/NameLabel
 @onready var def_close_btn: Button = $DefenderInfoPanel/VBox/HeaderRow/CloseButton
@@ -68,6 +70,9 @@ const _CODEX_ENTRY_PATHS: Array[String] = [
 	"res://data/codex/anne_frank.tres",
 	"res://data/codex/montgomery.tres",
 	"res://data/codex/pavlichenko.tres",
+	"res://data/codex/fdr.tres",
+	"res://data/codex/bletchley.tres",
+	"res://data/codex/airborne_101.tres",
 	"res://data/codex/wehrmacht_infantry.tres",
 	"res://data/codex/panzer_iii.tres",
 	"res://data/codex/stuka.tres",
@@ -105,6 +110,11 @@ func _ready() -> void:
 	sidebar_collapse_btn.pressed.connect(_toggle_sidebar)
 	sidebar_tab.pressed.connect(_toggle_sidebar)
 	def_close_btn.pressed.connect(_hide_defender_info)
+	wave_preview_panel.visible = false
+	EventBus.tower_placed.connect(_refresh_wave_preview_from_signal)
+	EventBus.tower_sold.connect(_refresh_wave_preview_after_sell)
+	EventBus.wave_started.connect(_refresh_wave_preview_after_wave)
+	EventBus.wave_ended.connect(_refresh_wave_preview_after_wave)
 	shop_panel.visible = false
 	shop_next_btn.pressed.connect(_on_shop_next_pressed)
 	EventBus.shop_opened.connect(_on_shop_opened)
@@ -360,6 +370,29 @@ func _toggle_sidebar() -> void:
 	_sidebar_collapsed = not _sidebar_collapsed
 	sidebar.visible = not _sidebar_collapsed
 	sidebar_tab.visible = _sidebar_collapsed
+
+func _refresh_wave_preview_from_signal(_t: Node) -> void:
+	_refresh_wave_preview()
+
+func _refresh_wave_preview_after_sell(_t: Node, _refund: int) -> void:
+	_refresh_wave_preview()
+
+func _refresh_wave_preview_after_wave(_idx: int) -> void:
+	_refresh_wave_preview()
+
+func _refresh_wave_preview() -> void:
+	var providers := get_tree().get_nodes_in_group("wave_preview_providers")
+	if providers.is_empty():
+		wave_preview_panel.visible = false
+		return
+	var wd_nodes := get_tree().get_nodes_in_group("wave_director")
+	if wd_nodes.is_empty():
+		wave_preview_panel.visible = false
+		return
+	var wd: Node = wd_nodes[0]
+	if wd.has_method("get_next_wave_summary"):
+		wave_preview_label.text = "Next wave: %s" % wd.get_next_wave_summary()
+		wave_preview_panel.visible = true
 
 func _short_figure_name(full: String) -> String:
 	var parts := full.split(" ")

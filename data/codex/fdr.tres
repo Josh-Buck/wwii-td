@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"fdr"
+title = "Franklin D. Roosevelt (1882-1945)"
+body = "Born in Hyde Park, New York. Educated at Harvard and Columbia Law. Assistant Secretary of the Navy under Wilson, then Governor of New York from 1929. Contracted polio in 1921 and spent the rest of his life paralyzed from the waist down — a fact largely concealed from the public.
+
+Elected to four presidential terms (1933-1945) — the only U.S. president to serve more than two. The first two terms were dominated by the Great Depression and the New Deal, a sweeping restructuring of the U.S. economy that included Social Security, the FDIC, the SEC, and the Tennessee Valley Authority.
+
+Pre-war, his administration shifted from neutrality to active support of the Allies through the 1941 Lend-Lease Act, which supplied roughly $50 billion (over $700 billion in 2025 dollars) of equipment, food, and fuel to the U.K., U.S.S.R., China, and other allies before and during U.S. participation. After Pearl Harbor (December 1941) he led the U.S. through the war as commander-in-chief, working closely with Churchill and Stalin in the Tehran (1943) and Yalta (1945) conferences. He died of a cerebral hemorrhage on 12 April 1945, weeks before V-E Day."
+sources = "Sources: FDR Presidential Library and Museum, Library of Congress, The Defining Moment (Jonathan Alter, 2006), Lend-Lease Act records (NARA)."

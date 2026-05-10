@@ -18,6 +18,8 @@ var hovered: bool = false   ## drives range-preview visibility in _draw
 var upgrade_a_tier: int = 0  ## branch A tiers purchased (0..3)
 var upgrade_b_tier: int = 0  ## branch B tiers purchased (0..3)
 var total_invested: int = 0  ## base cost + all upgrade costs (for sell refund)
+var _eco_timer: Timer = null
+var _gold_accumulator: float = 0.0
 
 const _PROJECTILE_SCENE: PackedScene = preload("res://scenes/projectiles/Projectile.tscn")
 
@@ -37,6 +39,17 @@ func _ready() -> void:
 	add_to_group("towers")
 	if stats.default_targeting != &"":
 		targeting_mode = stats.default_targeting
+	if stats.provides_wave_preview:
+		add_to_group("wave_preview_providers")
+		EventBus.tower_placed.emit(self)  ## ensure HUD refresh on first add
+	if stats.gold_per_sec > 0.0:
+		_eco_timer = Timer.new()
+		_eco_timer.process_mode = Node.PROCESS_MODE_PAUSABLE
+		_eco_timer.wait_time = 1.0
+		_eco_timer.one_shot = false
+		_eco_timer.timeout.connect(_on_eco_tick)
+		add_child(_eco_timer)
+		_eco_timer.start()
 	# Always assign a fresh shape per tower so range tweaks don't leak
 	# across instances via a shared scene-level sub_resource.
 	if range_collision:
@@ -89,8 +102,19 @@ func sell() -> void:
 	# Leave the towers group BEFORE emitting tower_sold so adjacency
 	# recompute on the remaining towers doesn't see this one.
 	remove_from_group("towers")
+	if is_in_group("wave_preview_providers"):
+		remove_from_group("wave_preview_providers")
 	EventBus.tower_sold.emit(self, refund)
 	queue_free()
+
+func _on_eco_tick() -> void:
+	if stats == null or stats.gold_per_sec <= 0.0:
+		return
+	_gold_accumulator += stats.gold_per_sec
+	if _gold_accumulator >= 1.0:
+		var add_gold: int = int(_gold_accumulator)
+		GameState.add_gold(add_gold)
+		_gold_accumulator -= add_gold
 
 func _active_upgrade_steps() -> Array:
 	var steps: Array = []

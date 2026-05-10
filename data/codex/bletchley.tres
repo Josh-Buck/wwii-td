@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"bletchley"
+title = "Bletchley Park (1939-1945)"
+body = "An estate in Buckinghamshire that housed the Government Code and Cypher School (GC&CS), the principal Allied codebreaking effort of the Second World War. At peak, around 9,000 staff worked at Bletchley, three-quarters of them women.
+
+Mathematician Alan Turing — recruited in September 1939 — extended pre-war Polish work on the Enigma cipher to develop the bombe, an electromechanical device that mechanized the search for daily Enigma settings. By 1942, Bletchley was reading large volumes of German naval, army, and air-force traffic in near-real-time. Decryptions, codenamed \"Ultra,\" guided convoy routing in the Battle of the Atlantic, the North African campaign, and the D-Day deception.
+
+Mathematician Tommy Flowers built Colossus (1943-1945), the world's first programmable electronic digital computer, to break the German Lorenz cipher used for Hitler's strategic communications.
+
+Ultra's existence remained classified until 1974. Historian Harry Hinsley estimated Bletchley shortened the war in Europe by two to four years. Turing was prosecuted in 1952 under the same laws that criminalized homosexuality, sentenced to chemical castration, and died by suicide on 7 June 1954. He received a posthumous royal pardon in 2013."
+sources = "Sources: Bletchley Park Trust archives, GCHQ Historical Documents, The Hut Six Story (Gordon Welchman, 1982), Alan Turing: The Enigma (Andrew Hodges, 1983)."
