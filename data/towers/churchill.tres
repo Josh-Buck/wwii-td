@@ -1,9 +1,11 @@
-[gd_resource type="Resource" script_class="TowerStats" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="TowerStats" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/tower_stats.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/figures/churchill.jpg" id="2"]
 
 [resource]
 script = ExtResource("1")
+portrait = ExtResource("2")
 id = &"churchill"
 display_name = "Winston Churchill"
 faction = &"uk"
@@ -13,6 +15,7 @@ damage = 8.0
 fire_rate = 0.8
 range_px = 180.0
 can_hit = 3
+default_targeting = &"first"
 adjacency_buffs = Array[StringName]([&"uk"])
 adjacency_consumes = Array[StringName]([&"uk"])
 tooltip_lore = "British PM during the Battle of Britain. His broadcasts (\"We shall fight on the beaches\") sustained UK morale through the war's darkest hours."

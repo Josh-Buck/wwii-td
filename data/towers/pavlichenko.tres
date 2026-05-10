@@ -1,9 +1,11 @@
-[gd_resource type="Resource" script_class="TowerStats" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="TowerStats" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/tower_stats.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/figures/pavlichenko.jpg" id="2"]
 
 [resource]
 script = ExtResource("1")
+portrait = ExtResource("2")
 id = &"pavlichenko"
 display_name = "Lyudmila Pavlichenko"
 faction = &"ussr"
@@ -13,6 +15,7 @@ damage = 80.0
 fire_rate = 0.15
 range_px = 320.0
 can_hit = 13
+default_targeting = &"strong"
 adjacency_buffs = Array[StringName]([&"ussr"])
 adjacency_consumes = Array[StringName]([&"ussr"])
 tooltip_lore = "Soviet sniper at Odessa and Sevastopol, 309 confirmed kills. Long-range single-shot devastation; sees camouflage."

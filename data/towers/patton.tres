@@ -1,9 +1,11 @@
-[gd_resource type="Resource" script_class="TowerStats" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="TowerStats" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/tower_stats.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/figures/patton.jpg" id="2"]
 
 [resource]
 script = ExtResource("1")
+portrait = ExtResource("2")
 id = &"patton"
 display_name = "George S. Patton"
 faction = &"us"
@@ -13,6 +15,7 @@ damage = 15.0
 fire_rate = 1.2
 range_px = 180.0
 can_hit = 5
+default_targeting = &"strong"
 adjacency_buffs = Array[StringName]([&"us"])
 adjacency_consumes = Array[StringName]([&"us"])
 tooltip_lore = "George S. Patton — commanded the U.S. Third Army's breakout from Normandy in 1944. Aggressive armor doctrine reshaped Allied tank tactics."
