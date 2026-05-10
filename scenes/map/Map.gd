@@ -7,6 +7,7 @@ class_name Map extends Node2D
 @export var enemy_set: Dictionary = {}  ## StringName -> EnemyStats
 @export var tower_scene: PackedScene
 @export var enemy_scene: PackedScene
+@export var available_bonds: Array = []  ## WarBond list
 
 @onready var path: Path2D = $Path
 @onready var slots_container: Node2D = $PlacementSlots
@@ -39,6 +40,12 @@ func _ready() -> void:
 			&"panzer_iii": load("res://data/enemies/panzer_iii.tres"),
 			&"stuka": load("res://data/enemies/stuka.tres"),
 		}
+	if available_bonds.is_empty():
+		available_bonds = [
+			load("res://data/bonds/bond_war_loan.tres"),
+			load("res://data/bonds/bond_victory.tres"),
+			load("res://data/bonds/bond_lend_lease.tres"),
+		]
 
 	# Wire WaveDirector to our enemy registry & path.
 	wave_director.enemy_scene = enemy_scene
@@ -96,15 +103,22 @@ func _on_slot_clicked(slot) -> void:
 	slot.set_tower(tower)
 	EventBus.tower_placed.emit(tower)
 
-func _on_wave_ended(_idx: int) -> void:
-	# M0: chain into the next wave automatically with a 3s breather.
-	await get_tree().create_timer(3.0).timeout
+func _on_wave_ended(idx: int) -> void:
 	if not GameState.run_active:
 		return
-	if wave_director.has_more_waves():
+	if not wave_director.has_more_waves():
+		return  # all_waves_completed signal fires elsewhere
+	if idx == 0:
+		# Wave 1 just ended; no shop yet. Brief breather then continue.
+		await get_tree().create_timer(2.5).timeout
+		if GameState.run_active:
+			wave_director.start_next_wave()
+		return
+	# Shop phase: open the war room and wait for player to advance.
+	EventBus.shop_opened.emit(available_bonds)
+	await EventBus.shop_closed
+	if GameState.run_active and wave_director.has_more_waves():
 		wave_director.start_next_wave()
-	# else: all_waves_completed signal fires when the last wave's enemies
-	# are fully cleared (handled separately).
 
 func _on_all_waves_completed() -> void:
 	if GameState.run_active:

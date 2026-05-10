@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="WarBond" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/war_bond.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"lend_lease"
+display_name = "Lend-Lease"
+cost = 500
+payout = 900
+maturity_waves = 5
+description = "Long-term commitment. Pay 500g; receive 900g when the 5th wave from now starts."

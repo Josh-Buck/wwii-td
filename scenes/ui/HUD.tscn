@@ -138,6 +138,44 @@ horizontal_alignment = 1
 [node name="ResumeButton" type="Button" parent="PauseOverlay/Center/VBox"]
 text = "Resume"
 
+[node name="ShopPanel" type="PanelContainer" parent="."]
+visible = false
+mouse_filter = 0
+offset_left = 200.0
+offset_top = 60.0
+offset_right = 1080.0
+offset_bottom = 660.0
+
+[node name="VBox" type="VBoxContainer" parent="ShopPanel"]
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="ShopPanel/VBox"]
+text = "War Room"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+
+[node name="GoldLabel" type="Label" parent="ShopPanel/VBox"]
+text = "Gold: 0"
+horizontal_alignment = 1
+
+[node name="BondsHeader" type="Label" parent="ShopPanel/VBox"]
+text = "War Bonds — guaranteed payout when they mature"
+theme_override_font_sizes/font_size = 16
+
+[node name="BondsContainer" type="VBoxContainer" parent="ShopPanel/VBox"]
+
+[node name="HeldHeader" type="Label" parent="ShopPanel/VBox"]
+text = "Held Bonds"
+theme_override_font_sizes/font_size = 16
+
+[node name="HeldContainer" type="VBoxContainer" parent="ShopPanel/VBox"]
+
+[node name="Spacer" type="Control" parent="ShopPanel/VBox"]
+custom_minimum_size = Vector2(0, 12)
+
+[node name="NextWaveButton" type="Button" parent="ShopPanel/VBox"]
+text = "Next Wave"
+
 [node name="EndScreen" type="Control" parent="."]
 visible = false
 offset_right = 1280.0

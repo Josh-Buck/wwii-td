@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="WarBond" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/war_bond.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"victory_bond"
+display_name = "Victory Bond"
+cost = 250
+payout = 425
+maturity_waves = 4
+description = "Mid-term commitment. Pay 250g; receive 425g when the 4th wave from now starts."

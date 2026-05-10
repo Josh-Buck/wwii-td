@@ -19,8 +19,15 @@ extends CanvasLayer
 @onready var pause_btn: Button = $TopBar/PauseButton
 @onready var pause_overlay: Control = $PauseOverlay
 @onready var resume_btn: Button = $PauseOverlay/Center/VBox/ResumeButton
+@onready var shop_panel: PanelContainer = $ShopPanel
+@onready var shop_title: Label = $ShopPanel/VBox/Title
+@onready var shop_gold_label: Label = $ShopPanel/VBox/GoldLabel
+@onready var shop_bonds_container: VBoxContainer = $ShopPanel/VBox/BondsContainer
+@onready var shop_held_container: VBoxContainer = $ShopPanel/VBox/HeldContainer
+@onready var shop_next_btn: Button = $ShopPanel/VBox/NextWaveButton
 
 var _selected_tower: Node = null
+var _shop_bonds: Array = []
 
 func _ready() -> void:
 	end_screen.visible = false
@@ -41,6 +48,11 @@ func _ready() -> void:
 	pause_btn.pressed.connect(toggle_pause)
 	resume_btn.pressed.connect(toggle_pause)
 	pause_overlay.visible = false
+	shop_panel.visible = false
+	shop_next_btn.pressed.connect(_on_shop_next_pressed)
+	EventBus.shop_opened.connect(_on_shop_opened)
+	EventBus.gold_changed.connect(_on_gold_changed_for_shop)
+	EventBus.bond_matured.connect(_on_bond_matured_in_shop)
 	gold_label.text = "Gold: %d" % GameState.gold
 	lives_label.text = "Lives: %d" % GameState.lives
 	wave_label.text = "Wave 1"
@@ -130,6 +142,73 @@ func toggle_pause() -> void:
 	pause_overlay.visible = p
 	pause_btn.text = "Resume (P)" if p else "Pause (P)"
 	EventBus.pause_toggled.emit(p)
+
+func _on_shop_opened(bonds: Array) -> void:
+	_shop_bonds = bonds
+	shop_title.text = "Wave %d complete — War Room" % (GameState.wave_index + 1)
+	_refresh_shop_bonds()
+	_refresh_held_bonds()
+	shop_panel.visible = true
+
+func _on_shop_next_pressed() -> void:
+	shop_panel.visible = false
+	EventBus.shop_closed.emit()
+
+func _refresh_shop_bonds() -> void:
+	for c in shop_bonds_container.get_children():
+		c.queue_free()
+	for bond in _shop_bonds:
+		var row := HBoxContainer.new()
+		row.theme_override_constants_separation = 12
+		var label := Label.new()
+		label.text = "%s — pay %dg, receive %dg in %d waves" % [
+			bond.display_name, bond.cost, bond.payout, bond.maturity_waves
+		]
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var btn := Button.new()
+		btn.text = "Buy %dg" % bond.cost
+		btn.disabled = bond.cost > GameState.gold
+		btn.pressed.connect(_make_buy_callback(bond))
+		row.add_child(label)
+		row.add_child(btn)
+		shop_bonds_container.add_child(row)
+	shop_gold_label.text = "Gold: %d   Lives: %d" % [GameState.gold, GameState.lives]
+
+func _make_buy_callback(bond: Resource) -> Callable:
+	return func(): _on_buy_bond(bond)
+
+func _on_buy_bond(bond: Resource) -> void:
+	if GameState.buy_bond(bond):
+		_refresh_shop_bonds()
+		_refresh_held_bonds()
+
+func _refresh_held_bonds() -> void:
+	for c in shop_held_container.get_children():
+		c.queue_free()
+	if GameState.held_bonds.is_empty():
+		var label := Label.new()
+		label.text = "(none)"
+		label.modulate = Color(1, 1, 1, 0.55)
+		shop_held_container.add_child(label)
+		return
+	for entry in GameState.held_bonds:
+		var label := Label.new()
+		var plural := "s" if entry.waves_remaining != 1 else ""
+		label.text = "%s — matures in %d wave%s, pays %dg" % [
+			entry.bond.display_name,
+			entry.waves_remaining,
+			plural,
+			entry.bond.payout,
+		]
+		shop_held_container.add_child(label)
+
+func _on_gold_changed_for_shop(_g: int) -> void:
+	if shop_panel.visible:
+		_refresh_shop_bonds()
+
+func _on_bond_matured_in_shop(_bond: Resource, _payout: int) -> void:
+	if shop_panel.visible:
+		_refresh_held_bonds()
 
 func show_end_screen(victory: bool) -> void:
 	end_label.text = "VICTORY" if victory else "DEFEAT"

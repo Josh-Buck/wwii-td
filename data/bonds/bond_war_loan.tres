@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="WarBond" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/war_bond.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"war_loan"
+display_name = "War Loan"
+cost = 100
+payout = 150
+maturity_waves = 3
+description = "Short-term loan. Pay 100g now; receive 150g when the 3rd wave from now starts."
