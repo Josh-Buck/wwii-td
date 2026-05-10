@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <rect width="128" height="128" fill="#2c3a26"/>
+  <circle cx="64" cy="64" r="40" fill="#a89545" stroke="#5a4f23" stroke-width="4"/>
+  <text x="64" y="74" font-family="serif" font-size="40" font-weight="bold" text-anchor="middle" fill="#1a1a1a">TD</text>
+</svg>

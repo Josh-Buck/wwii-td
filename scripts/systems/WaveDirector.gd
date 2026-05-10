@@ -1,0 +1,116 @@
+class_name WaveDirector extends Node
+
+# Loads wave schedules from JSON during dev. Bake to .tres before web export
+# (PCK is read-only; mtime hot-reload only works in editor / desktop).
+
+signal wave_started(wave_index: int)
+signal wave_ended(wave_index: int)
+signal all_waves_completed
+
+@export var waves_json_path: String = "res://data/waves/m0.json"
+@export var enemy_scene: PackedScene
+@export var enemy_registry: Dictionary = {}  ## StringName -> EnemyStats
+
+var _waves: Array = []
+var _current_wave_index: int = -1
+var _enemies_alive: int = 0
+var _wave_active: bool = false
+var _spawning_active: bool = false
+
+@onready var _path: Path2D = _resolve_path()
+
+func _resolve_path() -> Path2D:
+	var p := get_parent()
+	while p:
+		var n: Node = p.get_node_or_null("Path")
+		if n is Path2D:
+			return n
+		p = p.get_parent()
+	return null
+
+func _ready() -> void:
+	_load_waves()
+	EventBus.enemy_killed.connect(_on_enemy_killed_for_count)
+	EventBus.enemy_reached_end.connect(_on_enemy_leaked)
+
+func _load_waves() -> void:
+	var f := FileAccess.open(waves_json_path, FileAccess.READ)
+	if f == null:
+		push_error("WaveDirector: missing %s" % waves_json_path)
+		return
+	var parsed = JSON.parse_string(f.get_as_text())
+	if parsed is Array:
+		_waves = parsed
+	else:
+		push_error("WaveDirector: %s root must be an array" % waves_json_path)
+
+func has_more_waves() -> bool:
+	return _current_wave_index + 1 < _waves.size()
+
+func wave_count() -> int:
+	return _waves.size()
+
+func start_next_wave() -> void:
+	if not has_more_waves():
+		all_waves_completed.emit()
+		return
+	_current_wave_index += 1
+	_wave_active = true
+	_enemies_alive = 0
+	var wave_def: Dictionary = _waves[_current_wave_index]
+	wave_started.emit(_current_wave_index)
+	EventBus.wave_started.emit(_current_wave_index)
+	_spawn_wave_async(wave_def.get("spawns", []))
+
+func _spawn_wave_async(spawns: Array) -> void:
+	_spawning_active = true
+	for spawn in spawns:
+		var enemy_id := StringName(spawn.get("enemy", ""))
+		var count: int = int(spawn.get("count", 1))
+		var interval: float = float(spawn.get("interval", 1.0))
+		var delay: float = float(spawn.get("delay", 0.0))
+		if delay > 0.0:
+			await get_tree().create_timer(delay).timeout
+			if not _wave_active:
+				_spawning_active = false
+				return
+		for i in count:
+			if not _wave_active:
+				_spawning_active = false
+				return
+			_spawn_enemy(enemy_id)
+			if i + 1 < count:
+				await get_tree().create_timer(interval).timeout
+	_spawning_active = false
+	_check_wave_end()
+
+func _spawn_enemy(enemy_id: StringName) -> void:
+	if enemy_scene == null:
+		push_error("WaveDirector.enemy_scene not set")
+		return
+	if not enemy_registry.has(enemy_id):
+		push_error("WaveDirector: no enemy registered as %s" % enemy_id)
+		return
+	var enemy = enemy_scene.instantiate()
+	enemy.stats = enemy_registry[enemy_id]
+	if _path:
+		_path.add_child(enemy)
+	else:
+		add_child(enemy)
+	_enemies_alive += 1
+
+func _on_enemy_killed_for_count(_e: Node, _r: int) -> void:
+	_dec_alive()
+
+func _on_enemy_leaked(_e: Node) -> void:
+	_dec_alive()
+
+func _dec_alive() -> void:
+	_enemies_alive = max(0, _enemies_alive - 1)
+	_check_wave_end()
+
+func _check_wave_end() -> void:
+	if _wave_active and not _spawning_active and _enemies_alive == 0:
+		_wave_active = false
+		wave_ended.emit(_current_wave_index)
+		EventBus.wave_ended.emit(_current_wave_index)
