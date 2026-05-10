@@ -17,6 +17,7 @@ signal tower_placed(tower: Node)
 signal tower_sold(tower: Node, refund: int)
 signal tower_selected(tower: Node)
 signal tower_deselected
+signal tower_selection_changed(stats: Resource)  ## active palette selection
 
 # Codex
 signal codex_entry_unlocked(entry_id: StringName)

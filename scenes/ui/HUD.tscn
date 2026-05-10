@@ -39,7 +39,15 @@ offset_top = 680.0
 offset_right = 1264.0
 offset_bottom = 712.0
 mouse_filter = 2
-text = "Click a slot to deploy."
+text = "Click a slot to deploy. Press 1-4 to switch tower."
+
+[node name="SelectionLabel" type="Label" parent="."]
+offset_left = 16.0
+offset_top = 644.0
+offset_right = 1264.0
+offset_bottom = 672.0
+mouse_filter = 2
+text = "Selected: —"
 
 [node name="EndScreen" type="Control" parent="."]
 visible = false

@@ -27,9 +27,18 @@ func _ready() -> void:
 	if enemy_scene == null:
 		enemy_scene = preload("res://scenes/enemies/Enemy.tscn")
 	if available_towers.is_empty():
-		available_towers = [load("res://data/towers/patton.tres")]
+		available_towers = [
+			load("res://data/towers/patton.tres"),
+			load("res://data/towers/eisenhower.tres"),
+			load("res://data/towers/churchill.tres"),
+			load("res://data/towers/anne_frank.tres"),
+		]
 	if enemy_set.is_empty():
-		enemy_set = {&"wehrmacht_infantry": load("res://data/enemies/wehrmacht_infantry.tres")}
+		enemy_set = {
+			&"wehrmacht_infantry": load("res://data/enemies/wehrmacht_infantry.tres"),
+			&"panzer_iii": load("res://data/enemies/panzer_iii.tres"),
+			&"stuka": load("res://data/enemies/stuka.tres"),
+		}
 
 	# Wire WaveDirector to our enemy registry & path.
 	wave_director.enemy_scene = enemy_scene
@@ -38,9 +47,9 @@ func _ready() -> void:
 	wave_director.all_waves_completed.connect(_on_all_waves_completed)
 	EventBus.run_ended.connect(_on_run_ended)
 
-	# Default M0: auto-select the first tower.
+	# Default M1: auto-select the first tower; 1-4 hotkeys swap.
 	if available_towers.size() > 0:
-		selected_tower_stats = available_towers[0]
+		_select_tower_index(0)
 
 	# Hook up slots. Use signal-based detection so robustness doesn't
 	# depend on the class_name resolving correctly.
@@ -58,6 +67,24 @@ func _ready() -> void:
 	await get_tree().create_timer(2.0).timeout
 	if GameState.run_active:
 		wave_director.start_next_wave()
+
+func _input(event: InputEvent) -> void:
+	if not (event is InputEventKey and event.pressed and not event.echo):
+		return
+	var idx := -1
+	match event.keycode:
+		KEY_1: idx = 0
+		KEY_2: idx = 1
+		KEY_3: idx = 2
+		KEY_4: idx = 3
+	if idx >= 0 and idx < available_towers.size():
+		_select_tower_index(idx)
+
+func _select_tower_index(idx: int) -> void:
+	if idx < 0 or idx >= available_towers.size():
+		return
+	selected_tower_stats = available_towers[idx]
+	EventBus.tower_selection_changed.emit(selected_tower_stats)
 
 func _on_slot_clicked(slot) -> void:
 	print("[Map] _on_slot_clicked: gold=%d cost=%s selected=%s occupied=%s" % [

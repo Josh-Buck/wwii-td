@@ -14,7 +14,44 @@
   {
     "wave": 3,
     "spawns": [
-      {"enemy": "wehrmacht_infantry", "count": 24, "interval": 0.5}
+      {"enemy": "wehrmacht_infantry", "count": 8, "interval": 0.6},
+      {"enemy": "panzer_iii", "count": 2, "interval": 2.0, "delay": 4.0}
+    ]
+  },
+  {
+    "wave": 4,
+    "spawns": [
+      {"enemy": "stuka", "count": 4, "interval": 1.5}
+    ]
+  },
+  {
+    "wave": 5,
+    "spawns": [
+      {"enemy": "wehrmacht_infantry", "count": 12, "interval": 0.5},
+      {"enemy": "panzer_iii", "count": 4, "interval": 1.5, "delay": 3.0}
+    ]
+  },
+  {
+    "wave": 6,
+    "spawns": [
+      {"enemy": "wehrmacht_infantry", "count": 6, "interval": 0.4},
+      {"enemy": "stuka", "count": 6, "interval": 1.0, "delay": 2.0}
+    ]
+  },
+  {
+    "wave": 7,
+    "spawns": [
+      {"enemy": "wehrmacht_infantry", "count": 10, "interval": 0.4},
+      {"enemy": "panzer_iii", "count": 6, "interval": 1.2, "delay": 2.0},
+      {"enemy": "stuka", "count": 4, "interval": 1.5, "delay": 5.0}
+    ]
+  },
+  {
+    "wave": 8,
+    "spawns": [
+      {"enemy": "wehrmacht_infantry", "count": 16, "interval": 0.3},
+      {"enemy": "panzer_iii", "count": 10, "interval": 1.0, "delay": 1.0},
+      {"enemy": "stuka", "count": 8, "interval": 1.0, "delay": 4.0}
     ]
   }
 ]
