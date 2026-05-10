@@ -31,8 +31,6 @@ func _ready() -> void:
 	# Fire timer is forced PAUSABLE so towers still stop shooting on pause.
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group("towers")
-	if stats.default_targeting != &"":
-		targeting_mode = stats.default_targeting
 	# Always assign a fresh shape per tower so range tweaks don't leak
 	# across instances via a shared scene-level sub_resource.
 	if range_collision:

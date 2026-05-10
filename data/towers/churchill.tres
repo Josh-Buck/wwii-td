@@ -13,7 +13,6 @@ damage = 8.0
 fire_rate = 0.8
 range_px = 180.0
 can_hit = 3
-default_targeting = &"first"
 adjacency_buffs = Array[StringName]([&"uk"])
 adjacency_consumes = Array[StringName]([&"uk"])
 tooltip_lore = "British PM during the Battle of Britain. His broadcasts (\"We shall fight on the beaches\") sustained UK morale through the war's darkest hours."

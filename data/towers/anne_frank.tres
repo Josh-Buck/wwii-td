@@ -13,7 +13,6 @@ damage = 4.0
 fire_rate = 1.5
 range_px = 280.0
 can_hit = 15
-default_targeting = &"camo"
 adjacency_buffs = Array[StringName]([&"resistance"])
 adjacency_consumes = Array[StringName]([&"resistance"])
 tooltip_lore = "Jewish teenager who hid with her family in an Amsterdam attic for 25 months before betrayal in 1944. Her diary, published posthumously, is one of the most-read accounts of the Holocaust."

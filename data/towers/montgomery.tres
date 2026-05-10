@@ -13,7 +13,6 @@ damage = 35.0
 fire_rate = 0.5
 range_px = 200.0
 can_hit = 5
-default_targeting = &"strong"
 adjacency_buffs = Array[StringName]([&"uk"])
 adjacency_consumes = Array[StringName]([&"uk"])
 tooltip_lore = "Methodical British general, decisive at El Alamein in 1942 — the Allies' first major land victory of the war. Anti-armor specialist."

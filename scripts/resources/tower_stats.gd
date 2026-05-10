@@ -18,7 +18,6 @@ class_name TowerStats extends Resource
 @export var aoe_radius: float = 0.0  ## > 0 → projectile damages all enemies within this radius on impact
 @export var projectile: PackedScene
 @export_flags("Ground", "Air", "Armor", "Camo") var can_hit: int = 1
-@export var default_targeting: StringName = &"first"  ## first / last / strong / close / camo
 
 @export_group("Synergy")
 @export var adjacency_buffs: Array[StringName] = []  ## tags this tower grants to neighbors
