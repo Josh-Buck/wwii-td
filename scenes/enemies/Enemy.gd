@@ -78,6 +78,19 @@ func _draw() -> void:
 	if stats == null:
 		return
 	var r: float = stats.radius
+	# Portrait: drawn first as a fill so the silhouette rim sits on top.
+	if stats.portrait != null:
+		var tex_size: Vector2 = stats.portrait.get_size()
+		if tex_size.x > 0 and tex_size.y > 0:
+			var max_dim: float = maxf(tex_size.x, tex_size.y)
+			var scale: float = (r * 2.0) / max_dim
+			var draw_size: Vector2 = tex_size * scale
+			draw_texture_rect(stats.portrait, Rect2(-draw_size / 2.0, draw_size), false)
+			draw_arc(Vector2.ZERO, r, 0, TAU, 24, stats.color.darkened(0.5), 1.5)
+			if stats.is_boss:
+				draw_arc(Vector2.ZERO, r + 4.0, 0, TAU, 32, Color(1.0, 0.85, 0.3, 0.85), 2.5)
+				draw_arc(Vector2.ZERO, r + 8.0, 0, TAU, 32, Color(1.0, 0.6, 0.2, 0.45), 1.5)
+		return
 	if stats.is_air():
 		# Plane silhouette: forward-pointing triangle.
 		var p1 := Vector2(-r * 0.85, -r * 0.55)

@@ -153,6 +153,8 @@ func _find_projectiles_container() -> Node:
 		n = n.get_parent()
 	return null
 
+const TOWER_RADIUS: float = 30.0
+
 func _draw() -> void:
 	if stats == null:
 		return
@@ -165,12 +167,12 @@ func _draw() -> void:
 		_draw_portrait()
 	else:
 		# Placeholder visual: faction-colored disc with last-name initials.
-		draw_circle(Vector2.ZERO, 22.0, stats.color)
-		draw_arc(Vector2.ZERO, 22.0, 0, TAU, 32, stats.color.darkened(0.4), 2.0)
+		draw_circle(Vector2.ZERO, TOWER_RADIUS, stats.color)
+		draw_arc(Vector2.ZERO, TOWER_RADIUS, 0, TAU, 32, stats.color.darkened(0.4), 2.0)
 		_draw_initials()
 	# Synergy indicator: golden ring when at least one adjacency buff is active.
 	if active_buffs.size() > 0:
-		draw_arc(Vector2.ZERO, 30.0, 0, TAU, 32, Color(1.0, 0.85, 0.3, 0.85), 2.5)
+		draw_arc(Vector2.ZERO, TOWER_RADIUS + 8.0, 0, TAU, 32, Color(1.0, 0.85, 0.3, 0.85), 2.5)
 	# Faction flag stripe always shows (over portrait or placeholder).
 	_draw_flag_stripe(stats.faction)
 
@@ -182,10 +184,11 @@ func _draw_portrait() -> void:
 	if tex_size.x <= 0 or tex_size.y <= 0:
 		return
 	var max_dim: float = maxf(tex_size.x, tex_size.y)
-	var scale: float = 44.0 / max_dim   # fit in ~44px circle
+	# Scale so the portrait fills the tower disc — face takes up most of the icon.
+	var scale: float = (TOWER_RADIUS * 2.0) / max_dim
 	var draw_size: Vector2 = tex_size * scale
 	draw_texture_rect(tex, Rect2(-draw_size / 2.0, draw_size), false)
-	draw_arc(Vector2.ZERO, 23.0, 0, TAU, 32, stats.color.darkened(0.4), 2.0)
+	draw_arc(Vector2.ZERO, TOWER_RADIUS + 1.0, 0, TAU, 32, stats.color.darkened(0.4), 2.0)
 
 func _draw_initials() -> void:
 	if stats == null or stats.display_name == "":
@@ -207,11 +210,11 @@ func _short_initials() -> String:
 	return parts[-1].substr(0, 3).to_upper()
 
 func _draw_flag_stripe(faction: StringName) -> void:
-	# Small banner above the tower disc: y = -34 to -28 (6px tall, 32px wide)
-	var x: float = -16.0
-	var y: float = -34.0
-	var w: float = 32.0
-	var h: float = 6.0
+	# Small banner above the tower disc: 7px tall, 38px wide, perched above
+	var x: float = -19.0
+	var y: float = TOWER_RADIUS * -1.0 - 10.0
+	var w: float = 38.0
+	var h: float = 7.0
 	match faction:
 		&"us":
 			# 3 horizontal stripes: red, white, blue (simplified)

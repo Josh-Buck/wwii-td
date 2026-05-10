@@ -152,25 +152,49 @@ func _on_map_ready(towers: Array) -> void:
 func _build_sidebar_card(idx: int, stats: Resource) -> Button:
 	var btn := Button.new()
 	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	btn.custom_minimum_size = Vector2(0, 64)
+	btn.custom_minimum_size = Vector2(0, 84)
 	btn.toggle_mode = true
 	btn.flat = false
-	# Compose card text. Portrait would be a child icon; for now, faction-tinted
-	# button + multi-line text gives readable info at a glance.
-	btn.text = "%d. %s\n  %dg  %s" % [
-		idx + 1,
-		stats.display_name,
-		stats.cost,
-		_short_target_label(stats.default_targeting),
-	]
-	btn.add_theme_color_override("font_color", Color.WHITE)
+	btn.text = ""  ## text rendered by inner Label so layout is precise
 	btn.modulate = stats.color.lerp(Color.WHITE, 0.4)
 	btn.pressed.connect(_on_palette_btn_pressed.bind(idx))
 	btn.pressed.connect(_show_defender_info.bind(stats))
-	# If a portrait texture exists, drop it into the button as an icon.
+
+	var hbox := HBoxContainer.new()
+	hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hbox.add_theme_constant_override("separation", 8)
+	hbox.anchor_right = 1.0
+	hbox.anchor_bottom = 1.0
+	btn.add_child(hbox)
+
+	# Portrait (~72px square) on the left — face front-and-center.
 	if stats.portrait != null:
-		btn.icon = stats.portrait
-		btn.expand_icon = true
+		var tex := TextureRect.new()
+		tex.texture = stats.portrait
+		tex.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		tex.custom_minimum_size = Vector2(72, 72)
+		tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		hbox.add_child(tex)
+
+	var vbox := VBoxContainer.new()
+	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vbox.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hbox.add_child(vbox)
+
+	var name_lbl := Label.new()
+	name_lbl.text = "%d. %s" % [idx + 1, _short_figure_name(stats.display_name)]
+	name_lbl.add_theme_font_size_override("font_size", 14)
+	name_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vbox.add_child(name_lbl)
+
+	var cost_lbl := Label.new()
+	cost_lbl.text = "%dg %s" % [stats.cost, _short_target_label(stats.default_targeting)]
+	cost_lbl.modulate = Color(1, 1, 1, 0.85)
+	cost_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vbox.add_child(cost_lbl)
+
 	return btn
 
 func _show_defender_info(stats: Resource) -> void:

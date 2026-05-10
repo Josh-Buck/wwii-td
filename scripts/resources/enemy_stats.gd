@@ -3,6 +3,7 @@ class_name EnemyStats extends Resource
 @export var id: StringName
 @export var display_name: String
 @export var sprite: Texture2D
+@export var portrait: Texture2D  ## optional portrait/photo, drawn over the sprite
 @export var color: Color = Color(0.7, 0.3, 0.3)  ## fallback tint for M0 placeholder draw
 @export var radius: float = 14.0  ## visual + hitbox radius (M0 placeholder)
 

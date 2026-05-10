@@ -33,3 +33,20 @@ All figure portraits are public-domain photographs sourced from Wikimedia Common
   - File: [Lyudmila_Pavlichenko_portrait.jpg](https://commons.wikimedia.org/wiki/File:Lyudmila_Pavlichenko_portrait.jpg)
   - License: PD-Russia-1996 (anonymous wartime Soviet press photo; PD as of URAA date)
   - Description: 1943 portrait of Hero of the Soviet Union Lyudmila Pavlichenko; published in *Krasnoe Priazovye*, February 1944.
+
+## Enemy unit portraits
+
+- **Wehrmacht infantry** — `art/enemies/wehrmacht_infantry.jpg`
+  - File: [German_soldier_with_Sturmpistole,_1943.jpg](https://commons.wikimedia.org/wiki/File:German_soldier_with_Sturmpistole,_1943.jpg)
+  - License: Public domain (Polish National Archives / Narodowe Archiwum Cyfrowe; PD by Polish copyright law and PD-US under URAA)
+  - Photographer: Janke (October 1943)
+
+- **Panzer III** — `art/enemies/panzer_iii.jpg`
+  - File: [Bundesarchiv Bild 101I-783-0150-28, Nordafrika, Panzer III](https://commons.wikimedia.org/wiki/File:Bundesarchiv_Bild_101I-783-0150-28,_Nordafrika,_Panzer_III.jpg)
+  - License: **CC-BY-SA 3.0 de** — credit required: "Bundesarchiv, Bild 101I-783-0150-28 / Valtingojer / CC-BY-SA 3.0"
+  - Description: Panzer III in North Africa with the Afrika Korps, April 1941.
+
+- **Junkers Ju 87 "Stuka"** — `art/enemies/stuka.jpg`
+  - File: [Bundesarchiv Bild 101I-478-2174-18A, Italien, Junkers Ju 87 auf Feldflugplatz](https://commons.wikimedia.org/wiki/File:Bundesarchiv_Bild_101I-478-2174-18A,_Italien,_Junkers_Ju_87_auf_Feldflugplatz.jpg)
+  - License: **CC-BY-SA 3.0 de** — credit required: "Bundesarchiv, Bild 101I-478-2174-18A / Rieder, Fred / CC-BY-SA 3.0"
+  - Description: Ju 87 Stuka on an Italian field airstrip, 1944; side view showing inverted gull wings.

@@ -1,9 +1,11 @@
-[gd_resource type="Resource" script_class="EnemyStats" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="EnemyStats" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/enemy_stats.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/enemies/wehrmacht_infantry.jpg" id="2"]
 
 [resource]
 script = ExtResource("1")
+portrait = ExtResource("2")
 id = &"wehrmacht_infantry"
 display_name = "Wehrmacht Infantry"
 color = Color(0.7, 0.25, 0.2, 1)
