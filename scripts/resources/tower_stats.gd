@@ -23,6 +23,8 @@ class_name TowerStats extends Resource
 @export_group("Synergy")
 @export var adjacency_buffs: Array[StringName] = []  ## tags this tower grants to neighbors
 @export var adjacency_consumes: Array[StringName] = []  ## tags this tower benefits from
+@export var aura_radius: float = 0.0  ## > 0 → tower projects an aura buff to all towers in radius
+@export var aura_fire_rate_bonus: float = 0.0  ## additive multiplier (e.g., 0.15 = +15%)
 
 @export_group("Lore")
 @export_multiline var tooltip_lore: String = ""

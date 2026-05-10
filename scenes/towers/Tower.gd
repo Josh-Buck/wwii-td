@@ -11,7 +11,8 @@ const _PRIORITY_CYCLE: Array[StringName] = [
 
 var targeting_mode: StringName = TargetingSystem.FIRST  ## overridden from stats in _ready
 var targets_in_range: Array = []
-var active_buffs: Dictionary = {}  ## tag -> source tower (M2)
+var active_buffs: Dictionary = {}  ## adjacency tag -> source tower
+var aura_buffs: Dictionary = {}    ## source tower -> {fire_rate_bonus: float}
 var owning_slot: Node = null   ## set by Map on placement; cleared on sell
 var hovered: bool = false   ## drives range-preview visibility in _draw
 
@@ -94,6 +95,8 @@ func effective_fire_rate() -> float:
 	if stats == null:
 		return 1.0
 	var multiplier := 1.0 + AdjacencySystem.RATE_BONUS_PER_BUFF * active_buffs.size()
+	for source in aura_buffs.values():
+		multiplier += source.get("fire_rate_bonus", 0.0)
 	return stats.fire_rate * multiplier
 
 func effective_range() -> float:
@@ -171,8 +174,12 @@ func _draw() -> void:
 		draw_arc(Vector2.ZERO, TOWER_RADIUS, 0, TAU, 32, stats.color.darkened(0.4), 2.0)
 		_draw_initials()
 	# Synergy indicator: golden ring when at least one adjacency buff is active.
-	if active_buffs.size() > 0:
+	if active_buffs.size() > 0 or aura_buffs.size() > 0:
 		draw_arc(Vector2.ZERO, TOWER_RADIUS + 8.0, 0, TAU, 32, Color(1.0, 0.85, 0.3, 0.85), 2.5)
+	# Aura projection: faint persistent ring on towers that emit auras.
+	if stats.aura_radius > 0.0:
+		draw_circle(Vector2.ZERO, stats.aura_radius, Color(1.0, 0.95, 0.5, 0.04))
+		draw_arc(Vector2.ZERO, stats.aura_radius, 0, TAU, 64, Color(1.0, 0.95, 0.5, 0.30), 1.0)
 	# Faction flag stripe always shows (over portrait or placeholder).
 	_draw_flag_stripe(stats.faction)
 

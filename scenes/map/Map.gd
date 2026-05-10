@@ -148,7 +148,10 @@ func _on_run_ended(victory: bool) -> void:
 
 func _on_tower_placed_for_synergy(tower: Node) -> void:
 	AdjacencySystem.recompute_in_radius(tower)
+	AuraSystem.recompute_in_radius(tower)
 
 func _on_tower_sold_for_synergy(tower: Node, _refund: int) -> void:
 	if tower and is_instance_valid(tower):
+		var aura_r: float = tower.stats.aura_radius if tower.stats else 0.0
 		AdjacencySystem.recompute_after_removal(tower.global_position, tower.get_tree())
+		AuraSystem.recompute_after_removal(tower.global_position, aura_r, tower.get_tree())

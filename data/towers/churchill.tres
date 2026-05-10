@@ -18,5 +18,7 @@ can_hit = 3
 default_targeting = &"first"
 adjacency_buffs = Array[StringName]([&"uk"])
 adjacency_consumes = Array[StringName]([&"uk"])
+aura_radius = 160.0
+aura_fire_rate_bonus = 0.15
 tooltip_lore = "British PM during the Battle of Britain. His broadcasts (\"We shall fight on the beaches\") sustained UK morale through the war's darkest hours."
 codex_id = &"churchill"
