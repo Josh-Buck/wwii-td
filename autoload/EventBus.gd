@@ -26,3 +26,10 @@ signal tower_clicked(tower: Node)  ## opens info panel
 
 # Codex
 signal codex_entry_unlocked(entry_id: StringName)
+
+# Meta
+signal pause_toggled(paused: bool)
+signal shop_opened(available_bonds: Array)
+signal shop_closed
+signal bond_purchased(bond: Resource)
+signal bond_matured(bond: Resource, payout: int)

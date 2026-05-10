@@ -16,6 +16,9 @@ extends CanvasLayer
 @onready var info_target_btn: Button = $TowerInfoPanel/VBox/ButtonRow/TargetButton
 @onready var info_sell_btn: Button = $TowerInfoPanel/VBox/ButtonRow/SellButton
 @onready var info_close_btn: Button = $TowerInfoPanel/VBox/CloseButton
+@onready var pause_btn: Button = $TopBar/PauseButton
+@onready var pause_overlay: Control = $PauseOverlay
+@onready var resume_btn: Button = $PauseOverlay/Center/VBox/ResumeButton
 
 var _selected_tower: Node = null
 
@@ -35,6 +38,9 @@ func _ready() -> void:
 	info_target_btn.pressed.connect(_on_target_btn_pressed)
 	info_sell_btn.pressed.connect(_on_sell_btn_pressed)
 	info_close_btn.pressed.connect(_on_close_btn_pressed)
+	pause_btn.pressed.connect(toggle_pause)
+	resume_btn.pressed.connect(toggle_pause)
+	pause_overlay.visible = false
 	gold_label.text = "Gold: %d" % GameState.gold
 	lives_label.text = "Lives: %d" % GameState.lives
 	wave_label.text = "Wave 1"
@@ -112,6 +118,18 @@ func _on_sell_btn_pressed() -> void:
 func _on_close_btn_pressed() -> void:
 	_selected_tower = null
 	info_panel.visible = false
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_P:
+		toggle_pause()
+		get_viewport().set_input_as_handled()
+
+func toggle_pause() -> void:
+	var p := not get_tree().paused
+	get_tree().paused = p
+	pause_overlay.visible = p
+	pause_btn.text = "Resume (P)" if p else "Pause (P)"
+	EventBus.pause_toggled.emit(p)
 
 func show_end_screen(victory: bool) -> void:
 	end_label.text = "VICTORY" if victory else "DEFEAT"
