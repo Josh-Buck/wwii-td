@@ -63,6 +63,13 @@ offset_bottom = 672.0
 mouse_filter = 2
 text = "Selected: —"
 
+[node name="TowerPalette" type="HBoxContainer" parent="."]
+offset_left = 12.0
+offset_top = 580.0
+offset_right = 1268.0
+offset_bottom = 642.0
+theme_override_constants/separation = 6
+
 [node name="Tooltip" type="PanelContainer" parent="."]
 visible = false
 mouse_filter = 2
