@@ -4,14 +4,37 @@ class_name Projectile extends Node2D
 
 var target: Node = null
 var damage: float = 0.0
-var aoe_radius: float = 0.0  ## 0 = single-target
+var aoe_radius: float = 0.0
+var color: Color = Color(1, 0.95, 0.4)
+var style: StringName = &"bullet"   ## bullet | shell | laser | drop
+var slow_factor: float = 1.0        ## 1.0 = no slow; <1.0 multiplies enemy speed
+var slow_duration: float = 0.0
+var knockback: float = 0.0          ## px to push enemy backward along path
+var _spawn_pos: Vector2
 
-func setup(target_enemy: Node, dmg: float, aoe: float = 0.0) -> void:
+func setup(target_enemy: Node, dmg: float, opts: Dictionary = {}) -> void:
 	target = target_enemy
 	damage = dmg
-	aoe_radius = aoe
+	aoe_radius = opts.get("aoe", 0.0)
+	color = opts.get("color", color)
+	style = opts.get("style", &"bullet")
+	slow_factor = opts.get("slow_factor", 1.0)
+	slow_duration = opts.get("slow_duration", 0.0)
+	knockback = opts.get("knockback", 0.0)
+
+func _ready() -> void:
+	_spawn_pos = global_position
+	# Laser hits instantly — resolve and free immediately.
+	if style == &"laser":
+		if target and is_instance_valid(target):
+			_resolve_hit(target.global_position)
+		# Stay alive for one frame so the laser line draws.
+		await get_tree().process_frame
+		queue_free()
 
 func _process(delta: float) -> void:
+	if style == &"laser":
+		return  # already resolved
 	if target == null or not is_instance_valid(target) or target.dead:
 		queue_free()
 		return
@@ -28,11 +51,8 @@ func _process(delta: float) -> void:
 
 func _resolve_hit(impact_pos: Vector2) -> void:
 	if aoe_radius <= 0.0:
-		# Single-target hit
-		if target and is_instance_valid(target) and target.has_method("take_damage"):
-			target.take_damage(damage)
+		_apply_to(target, impact_pos)
 		return
-	# AoE: damage all live enemies within radius of impact
 	var tree := get_tree()
 	if tree == null:
 		return
@@ -40,10 +60,33 @@ func _resolve_hit(impact_pos: Vector2) -> void:
 		if not is_instance_valid(enemy) or enemy.dead:
 			continue
 		if impact_pos.distance_to(enemy.global_position) <= aoe_radius:
-			if enemy.has_method("take_damage"):
-				enemy.take_damage(damage)
+			_apply_to(enemy, impact_pos)
+
+func _apply_to(enemy: Node, _impact: Vector2) -> void:
+	if enemy == null or not is_instance_valid(enemy):
+		return
+	if enemy.has_method("take_damage"):
+		enemy.take_damage(damage)
+	if slow_factor < 1.0 and slow_duration > 0.0 and enemy.has_method("apply_slow"):
+		enemy.apply_slow(slow_factor, slow_duration)
+	if knockback > 0.0 and enemy.has_method("apply_knockback"):
+		enemy.apply_knockback(knockback)
 
 func _draw() -> void:
-	# Bright tracer with a soft trail.
-	draw_line(Vector2(-10, 0), Vector2.ZERO, Color(1, 0.85, 0.3, 0.4), 2.0)
-	draw_circle(Vector2.ZERO, 3.0, Color(1, 0.95, 0.4))
+	match style:
+		&"laser":
+			# Thin instant tracer from spawn to target position.
+			var local_target: Vector2 = Vector2.ZERO
+			if target and is_instance_valid(target):
+				local_target = target.global_position - global_position
+			draw_line(Vector2.ZERO, local_target, color.lightened(0.4), 2.0)
+			draw_circle(local_target, 4.0, color)
+		&"shell":
+			# Chunky artillery shell with glow.
+			draw_circle(Vector2.ZERO, 7.0, color)
+			draw_arc(Vector2.ZERO, 7.0, 0, TAU, 16, color.lightened(0.3), 1.5)
+			draw_circle(Vector2(-4, 0), 3.0, color.lightened(0.5))
+		_:
+			# Bullet (default).
+			draw_line(Vector2(-10, 0), Vector2.ZERO, Color(color.r, color.g, color.b, 0.4), 2.0)
+			draw_circle(Vector2.ZERO, 3.0, color)

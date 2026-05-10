@@ -252,13 +252,52 @@ func _fire_at(target: Node) -> void:
 	if not is_instance_valid(target):
 		return
 	var projectile := _PROJECTILE_SCENE.instantiate()
-	projectile.setup(target, damage_for_target(target), effective_aoe_radius())
+	var opts: Dictionary = {
+		"aoe": effective_aoe_radius(),
+		"color": stats.color,
+		"style": _projectile_style(),
+		"slow_factor": _effective_slow_factor(),
+		"slow_duration": _effective_slow_duration(),
+		"knockback": _effective_knockback(),
+	}
+	projectile.setup(target, damage_for_target(target), opts)
 	projectile.global_position = global_position
 	var container := _find_projectiles_container()
 	if container:
 		container.add_child(projectile)
 	else:
 		get_parent().add_child(projectile)
+
+func _projectile_style() -> StringName:
+	if stats == null:
+		return &"bullet"
+	match stats.id:
+		&"pavlichenko": return &"laser"
+		&"eisenhower": return &"shell"
+		&"airborne_101": return &"shell"
+	return &"bullet"
+
+func _effective_slow_factor() -> float:
+	var f: float = 1.0
+	for step in _active_upgrade_steps():
+		var s: float = step.get("slow_factor", 1.0)
+		if s < f:
+			f = s
+	return f
+
+func _effective_slow_duration() -> float:
+	var d: float = 0.0
+	for step in _active_upgrade_steps():
+		var sd: float = step.get("slow_duration", 0.0)
+		if sd > d:
+			d = sd
+	return d
+
+func _effective_knockback() -> float:
+	var k: float = 0.0
+	for step in _active_upgrade_steps():
+		k += step.get("knockback", 0.0)
+	return k
 
 func _find_projectiles_container() -> Node:
 	var n: Node = get_parent()

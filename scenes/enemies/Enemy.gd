@@ -5,6 +5,9 @@ class_name Enemy extends PathFollow2D
 var hp: float = 0.0
 var max_hp: float = 0.0
 var dead: bool = false
+var _slow_factor: float = 1.0
+var _slow_until: float = 0.0
+var _slow_active_prev: bool = false
 
 @onready var hitbox: Area2D = $Hitbox
 @onready var hitbox_collision: CollisionShape2D = $Hitbox/CollisionShape2D
@@ -42,13 +45,30 @@ func _on_hover_exited() -> void:
 func _process(delta: float) -> void:
 	if dead:
 		return
-	progress += stats.speed * delta
+	var now: float = Time.get_ticks_msec() / 1000.0
+	var slow_active: bool = now < _slow_until
+	if slow_active != _slow_active_prev:
+		_slow_active_prev = slow_active
+		queue_redraw()
+	var speed_mult: float = _slow_factor if slow_active else 1.0
+	progress += stats.speed * speed_mult * delta
 	if stats.regen_per_sec > 0.0 and hp < max_hp:
 		hp = minf(max_hp, hp + stats.regen_per_sec * delta)
 		if health_bar:
 			health_bar.value = hp
 	if progress_ratio >= 1.0:
 		_reach_end()
+
+func apply_slow(factor: float, duration_sec: float) -> void:
+	if dead:
+		return
+	_slow_factor = factor
+	_slow_until = Time.get_ticks_msec() / 1000.0 + duration_sec
+
+func apply_knockback(amount: float) -> void:
+	if dead:
+		return
+	progress = max(0.0, progress - amount)
 
 func is_camo() -> bool:
 	return stats.is_camo() if stats else false
@@ -112,3 +132,6 @@ func _draw() -> void:
 		# Glowing crown halo for bosses.
 		draw_arc(Vector2.ZERO, r + 4.0, 0, TAU, 32, Color(1.0, 0.85, 0.3, 0.85), 2.5)
 		draw_arc(Vector2.ZERO, r + 8.0, 0, TAU, 32, Color(1.0, 0.6, 0.2, 0.45), 1.5)
+	if _slow_active_prev:
+		# Cold-blue ring when slowed.
+		draw_arc(Vector2.ZERO, r + 3.0, 0, TAU, 32, Color(0.45, 0.75, 1.0, 0.9), 2.0)

@@ -121,6 +121,12 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		elif event.button_index == MOUSE_BUTTON_LEFT:
 			var pos := get_global_mouse_position()
+			# Clicking on a placed tower during placement mode → exit
+			# placement and let the tower's HoverArea open the info panel.
+			var clicked_tower := _tower_at(pos)
+			if clicked_tower:
+				_exit_placement_mode()
+				return  # don't consume; Tower's HoverArea handles the click
 			if _is_valid_placement(pos) and selected_tower_stats and GameState.gold >= selected_tower_stats.cost:
 				_place_tower_at(pos, selected_tower_stats)
 				get_viewport().set_input_as_handled()
@@ -174,6 +180,14 @@ func _is_valid_placement(pos: Vector2) -> bool:
 		if pos.distance_to(tw.global_position) < _TOWER_CLEARANCE:
 			return false
 	return true
+
+func _tower_at(pos: Vector2) -> Node:
+	for tw in get_tree().get_nodes_in_group("towers"):
+		if not is_instance_valid(tw):
+			continue
+		if pos.distance_to(tw.global_position) < 30.0:
+			return tw
+	return null
 
 func _distance_to_path(pos: Vector2) -> float:
 	if _path_baked_points.is_empty():
