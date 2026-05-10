@@ -15,6 +15,7 @@ var active_buffs: Dictionary = {}  ## adjacency tag -> source tower
 var aura_buffs: Dictionary = {}    ## source tower -> {fire_rate_bonus: float}
 var owning_slot: Node = null   ## set by Map on placement; cleared on sell
 var hovered: bool = false   ## drives range-preview visibility in _draw
+var selected: bool = false  ## set by HUD when info panel pinned to this tower
 var upgrade_a_tier: int = 0  ## branch A tiers purchased (0..3)
 var upgrade_b_tier: int = 0  ## branch B tiers purchased (0..3)
 var total_invested: int = 0  ## base cost + all upgrade costs (for sell refund)
@@ -273,11 +274,11 @@ const TOWER_RADIUS: float = 30.0
 func _draw() -> void:
 	if stats == null:
 		return
-	# Range preview (drawn under everything else when hovered).
-	if hovered:
+	# Range preview (drawn under everything else when hovered or selected).
+	if hovered or selected:
 		var r := effective_range()
 		draw_circle(Vector2.ZERO, r, Color(1, 1, 1, 0.05))
-		draw_arc(Vector2.ZERO, r, 0, TAU, 64, Color(1, 1, 1, 0.45), 1.5)
+		draw_arc(Vector2.ZERO, r, 0, TAU, 64, Color(1, 1, 1, 0.55), 2.0)
 	if stats.portrait != null:
 		_draw_portrait()
 	else:

@@ -215,8 +215,15 @@ func _build_sidebar_card(idx: int, stats: Resource) -> Button:
 func _show_defender_info(stats: Resource, placed_tower: Node = null) -> void:
 	if stats == null:
 		return
+	# Deselect previously selected tower (range ring goes away).
+	if _info_active_tower and is_instance_valid(_info_active_tower):
+		_info_active_tower.selected = false
+		_info_active_tower.queue_redraw()
 	_info_active_stats = stats
 	_info_active_tower = placed_tower if placed_tower and is_instance_valid(placed_tower) else null
+	if _info_active_tower:
+		_info_active_tower.selected = true
+		_info_active_tower.queue_redraw()
 	def_name.text = "%s — %dg" % [stats.display_name, stats.cost]
 	def_faction.text = "Faction: %s" % _faction_label(stats.faction)
 	var dps: float = stats.damage * stats.fire_rate
@@ -237,6 +244,9 @@ func _show_defender_info(stats: Resource, placed_tower: Node = null) -> void:
 	def_info_panel.visible = true
 
 func _hide_defender_info() -> void:
+	if _info_active_tower and is_instance_valid(_info_active_tower):
+		_info_active_tower.selected = false
+		_info_active_tower.queue_redraw()
 	def_info_panel.visible = false
 	_info_active_tower = null
 	_info_active_stats = null
