@@ -29,6 +29,14 @@ extends CanvasLayer
 @onready var sidebar_list: VBoxContainer = $TowerSidebar/VBox/ScrollContainer/PaletteList
 @onready var sidebar_collapse_btn: Button = $TowerSidebar/VBox/HeaderRow/CollapseButton
 @onready var sidebar_tab: Button = $TowerSidebarTab
+@onready var def_info_panel: PanelContainer = $DefenderInfoPanel
+@onready var def_name: Label = $DefenderInfoPanel/VBox/NameLabel
+@onready var def_faction: Label = $DefenderInfoPanel/VBox/FactionLabel
+@onready var def_stats: Label = $DefenderInfoPanel/VBox/StatsLabel
+@onready var def_hits: Label = $DefenderInfoPanel/VBox/HitsLabel
+@onready var def_strength: Label = $DefenderInfoPanel/VBox/StrengthLabel
+@onready var def_weakness: Label = $DefenderInfoPanel/VBox/WeaknessLabel
+@onready var def_lore: Label = $DefenderInfoPanel/VBox/LoreLabel
 
 const _SPEED_CYCLE: Array[float] = [1.0, 2.0, 4.0]
 var _speed_idx: int = 0
@@ -155,11 +163,90 @@ func _build_sidebar_card(idx: int, stats: Resource) -> Button:
 	btn.add_theme_color_override("font_color", Color.WHITE)
 	btn.modulate = stats.color.lerp(Color.WHITE, 0.4)
 	btn.pressed.connect(_on_palette_btn_pressed.bind(idx))
+	btn.mouse_entered.connect(_show_defender_info.bind(stats))
+	btn.mouse_exited.connect(_hide_defender_info)
 	# If a portrait texture exists, drop it into the button as an icon.
 	if stats.portrait != null:
 		btn.icon = stats.portrait
 		btn.expand_icon = true
 	return btn
+
+func _show_defender_info(stats: Resource) -> void:
+	if stats == null:
+		return
+	def_name.text = "%s — %dg" % [stats.display_name, stats.cost]
+	def_faction.text = "Faction: %s" % _faction_label(stats.faction)
+	var dps: float = stats.damage * stats.fire_rate
+	var aoe_str: String = ""
+	if stats.aoe_radius > 0:
+		aoe_str = "  AoE r%d" % int(stats.aoe_radius)
+	def_stats.text = "Damage %d  ·  Rate %.1f/s  ·  Range %d  ·  DPS %d%s" % [
+		int(stats.damage), stats.fire_rate, int(stats.range_px), int(dps), aoe_str
+	]
+	def_hits.text = "Hits: %s   Default target: %s" % [
+		_hits_text(stats.can_hit),
+		_short_target_label(stats.default_targeting).replace("→ ", ""),
+	]
+	def_strength.text = "Strengths: %s" % _strengths_for(stats)
+	def_weakness.text = "Weaknesses: %s" % _weaknesses_for(stats)
+	def_lore.text = stats.tooltip_lore
+	def_info_panel.visible = true
+
+func _hide_defender_info() -> void:
+	def_info_panel.visible = false
+
+func _faction_label(f: StringName) -> String:
+	match f:
+		&"us": return "United States"
+		&"uk": return "United Kingdom"
+		&"ussr": return "Soviet Union"
+		&"resistance": return "Resistance / civilian"
+		&"axis_germany": return "Nazi Germany"
+		&"axis_japan": return "Imperial Japan"
+		&"axis_italy": return "Fascist Italy"
+	return String(f)
+
+func _hits_text(flags: int) -> String:
+	var parts: Array[String] = []
+	if flags & 1: parts.append("Ground")
+	if flags & 2: parts.append("Air")
+	if flags & 4: parts.append("Armor")
+	if flags & 8: parts.append("Camo")
+	return " + ".join(parts) if parts.size() > 0 else "—"
+
+func _strengths_for(stats: Resource) -> String:
+	var parts: Array[String] = []
+	if stats.aoe_radius > 0:
+		parts.append("clears tight clusters")
+	if stats.range_px >= 250:
+		parts.append("very long range")
+	if stats.damage >= 50 and stats.fire_rate <= 0.4:
+		parts.append("massive single-shot vs heavies")
+	if (stats.can_hit & 8) != 0:
+		parts.append("sees hidden / camo enemies")
+	if stats.fire_rate >= 1.2:
+		parts.append("fast firing")
+	if (stats.can_hit & 4) != 0 and stats.damage * stats.fire_rate >= 15:
+		parts.append("cuts through armor")
+	if parts.is_empty():
+		parts.append("flexible generalist")
+	return ", ".join(parts)
+
+func _weaknesses_for(stats: Resource) -> String:
+	var parts: Array[String] = []
+	if (stats.can_hit & 2) == 0:
+		parts.append("can't hit air")
+	if (stats.can_hit & 4) == 0:
+		parts.append("struggles vs armor")
+	if (stats.can_hit & 8) == 0 and stats.range_px < 200:
+		parts.append("blind to camo")
+	if stats.fire_rate <= 0.25:
+		parts.append("very slow rate of fire")
+	if stats.cost >= 200:
+		parts.append("expensive")
+	if parts.is_empty():
+		parts.append("none specifically")
+	return ", ".join(parts)
 
 func _short_target_label(mode: StringName) -> String:
 	match mode:

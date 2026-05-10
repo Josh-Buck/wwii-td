@@ -100,6 +100,62 @@ offset_right = 1276.0
 offset_bottom = 100.0
 text = "◂"
 
+[node name="DefenderInfoPanel" type="PanelContainer" parent="."]
+visible = false
+mouse_filter = 2
+offset_left = 736.0
+offset_top = 56.0
+offset_right = 1056.0
+offset_bottom = 480.0
+
+[node name="VBox" type="VBoxContainer" parent="DefenderInfoPanel"]
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="NameLabel" type="Label" parent="DefenderInfoPanel/VBox"]
+mouse_filter = 2
+text = ""
+theme_override_font_sizes/font_size = 18
+
+[node name="FactionLabel" type="Label" parent="DefenderInfoPanel/VBox"]
+mouse_filter = 2
+text = ""
+modulate = Color(0.85, 0.85, 0.85, 1)
+
+[node name="HSep1" type="HSeparator" parent="DefenderInfoPanel/VBox"]
+
+[node name="StatsLabel" type="Label" parent="DefenderInfoPanel/VBox"]
+mouse_filter = 2
+text = ""
+custom_minimum_size = Vector2(300, 0)
+autowrap_mode = 2
+
+[node name="HitsLabel" type="Label" parent="DefenderInfoPanel/VBox"]
+mouse_filter = 2
+text = ""
+
+[node name="StrengthLabel" type="Label" parent="DefenderInfoPanel/VBox"]
+mouse_filter = 2
+text = ""
+modulate = Color(0.6, 1, 0.6, 1)
+custom_minimum_size = Vector2(300, 0)
+autowrap_mode = 2
+
+[node name="WeaknessLabel" type="Label" parent="DefenderInfoPanel/VBox"]
+mouse_filter = 2
+text = ""
+modulate = Color(1, 0.65, 0.6, 1)
+custom_minimum_size = Vector2(300, 0)
+autowrap_mode = 2
+
+[node name="HSep2" type="HSeparator" parent="DefenderInfoPanel/VBox"]
+
+[node name="LoreLabel" type="Label" parent="DefenderInfoPanel/VBox"]
+mouse_filter = 2
+text = ""
+custom_minimum_size = Vector2(300, 0)
+autowrap_mode = 2
+
 [node name="Tooltip" type="PanelContainer" parent="."]
 visible = false
 mouse_filter = 2
