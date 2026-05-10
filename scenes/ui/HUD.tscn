@@ -10,21 +10,27 @@ offset_left = 16.0
 offset_top = 12.0
 offset_right = 1264.0
 offset_bottom = 44.0
+mouse_filter = 2
 theme_override_constants/separation = 32
 
 [node name="GoldLabel" type="Label" parent="TopBar"]
+mouse_filter = 2
 text = "Gold: 200"
 
 [node name="Spacer" type="Control" parent="TopBar"]
+mouse_filter = 2
 size_flags_horizontal = 3
 
 [node name="WaveLabel" type="Label" parent="TopBar"]
+mouse_filter = 2
 text = "Wave 1"
 
 [node name="Spacer2" type="Control" parent="TopBar"]
+mouse_filter = 2
 size_flags_horizontal = 3
 
 [node name="LivesLabel" type="Label" parent="TopBar"]
+mouse_filter = 2
 text = "Lives: 20"
 
 [node name="HintLabel" type="Label" parent="."]
@@ -32,6 +38,7 @@ offset_left = 16.0
 offset_top = 680.0
 offset_right = 1264.0
 offset_bottom = 712.0
+mouse_filter = 2
 text = "Click a slot to deploy."
 
 [node name="EndScreen" type="Control" parent="."]
