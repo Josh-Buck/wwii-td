@@ -25,6 +25,10 @@ func _ready() -> void:
 	if stats == null:
 		push_error("Tower spawned without TowerStats")
 		return
+	# Keep towers responsive to clicks/hovers even when the tree is paused
+	# so the player can read codex / buy / sell during pause for planning.
+	# Fire timer is forced PAUSABLE so towers still stop shooting on pause.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group("towers")
 	# Always assign a fresh shape per tower so range tweaks don't leak
 	# across instances via a shared scene-level sub_resource.
@@ -34,6 +38,7 @@ func _ready() -> void:
 		range_collision.shape = shape
 	fire_timer.wait_time = 1.0 / max(0.0001, effective_fire_rate())
 	fire_timer.one_shot = false
+	fire_timer.process_mode = Node.PROCESS_MODE_PAUSABLE
 	if not fire_timer.timeout.is_connected(_on_fire_tick):
 		fire_timer.timeout.connect(_on_fire_tick)
 	fire_timer.start()

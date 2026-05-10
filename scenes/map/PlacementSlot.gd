@@ -7,6 +7,9 @@ signal slot_clicked(slot)
 var _tower: Node = null
 
 func _ready() -> void:
+	# Slots stay clickable while the tree is paused so the player can
+	# place towers as part of strategic planning during pause.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	input_pickable = true
 	if get_child_count() == 0:
 		var col := CollisionShape2D.new()
