@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"patton"
+title = "George S. Patton (1885-1945)"
+body = "Born in San Gabriel, California; West Point class of 1909. Saw combat in the 1916 Punitive Expedition against Pancho Villa and as a tank officer in the First World War. He was a pioneer of U.S. armored doctrine.
+
+In WWII Patton commanded U.S. forces in the 1942 invasion of French Morocco, the Seventh Army in Sicily (1943), and the Third Army from August 1944, leading the breakout from Normandy across France, the relief of Bastogne in the Battle of the Bulge, and the drive into Germany and Czechoslovakia.
+
+His aggressive armor tactics shaped postwar U.S. doctrine. Patton died on 21 December 1945 from injuries sustained in a vehicle accident in occupied Germany."
+sources = "Sources: U.S. Army Center of Military History, The Patton Papers (Houghton Mifflin), West Point archives."

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"wehrmacht_infantry"
+title = "Wehrmacht Infantry"
+body = "The infantry of the Heer (Army), the largest branch of Nazi Germany's Wehrmacht. Conscripted from 1935 onward in violation of the Treaty of Versailles, the German Army peaked at roughly 6.5 million personnel in 1943.
+
+The standard infantry rifleman was equipped with the Karabiner 98k bolt-action rifle, supported by MG34 and MG42 machine guns at the squad level — the latter capable of 1,200 rounds per minute, the highest rate of fire of any contemporary infantry weapon. Tactical doctrine emphasized mission-oriented orders (Auftragstaktik) and combined-arms cooperation with armor and air support.
+
+Wehrmacht units were complicit in war crimes on the Eastern Front and in occupied territories, particularly the Commissar Order, anti-partisan operations, and cooperation with Einsatzgruppen killing squads. The postwar \"clean Wehrmacht\" myth is contradicted by extensive documentary evidence."
+sources = "Sources: Bundesarchiv-Militärarchiv, USHMM, Hamburg Institute for Social Research (Wehrmacht crimes exhibit)."

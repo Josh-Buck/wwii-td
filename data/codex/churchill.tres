@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"churchill"
+title = "Winston Churchill (1874-1965)"
+body = "Educated at Harrow and Sandhurst; saw combat in Cuba, India, Sudan and South Africa before entering Parliament in 1900. As First Lord of the Admiralty he oversaw the disastrous 1915 Gallipoli campaign and was forced from office, returning to the trenches as a battalion commander.
+
+Out of office through most of the 1930s, he warned of the Nazi threat. On 10 May 1940, the day Germany invaded the Low Countries, he became prime minister of a wartime coalition government.
+
+His speeches — \"We shall fight on the beaches\", \"Their finest hour\", \"Blood, toil, tears and sweat\" — are credited with sustaining British morale through 1940-41. He led the United Kingdom through the war, working closely with Roosevelt and Stalin until his electoral defeat in July 1945."
+sources = "Sources: Churchill Archives Centre (Cambridge), Imperial War Museum, The Second World War (Churchill, 6 vols., 1948-1953)."

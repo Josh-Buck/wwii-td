@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"eisenhower"
+title = "Dwight D. Eisenhower (1890-1969)"
+body = "Born in Denison, Texas; raised in Abilene, Kansas. West Point class of 1915. Largely staff and training assignments through the interwar period, where he caught the attention of George Marshall.
+
+Appointed Supreme Commander, Allied Expeditionary Force in December 1943. Planned and approved Operation Overlord — the 6 June 1944 D-Day landings on the Normandy coast, the largest amphibious invasion in history — and oversaw the campaign in Northwest Europe through Germany's surrender on 8 May 1945.
+
+After the war he served as Army Chief of Staff and first Supreme Commander of NATO before winning the U.S. presidency in 1952 and serving two terms (1953-1961)."
+sources = "Sources: Eisenhower Presidential Library, U.S. Army Center of Military History, The Supreme Command (Forrest C. Pogue, 1954)."

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"panzer_iii"
+title = "Panzerkampfwagen III"
+body = "The standard German medium tank in the early years of the war, introduced in 1939 and produced through 1943 (about 5,800 built across all variants). Originally armed with a 37mm cannon, upgunned to a short 50mm and finally a longer 50mm L/60. Crew of five.
+
+The Panzer III was the workhorse of the Blitzkrieg in Poland (1939), France (1940), and the Balkans (1941), and remained a frontline tank through Operation Barbarossa. By 1942 the appearance of the Soviet T-34 and the British Matilda exposed the Panzer III's limitations in armor and gun, and production wound down in favor of the Panzer IV and Panther.
+
+A version with a short 75mm howitzer (Panzer III Ausf. N) served as an infantry support vehicle until 1945."
+sources = "Sources: Bundesarchiv-Militärarchiv, Panzer III: A Production Series (Walter J. Spielberger), Bovington Tank Museum."

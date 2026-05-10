@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"stuka"
+title = "Junkers Ju 87 \"Stuka\""
+body = "A purpose-built dive bomber that became one of the most recognizable aircraft of the early war, identified by its inverted gull wings and the \"Jericho-Trumpet\" sirens fitted to early models. About 6,500 were produced.
+
+The Stuka was central to the Blitzkrieg doctrine of close air support — pinpoint dive-bombing in cooperation with advancing armor — and saw extensive use in Poland, the Low Countries, France, the Balkans, and the Mediterranean. It was decisive against the Polish Air Force and instrumental in the early defeats of British and French armor.
+
+By the Battle of Britain (1940) the Stuka was withdrawn from cross-Channel operations after suffering heavy losses to Spitfires and Hurricanes; its slow speed made it vulnerable in contested airspace. It remained effective on the Eastern Front through the war's end as a tank-buster (Ju 87 G) but was obsolescent by 1943."
+sources = "Sources: Imperial War Museum, RAF Museum, Bundesarchiv-Militärarchiv."
