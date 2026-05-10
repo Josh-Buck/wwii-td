@@ -14,7 +14,8 @@ Features intentionally deferred. **Add to this list whenever we decide "good ide
 ### Combat
 
 - **Active "Bombing Run" global ability** (per design plan, M2): 90s cooldown, click 3×3 area, AoE after 1.5s warning.
-- **Tower upgrade branches** (Kingdom Rush model, M2): 2 branches per figure, 3 tiers each. Themed (Patton → Armor Hunt vs Blitzkrieg).
+- **Tower upgrade tree** (Kingdom Rush / Bloons hybrid; Josh request 2026-05-10): 2 branches per figure × 3 tiers each, themed per figure. Patton → "Armor Hunt" (anti-tank specialist) vs "Blitzkrieg" (mobile, repositionable). Likely ties into the click-tower info panel as a third tab.
+- **Aura / radial-buff towers** (Josh request 2026-05-10): towers whose primary effect is buffing all towers within a radius (e.g., Churchill aura-buffs fire rate to all neighbors, not just same-faction). Distinct from the current adjacency synergy (which only triggers on shared faction tag). Probably driven by new `aura_radius` + `aura_buff_tags` fields on TowerStats.
 - **Adjacency synergy line visualization** — golden ring on buffed towers ships, but the linking lines between same-faction neighbors are still TODO.
 - **Stuka strafing towers** — currently Stukas just walk the path with `flying` flag. Should periodically strafe a tower in range, damaging it (towers would need HP). Combos with Montgomery's planned defensive aura.
 

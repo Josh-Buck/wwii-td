@@ -15,6 +15,7 @@ damage = 15.0
 fire_rate = 1.2
 range_px = 180.0
 can_hit = 5
+default_targeting = &"strong"
 adjacency_buffs = Array[StringName]([&"us"])
 adjacency_consumes = Array[StringName]([&"us"])
 tooltip_lore = "George S. Patton — commanded the U.S. Third Army's breakout from Normandy in 1944. Aggressive armor doctrine reshaped Allied tank tactics."

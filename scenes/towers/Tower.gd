@@ -9,7 +9,7 @@ const _PRIORITY_CYCLE: Array[StringName] = [
 	TargetingSystem.CLOSE,
 ]
 
-var targeting_mode: StringName = TargetingSystem.FIRST
+var targeting_mode: StringName = TargetingSystem.FIRST  ## overridden from stats in _ready
 var targets_in_range: Array = []
 var active_buffs: Dictionary = {}  ## tag -> source tower (M2)
 var owning_slot: Node = null   ## set by Map on placement; cleared on sell
@@ -31,6 +31,8 @@ func _ready() -> void:
 	# Fire timer is forced PAUSABLE so towers still stop shooting on pause.
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group("towers")
+	if stats.default_targeting != &"":
+		targeting_mode = stats.default_targeting
 	# Always assign a fresh shape per tower so range tweaks don't leak
 	# across instances via a shared scene-level sub_resource.
 	if range_collision:

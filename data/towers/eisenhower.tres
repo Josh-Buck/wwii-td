@@ -16,6 +16,7 @@ fire_rate = 0.2
 range_px = 220.0
 aoe_radius = 70.0
 can_hit = 7
+default_targeting = &"first"
 adjacency_buffs = Array[StringName]([&"us"])
 adjacency_consumes = Array[StringName]([&"us"])
 tooltip_lore = "Supreme Commander of Allied Expeditionary Forces. Planned and approved Operation Overlord (D-Day, 6 June 1944), the largest amphibious assault in history."
