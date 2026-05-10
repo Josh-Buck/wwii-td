@@ -30,7 +30,8 @@ extends CanvasLayer
 @onready var sidebar_collapse_btn: Button = $TowerSidebar/VBox/HeaderRow/CollapseButton
 @onready var sidebar_tab: Button = $TowerSidebarTab
 @onready var def_info_panel: PanelContainer = $DefenderInfoPanel
-@onready var def_name: Label = $DefenderInfoPanel/VBox/NameLabel
+@onready var def_name: Label = $DefenderInfoPanel/VBox/HeaderRow/NameLabel
+@onready var def_close_btn: Button = $DefenderInfoPanel/VBox/HeaderRow/CloseButton
 @onready var def_faction: Label = $DefenderInfoPanel/VBox/FactionLabel
 @onready var def_stats: Label = $DefenderInfoPanel/VBox/StatsLabel
 @onready var def_hits: Label = $DefenderInfoPanel/VBox/HitsLabel
@@ -98,6 +99,7 @@ func _ready() -> void:
 	EventBus.map_ready.connect(_on_map_ready)
 	sidebar_collapse_btn.pressed.connect(_toggle_sidebar)
 	sidebar_tab.pressed.connect(_toggle_sidebar)
+	def_close_btn.pressed.connect(_hide_defender_info)
 	shop_panel.visible = false
 	shop_next_btn.pressed.connect(_on_shop_next_pressed)
 	EventBus.shop_opened.connect(_on_shop_opened)
@@ -164,8 +166,7 @@ func _build_sidebar_card(idx: int, stats: Resource) -> Button:
 	btn.add_theme_color_override("font_color", Color.WHITE)
 	btn.modulate = stats.color.lerp(Color.WHITE, 0.4)
 	btn.pressed.connect(_on_palette_btn_pressed.bind(idx))
-	btn.mouse_entered.connect(_show_defender_info.bind(stats))
-	btn.mouse_exited.connect(_hide_defender_info)
+	btn.pressed.connect(_show_defender_info.bind(stats))
 	# If a portrait texture exists, drop it into the button as an icon.
 	if stats.portrait != null:
 		btn.icon = stats.portrait

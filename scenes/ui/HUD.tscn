@@ -102,20 +102,24 @@ text = "◂"
 
 [node name="DefenderInfoPanel" type="PanelContainer" parent="."]
 visible = false
-mouse_filter = 2
 offset_left = 736.0
 offset_top = 56.0
 offset_right = 1056.0
-offset_bottom = 480.0
+offset_bottom = 500.0
 
 [node name="VBox" type="VBoxContainer" parent="DefenderInfoPanel"]
-mouse_filter = 2
 theme_override_constants/separation = 6
 
-[node name="NameLabel" type="Label" parent="DefenderInfoPanel/VBox"]
-mouse_filter = 2
+[node name="HeaderRow" type="HBoxContainer" parent="DefenderInfoPanel/VBox"]
+
+[node name="NameLabel" type="Label" parent="DefenderInfoPanel/VBox/HeaderRow"]
+size_flags_horizontal = 3
 text = ""
 theme_override_font_sizes/font_size = 18
+
+[node name="CloseButton" type="Button" parent="DefenderInfoPanel/VBox/HeaderRow"]
+text = "×"
+custom_minimum_size = Vector2(28, 0)
 
 [node name="FactionLabel" type="Label" parent="DefenderInfoPanel/VBox"]
 mouse_filter = 2
