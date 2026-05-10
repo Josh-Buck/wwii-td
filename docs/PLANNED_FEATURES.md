@@ -13,10 +13,10 @@ Features intentionally deferred. **Add to this list whenever we decide "good ide
 
 ### Combat
 
-- **Eisenhower AoE projectile.** D-Day strike currently fires single-target like other towers. Should explode on impact, damaging all enemies in a small radius. Touches `Projectile.gd`, `TowerStats` (add `aoe_radius` field), Eisenhower's `.tres`.
 - **Active "Bombing Run" global ability** (per design plan, M2): 90s cooldown, click 3×3 area, AoE after 1.5s warning.
 - **Tower upgrade branches** (Kingdom Rush model, M2): 2 branches per figure, 3 tiers each. Themed (Patton → Armor Hunt vs Blitzkrieg).
-- **Adjacency synergies** (M2): same-faction towers in adjacent slots gain mutual buffs. Visualized with subtle linking line.
+- **Adjacency synergy line visualization** — golden ring on buffed towers ships, but the linking lines between same-faction neighbors are still TODO.
+- **Stuka strafing towers** — currently Stukas just walk the path with `flying` flag. Should periodically strafe a tower in range, damaging it (towers would need HP). Combos with Montgomery's planned defensive aura.
 
 ### Content
 
@@ -38,3 +38,5 @@ Features intentionally deferred. **Add to this list whenever we decide "good ide
 - M0 scaffold + GitHub Pages deploy
 - M1: 4 towers (Patton, Eisenhower, Churchill, Anne Frank), 3 enemies (Wehrmacht, Panzer III, Stuka), 8 waves
 - M1: hotkey selection (1-4), projectiles, sell/refund, target priority cycling, tooltip lore on hover
+- M1: pause (P), between-wave shop with War Bonds (3 tiers, guaranteed payout)
+- M2 (in progress): adjacency synergies (+20% rate per same-faction neighbor), Eisenhower AoE on impact (70px radius), codex skeleton with C hotkey + unlock-on-hover (9 entries sourced from USHMM / IWM / Yad Vashem / etc.), Montgomery (UK pair) + Pavlichenko (USSR sniper) bringing the roster to 6 towers
