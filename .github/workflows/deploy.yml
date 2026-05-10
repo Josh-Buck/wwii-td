@@ -32,9 +32,12 @@ jobs:
         run: |
           set -euo pipefail
           wget -q "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz" -O /tmp/templates.tpz
-          mkdir -p "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}"
+          # Godot expects templates under <version>.<channel> (dotted),
+          # while the release URL uses <version>-<channel> (hyphenated).
+          TEMPLATE_DIR_NAME="${GODOT_VERSION//-/.}"
+          mkdir -p "$HOME/.local/share/godot/export_templates/${TEMPLATE_DIR_NAME}"
           unzip -q /tmp/templates.tpz -d /tmp/templates_unzip
-          mv /tmp/templates_unzip/templates/* "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}/"
+          mv /tmp/templates_unzip/templates/* "$HOME/.local/share/godot/export_templates/${TEMPLATE_DIR_NAME}/"
 
       - name: Web build
         run: |
