@@ -31,6 +31,11 @@ extends CanvasLayer
 @onready var sidebar_tab: Button = $TowerSidebarTab
 @onready var wave_preview_panel: PanelContainer = $WavePreviewPanel
 @onready var wave_preview_label: Label = $WavePreviewPanel/Label
+@onready var start_wave_panel: PanelContainer = $StartWavePanel
+@onready var start_wave_btn: Button = $StartWavePanel/VBox/StartWaveButton
+
+var _wave_in_progress: bool = false
+var _waves_completed: int = 0
 @onready var def_info_panel: PanelContainer = $DefenderInfoPanel
 @onready var def_name: Label = $DefenderInfoPanel/VBox/HeaderRow/NameLabel
 @onready var def_close_btn: Button = $DefenderInfoPanel/VBox/HeaderRow/CloseButton
@@ -116,6 +121,15 @@ func _ready() -> void:
 	EventBus.tower_sold.connect(_refresh_wave_preview_after_sell)
 	EventBus.wave_started.connect(_refresh_wave_preview_after_wave)
 	EventBus.wave_ended.connect(_refresh_wave_preview_after_wave)
+	# Start Wave button drives wave advance (replaces auto-start timer).
+	start_wave_btn.pressed.connect(_on_start_wave_btn_pressed)
+	EventBus.wave_started.connect(_on_wave_started_for_btn)
+	EventBus.wave_ended.connect(_on_wave_ended_for_btn)
+	EventBus.run_started.connect(_on_run_started_for_btn)
+	EventBus.run_ended.connect(_on_run_ended_for_btn)
+	EventBus.shop_opened.connect(_on_shop_opened_for_btn)
+	EventBus.shop_closed.connect(_on_shop_closed_for_btn)
+	_refresh_start_wave_btn()
 	shop_panel.visible = false
 	shop_next_btn.pressed.connect(_on_shop_next_pressed)
 	EventBus.shop_opened.connect(_on_shop_opened)
@@ -410,6 +424,49 @@ func _refresh_wave_preview() -> void:
 		wave_preview_label.text = "Next wave: %s" % wd.get_next_wave_summary()
 		wave_preview_panel.visible = true
 
+func _on_start_wave_btn_pressed() -> void:
+	EventBus.start_wave_requested.emit()
+
+func _on_wave_started_for_btn(_idx: int) -> void:
+	_wave_in_progress = true
+	_refresh_start_wave_btn()
+
+func _on_wave_ended_for_btn(idx: int) -> void:
+	_wave_in_progress = false
+	_waves_completed = idx + 1
+	_refresh_start_wave_btn()
+
+func _on_run_started_for_btn() -> void:
+	_wave_in_progress = false
+	_waves_completed = 0
+	_refresh_start_wave_btn()
+
+func _on_run_ended_for_btn(_v: bool) -> void:
+	_wave_in_progress = false
+	start_wave_panel.visible = false
+
+func _on_shop_opened_for_btn(_b: Array) -> void:
+	# While shop is open, hide the start button; shop's Next Wave button drives advance.
+	start_wave_panel.visible = false
+
+func _on_shop_closed_for_btn() -> void:
+	# Map auto-emits start_wave_requested via shop's Next Wave button now? No —
+	# shop's Next Wave just closes the panel. We re-show the start button so the
+	# player can place towers between shop close and the next wave.
+	_refresh_start_wave_btn()
+
+func _refresh_start_wave_btn() -> void:
+	if not GameState.run_active:
+		start_wave_panel.visible = false
+		return
+	if _wave_in_progress:
+		start_wave_panel.visible = false
+		return
+	# Determine which wave is next.
+	var next_wave_num: int = _waves_completed + 1
+	start_wave_btn.text = "Start Wave %d ▶" % next_wave_num
+	start_wave_panel.visible = true
+
 func _short_figure_name(full: String) -> String:
 	var parts := full.split(" ")
 	if parts.size() <= 1:
@@ -520,6 +577,9 @@ func _on_shop_opened(bonds: Array) -> void:
 func _on_shop_next_pressed() -> void:
 	shop_panel.visible = false
 	EventBus.shop_closed.emit()
+	# Immediately start the next wave (shop's Next Wave is the wave-trigger
+	# during the shop phase). For Wave 2+ this matches the user's expectation.
+	EventBus.start_wave_requested.emit()
 
 func _refresh_shop_bonds() -> void:
 	for c in shop_bonds_container.get_children():

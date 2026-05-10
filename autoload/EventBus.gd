@@ -38,3 +38,6 @@ signal bond_purchased(bond: Resource)
 signal bond_matured(bond: Resource, payout: int)
 signal stock_prices_walked  ## fired after StockMarket recomputes each wave
 signal shares_changed(stock: Resource, new_count: int)
+
+# Wave start (button-driven)
+signal start_wave_requested  ## HUD asks Map to start the next wave

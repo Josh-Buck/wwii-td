@@ -112,6 +112,22 @@ offset_bottom = 92.0
 mouse_filter = 2
 text = "Next wave: ?"
 
+[node name="StartWavePanel" type="PanelContainer" parent="."]
+offset_left = 480.0
+offset_top = 60.0
+offset_right = 800.0
+offset_bottom = 120.0
+
+[node name="VBox" type="VBoxContainer" parent="StartWavePanel"]
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="StartWavePanel/VBox"]
+text = "Place defenders, then start"
+horizontal_alignment = 1
+
+[node name="StartWaveButton" type="Button" parent="StartWavePanel/VBox"]
+text = "Start Wave 1 ▶"
+
 [node name="DefenderInfoPanel" type="PanelContainer" parent="."]
 visible = false
 offset_left = 736.0
