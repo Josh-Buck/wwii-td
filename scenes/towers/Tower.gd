@@ -2,9 +2,17 @@ class_name Tower extends Node2D
 
 @export var stats: TowerStats
 
+const _PRIORITY_CYCLE: Array[StringName] = [
+	TargetingSystem.FIRST,
+	TargetingSystem.LAST,
+	TargetingSystem.STRONG,
+	TargetingSystem.CLOSE,
+]
+
 var targeting_mode: StringName = TargetingSystem.FIRST
 var targets_in_range: Array = []
 var active_buffs: Dictionary = {}  ## tag -> source tower (M2)
+var owning_slot: Node = null   ## set by Map on placement; cleared on sell
 
 @onready var range_area: Area2D = $RangeArea
 @onready var range_collision: CollisionShape2D = $RangeArea/CollisionShape2D
@@ -32,6 +40,7 @@ func _ready() -> void:
 	range_area.area_exited.connect(_on_target_area_exited)
 	hover_area.mouse_entered.connect(_on_hover_entered)
 	hover_area.mouse_exited.connect(_on_hover_exited)
+	hover_area.input_event.connect(_on_hover_input)
 	queue_redraw()
 
 func _on_hover_entered() -> void:
@@ -39,6 +48,26 @@ func _on_hover_entered() -> void:
 
 func _on_hover_exited() -> void:
 	EventBus.tower_unhovered.emit(self)
+
+func _on_hover_input(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		EventBus.tower_clicked.emit(self)
+
+func cycle_targeting_mode() -> StringName:
+	var idx := _PRIORITY_CYCLE.find(targeting_mode)
+	targeting_mode = _PRIORITY_CYCLE[(idx + 1) % _PRIORITY_CYCLE.size()]
+	return targeting_mode
+
+func sell() -> void:
+	if stats == null:
+		queue_free()
+		return
+	var refund := int(stats.cost * 0.75)
+	if owning_slot and is_instance_valid(owning_slot) and owning_slot.has_method("clear_tower"):
+		owning_slot.clear_tower()
+	GameState.add_gold(refund)
+	EventBus.tower_sold.emit(self, refund)
+	queue_free()
 
 func effective_damage() -> float:
 	return stats.damage  # M2 will fold in adjacency buffs

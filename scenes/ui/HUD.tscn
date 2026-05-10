@@ -71,6 +71,35 @@ text = ""
 autowrap_mode = 2
 custom_minimum_size = Vector2(340, 0)
 
+[node name="TowerInfoPanel" type="PanelContainer" parent="."]
+visible = false
+offset_left = 980.0
+offset_top = 60.0
+offset_right = 1264.0
+offset_bottom = 280.0
+
+[node name="VBox" type="VBoxContainer" parent="TowerInfoPanel"]
+
+[node name="NameLabel" type="Label" parent="TowerInfoPanel/VBox"]
+text = ""
+theme_override_font_sizes/font_size = 16
+
+[node name="LoreLabel" type="Label" parent="TowerInfoPanel/VBox"]
+text = ""
+autowrap_mode = 2
+custom_minimum_size = Vector2(264, 0)
+
+[node name="ButtonRow" type="HBoxContainer" parent="TowerInfoPanel/VBox"]
+
+[node name="TargetButton" type="Button" parent="TowerInfoPanel/VBox/ButtonRow"]
+text = "Target: First"
+
+[node name="SellButton" type="Button" parent="TowerInfoPanel/VBox/ButtonRow"]
+text = "Sell"
+
+[node name="CloseButton" type="Button" parent="TowerInfoPanel/VBox"]
+text = "Close"
+
 [node name="EndScreen" type="Control" parent="."]
 visible = false
 offset_right = 1280.0

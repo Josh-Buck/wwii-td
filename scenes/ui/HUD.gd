@@ -10,10 +10,19 @@ extends CanvasLayer
 @onready var tooltip: PanelContainer = $Tooltip
 @onready var tooltip_title: Label = $Tooltip/VBox/TitleLabel
 @onready var tooltip_lore: Label = $Tooltip/VBox/LoreLabel
+@onready var info_panel: PanelContainer = $TowerInfoPanel
+@onready var info_name: Label = $TowerInfoPanel/VBox/NameLabel
+@onready var info_lore: Label = $TowerInfoPanel/VBox/LoreLabel
+@onready var info_target_btn: Button = $TowerInfoPanel/VBox/ButtonRow/TargetButton
+@onready var info_sell_btn: Button = $TowerInfoPanel/VBox/ButtonRow/SellButton
+@onready var info_close_btn: Button = $TowerInfoPanel/VBox/CloseButton
+
+var _selected_tower: Node = null
 
 func _ready() -> void:
 	end_screen.visible = false
 	tooltip.visible = false
+	info_panel.visible = false
 	EventBus.gold_changed.connect(func(g): gold_label.text = "Gold: %d" % g)
 	EventBus.lives_changed.connect(func(l): lives_label.text = "Lives: %d" % l)
 	EventBus.wave_started.connect(func(w): wave_label.text = "Wave %d" % (w + 1))
@@ -22,11 +31,15 @@ func _ready() -> void:
 	EventBus.tower_unhovered.connect(_on_tower_unhovered)
 	EventBus.enemy_hovered.connect(_on_enemy_hovered)
 	EventBus.enemy_unhovered.connect(_on_enemy_unhovered)
+	EventBus.tower_clicked.connect(_on_tower_clicked)
+	info_target_btn.pressed.connect(_on_target_btn_pressed)
+	info_sell_btn.pressed.connect(_on_sell_btn_pressed)
+	info_close_btn.pressed.connect(_on_close_btn_pressed)
 	gold_label.text = "Gold: %d" % GameState.gold
 	lives_label.text = "Lives: %d" % GameState.lives
 	wave_label.text = "Wave 1"
 	if hint_label:
-		hint_label.text = "Click a slot to deploy. Press 1-4 to switch tower. Hover for lore."
+		hint_label.text = "Click a slot to deploy. Press 1-4 to switch tower. Click placed towers for sell/target."
 	if selection_label:
 		selection_label.text = "Selected: —"
 
@@ -66,6 +79,39 @@ func _on_enemy_hovered(enemy: Node) -> void:
 
 func _on_enemy_unhovered(_enemy: Node) -> void:
 	tooltip.visible = false
+
+func _on_tower_clicked(tower: Node) -> void:
+	_selected_tower = tower
+	_refresh_info_panel()
+	info_panel.visible = is_instance_valid(_selected_tower)
+
+func _refresh_info_panel() -> void:
+	if _selected_tower == null or not is_instance_valid(_selected_tower):
+		info_panel.visible = false
+		return
+	var stats = _selected_tower.stats
+	if stats == null:
+		info_panel.visible = false
+		return
+	info_name.text = "%s (cost %dg)" % [stats.display_name, stats.cost]
+	info_lore.text = stats.tooltip_lore
+	info_target_btn.text = "Target: %s" % String(_selected_tower.targeting_mode).capitalize()
+	info_sell_btn.text = "Sell (+%dg)" % int(stats.cost * 0.75)
+
+func _on_target_btn_pressed() -> void:
+	if _selected_tower and is_instance_valid(_selected_tower):
+		_selected_tower.cycle_targeting_mode()
+		_refresh_info_panel()
+
+func _on_sell_btn_pressed() -> void:
+	if _selected_tower and is_instance_valid(_selected_tower):
+		_selected_tower.sell()
+	_selected_tower = null
+	info_panel.visible = false
+
+func _on_close_btn_pressed() -> void:
+	_selected_tower = null
+	info_panel.visible = false
 
 func show_end_screen(victory: bool) -> void:
 	end_label.text = "VICTORY" if victory else "DEFEAT"
