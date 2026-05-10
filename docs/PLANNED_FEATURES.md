@@ -31,7 +31,13 @@ Features intentionally deferred. **Add to this list whenever we decide "good ide
 - **Custom HTML loading screen** for the web export (replaces Godot default).
 - **Touch-friendly controls** (mobile browser playtest).
 - **Sound effects + music** — period-appropriate per design plan (big-band swing, marches) over modern cinematic.
-- **Speed toggle** (1×/2×/4×) via `Engine.time_scale`.
+- **Range preview when picking a tower** — hover a slot or palette button while a tower is selected to see its placement range, not just after it's down.
+
+### Maps & placement (deferred — Josh request 2026-05-10)
+
+- **More complex paths** — multi-branch, looping, longer maps with more chokepoints. m0_field is intentionally simple as the tutorial map; M3 should add at least one map (e.g. *Ardennes*) with a longer / forking path.
+- **Free placement** instead of fixed slots — let the player place towers anywhere not on the path itself, with terrain-based constraints. Significant rework to `PlacementSlot` and `Map.gd`. Likely paired with **per-tower footprint** so heavy towers (Eisenhower) take up more space than light ones (Anne Frank).
+- **Variable tower size / footprint** — towers occupy different physical extents on the map; affects placement and adjacency radius computation.
 
 ## Done
 

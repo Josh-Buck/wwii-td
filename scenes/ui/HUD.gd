@@ -161,7 +161,9 @@ func _show_tooltip_for_stats(stats: Resource) -> void:
 
 func _on_tower_hovered(tower: Node) -> void:
 	if tower and tower.stats:
-		_show_tooltip_for_stats(tower.stats)
+		tooltip_title.text = tower.stats.display_name
+		tooltip_lore.text = tower.stats.tooltip_lore + "\n\n→ Click to sell or change targeting"
+		tooltip.visible = true
 		if tower.stats.codex_id != &"":
 			MetaProgress.mark_codex_seen(tower.stats.codex_id)
 

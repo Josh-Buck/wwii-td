@@ -13,6 +13,7 @@ var targeting_mode: StringName = TargetingSystem.FIRST
 var targets_in_range: Array = []
 var active_buffs: Dictionary = {}  ## tag -> source tower (M2)
 var owning_slot: Node = null   ## set by Map on placement; cleared on sell
+var hovered: bool = false   ## drives range-preview visibility in _draw
 
 const _PROJECTILE_SCENE: PackedScene = preload("res://scenes/projectiles/Projectile.tscn")
 
@@ -52,9 +53,13 @@ func _ready() -> void:
 	queue_redraw()
 
 func _on_hover_entered() -> void:
+	hovered = true
+	queue_redraw()
 	EventBus.tower_hovered.emit(self)
 
 func _on_hover_exited() -> void:
+	hovered = false
+	queue_redraw()
 	EventBus.tower_unhovered.emit(self)
 
 func _on_hover_input(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
@@ -149,6 +154,11 @@ func _find_projectiles_container() -> Node:
 func _draw() -> void:
 	if stats == null:
 		return
+	# Range preview (drawn under everything else when hovered).
+	if hovered:
+		var r := effective_range()
+		draw_circle(Vector2.ZERO, r, Color(1, 1, 1, 0.05))
+		draw_arc(Vector2.ZERO, r, 0, TAU, 64, Color(1, 1, 1, 0.45), 1.5)
 	if stats.portrait != null:
 		_draw_portrait()
 	else:
