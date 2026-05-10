@@ -7,6 +7,7 @@ var gold: int = STARTING_GOLD
 var lives: int = STARTING_LIVES
 var wave_index: int = 0
 var run_active: bool = false
+var wave_in_progress: bool = false  ## true between wave_started and wave_ended
 var held_bonds: Array = []  ## each entry: {bond: WarBond, waves_remaining: int}
 var held_shares: Dictionary = {}  ## stock id -> count
 
@@ -44,9 +45,14 @@ func _ready() -> void:
 	EventBus.enemy_reached_end.connect(_on_enemy_reached_end)
 	EventBus.wave_started.connect(_on_wave_started_for_bonds)
 	EventBus.wave_started.connect(_on_wave_started_track_index)
+	EventBus.wave_ended.connect(_on_wave_ended_track_inprogress)
 
 func _on_wave_started_track_index(idx: int) -> void:
 	wave_index = idx
+	wave_in_progress = true
+
+func _on_wave_ended_track_inprogress(_idx: int) -> void:
+	wave_in_progress = false
 
 func buy_bond(bond: Resource) -> bool:
 	if bond == null:
