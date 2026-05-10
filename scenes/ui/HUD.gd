@@ -173,7 +173,8 @@ func _build_sidebar_card(idx: int, stats: Resource) -> Button:
 	btn.text = ""  ## text rendered by inner Label so layout is precise
 	btn.modulate = stats.color.lerp(Color.WHITE, 0.4)
 	btn.pressed.connect(_on_palette_btn_pressed.bind(idx))
-	btn.pressed.connect(_show_defender_info.bind(stats))
+	# Sidebar click only selects for placement; the detailed info panel is
+	# reserved for placed towers (where the upgrade grid is interactive).
 
 	var hbox := HBoxContainer.new()
 	hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -380,6 +381,10 @@ func _toggle_sidebar() -> void:
 	_sidebar_collapsed = not _sidebar_collapsed
 	sidebar.visible = not _sidebar_collapsed
 	sidebar_tab.visible = _sidebar_collapsed
+	# When sidebar collapses, also dismiss the detailed info panel so the
+	# screen isn't cluttered.
+	if _sidebar_collapsed:
+		_hide_defender_info()
 
 func _refresh_wave_preview_from_signal(_t: Node) -> void:
 	_refresh_wave_preview()
