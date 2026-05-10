@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="EnemyStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"waffen_ss"
+display_name = "Waffen-SS"
+color = Color(0.18, 0.20, 0.22, 1)
+radius = 13.0
+max_hp = 60.0
+speed = 75.0
+armor = 0.2
+flags = 5
+lives_lost_on_leak = 1
+kill_reward = 14
+bond_reward = 0
+tooltip_lore = "Combat formation of the SS. Ideologically motivated; complicit in war crimes throughout occupied Europe. Faster and tougher than Heer infantry."
+codex_id = &"waffen_ss"

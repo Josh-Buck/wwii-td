@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"banzai"
+title = "Banzai charge — Imperial Japanese infantry"
+body = "Banzai totsugeki (\"banzai charge\") was a tactic of mass infantry assault used by Imperial Japanese ground forces, particularly in late-war Pacific operations when defeat was imminent. The name comes from the soldiers' shout of \"Tennō Heika Banzai!\" (\"Long live the Emperor!\").
+
+The most famous banzai charges occurred at Attu (May 1943, ~1,000 Japanese soldiers killed in the final attack), Saipan (July 1944, ~3,000 in the largest such charge of the war), and Okinawa (April-June 1945). Most were ineffective against entrenched American positions equipped with artillery and automatic weapons; they typically resulted in the destruction of the attacking force.
+
+The tactic reflected the Japanese military doctrine of *gyokusai* (\"shattered jewel\") — the imperative to die rather than surrender — which also drove the kamikaze pilot programs and contributed to the very high Japanese casualty counts in the Pacific island campaigns."
+sources = "Sources: U.S. Army Center of Military History, Naval History and Heritage Command, Japan's Pacific War (Akira Iriye, 1999)."

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"lemay"
+title = "Curtis LeMay (1906-1990)"
+body = "Born in Columbus, Ohio. Career Army Air Forces officer. As commander of the Eighth Air Force's 305th Bombardment Group in England (1942-43) he developed combat-box formation tactics for B-17 daylight bombing.
+
+Transferred to the Pacific in 1944, he took over XXI Bomber Command in January 1945 and shifted B-29 operations from high-altitude precision bombing to low-altitude incendiary attacks on Japanese cities. The 9-10 March 1945 firebombing of Tokyo killed an estimated 100,000 civilians in a single night and remains one of the most destructive non-nuclear attacks in history. Subsequent firebombings of 67 Japanese cities killed several hundred thousand more before the atomic bombings.
+
+Postwar, LeMay rebuilt Strategic Air Command into the Cold War's nuclear deterrent. Notoriously hawkish during the Cuban Missile Crisis. Retired 1965; ran for vice-president on George Wallace's segregationist 1968 ticket."
+sources = "Sources: U.S. Air Force Historical Research Agency, Mission with LeMay (LeMay & Kantor, 1965), The Bombing of Japan (Conrad Crane, 2016)."

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"audie_murphy"
+title = "Audie Murphy (1925-1971)"
+body = "Born to a family of Texas sharecroppers; orphaned in his teens. Lied about his age to enlist in the U.S. Army in 1942 (he was 17). Saw combat in Sicily, Italy, southern France, and Germany.
+
+On 26 January 1945, near Holtzwihr in the Colmar Pocket, Lieutenant Murphy held off a German infantry-and-tank attack from atop a burning M10 tank destroyer, manning its .50 calibre machine gun, killing or wounding 50 enemy soldiers and ordering artillery on his own position. He received the Medal of Honor for this action and is the most decorated American combat soldier of the war (33 awards including every U.S. Army combat decoration).
+
+Postwar he became a film actor and author. Suffered severely from undiagnosed PTSD (then \"battle fatigue\"). Died in a 1971 plane crash."
+sources = "Sources: U.S. Army Center of Military History, To Hell and Back (Audie Murphy memoir, 1949), Audie Murphy: American Soldier (Harold B. Simpson)."

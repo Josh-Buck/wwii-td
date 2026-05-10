@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="EnemyStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"bersaglieri"
+display_name = "Italian Bersaglieri"
+color = Color(0.40, 0.50, 0.32, 1)
+radius = 12.0
+max_hp = 30.0
+speed = 90.0
+armor = 0.0
+flags = 1
+lives_lost_on_leak = 1
+kill_reward = 7
+bond_reward = 0
+tooltip_lore = "Italian light infantry, distinguished by capercaillie-feather plumes. Mostly disbanded after the September 1943 armistice."
+codex_id = &"bersaglieri"

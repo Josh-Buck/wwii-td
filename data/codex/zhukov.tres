@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"zhukov"
+title = "Georgy Zhukov (1896-1974)"
+body = "Born in Strelkovka, Russian Empire. Conscripted into the Imperial Russian Army in 1915; joined the Bolsheviks during the Civil War. Survived Stalin's purges of the late 1930s.
+
+In August 1939 he commanded Soviet forces at Khalkhin Gol against the Japanese, the first major Soviet armored victory. After the German invasion in June 1941 he became Stalin's foremost troubleshooter — sent to Leningrad to halt the German siege, then to Moscow for the December counter-offensive that pushed the Wehrmacht back from the capital.
+
+He coordinated the encirclement at Stalingrad (Operation Uranus, Nov 1942), the defensive at Kursk (July 1943), the strategic offensives that drove the Wehrmacht out of Belorussia and Ukraine (1944), and the assault on Berlin (April-May 1945) where he accepted the German unconditional surrender on 8 May.
+
+Postwar Stalin demoted him out of jealousy. Rehabilitated under Khrushchev as Defense Minister 1955-1957."
+sources = "Sources: Russian State Archive of Socio-Political History, Marshal of Victory (Geoffrey Roberts, 2012), Zhukov's own memoirs (1969)."

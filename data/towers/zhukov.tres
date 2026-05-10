@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="TowerStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/tower_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"zhukov"
+display_name = "Georgy Zhukov"
+faction = &"ussr"
+color = Color(0.50, 0.20, 0.18, 1)
+cost = 180
+damage = 40.0
+fire_rate = 0.7
+range_px = 220.0
+can_hit = 5
+default_targeting = &"strong"
+adjacency_buffs = Array[StringName]([&"ussr"])
+adjacency_consumes = Array[StringName]([&"ussr"])
+tooltip_lore = "Soviet Marshal. Architect of the Stalingrad encirclement, the Battle of Kursk, and the Battle of Berlin. Anti-armor specialist with long range."
+codex_id = &"zhukov"

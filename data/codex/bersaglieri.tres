@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"bersaglieri"
+title = "Italian Bersaglieri"
+body = "Light-infantry corps of the Italian Army (Regio Esercito and later Esercito Italiano). Founded in 1836 to fill a quick-marching, sharpshooting role similar to British light infantry or French chasseurs. Distinguished historically by their wide-brimmed Vaira hats trimmed with capercaillie feathers — sometimes carried into combat, more typically replaced with helmets.
+
+In WWII, Bersaglieri served in North Africa (where the 7th Bersaglieri Regiment fought at Bir el Gobi alongside German Afrika Korps units in 1941), Greece, the Soviet Union (in the Italian Eighth Army that was destroyed at Stalingrad and along the Don in winter 1942-43), and across the home fronts.
+
+Italy's surrender in September 1943 split the Bersaglieri: most disbanded; some joined the Allied Co-Belligerent Italian Army; a smaller number continued to fight under the German-aligned Italian Social Republic (RSI). The corps was reconstituted postwar and continues today in the Italian Army."
+sources = "Sources: Esercito Italiano historical archives, Imperial War Museum (Italian campaign), Italy's Sorrow (James Holland, 2008)."

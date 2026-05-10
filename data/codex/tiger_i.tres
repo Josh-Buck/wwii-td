@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"tiger_i"
+title = "Panzerkampfwagen VI \"Tiger I\""
+body = "German heavy tank, in production August 1942 to August 1944. Total built: 1,347. Armed with the formidable 88mm KwK 36 gun and protected by 100mm of frontal armor that resisted virtually all Allied anti-tank weapons of 1942-43.
+
+The Tiger's combat reputation outsized its actual numerical impact. Famous engagements included Michael Wittmann's action at Villers-Bocage on 13 June 1944 (where a single Tiger destroyed 14 vehicles in 15 minutes) and the defensive battles in Normandy hedgerow country.
+
+The Tiger's weaknesses were mechanical: at ~57 tons it was overweight for its powerplant, fuel-thirsty, mechanically unreliable, and bridging-prohibitive. Its replacement, the Tiger II (\"King Tiger\"), arrived in late 1944 in even smaller numbers (~492 produced). Postwar, surviving Tigers became among the most valuable museum pieces in armor history."
+sources = "Sources: Bundesarchiv-Militärarchiv, Bovington Tank Museum, Tiger Tanks at War (Michael Green, 2008)."

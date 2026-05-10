@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"rosie"
+title = "Rosie the Riveter — American women in war industry"
+body = "\"Rosie the Riveter\" was the iconic image of the wartime mobilization of American women into the industrial workforce. Between 1940 and 1945 the proportion of women in the U.S. labor force rose from 27% to 37%, and roughly six million women joined factory and shipyard work that had previously been male-only.
+
+J. Howard Miller's 1943 \"We Can Do It!\" poster — produced for Westinghouse Electric to motivate its workforce — became posthumously famous in the 1980s as a feminist symbol; it was one of many recruiting images, others including Norman Rockwell's 1943 Saturday Evening Post cover.
+
+Real-world referents include Rose Will Monroe (a Michigan riveter at Willow Run), Naomi Parker Fraley (a Naval Air Station machinist often credited as Miller's model), and several million unnamed others. Many were laid off in 1945-46 as men returned, but the precedent reshaped postwar U.S. labor permanently."
+sources = "Sources: Library of Congress, Smithsonian National Museum of American History, The Real Rosie the Riveter Project (NYU oral histories)."

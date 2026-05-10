@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="EnemyStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"tiger_i"
+display_name = "Tiger I"
+color = Color(0.40, 0.45, 0.35, 1)
+radius = 18.0
+max_hp = 250.0
+speed = 35.0
+armor = 0.6
+flags = 5
+lives_lost_on_leak = 3
+kill_reward = 25
+bond_reward = 0
+tooltip_lore = "Panzerkampfwagen VI Ausf. E \"Tiger I\". Heavy armor and 88mm gun, but slow and mechanically fragile. Production peaked at 1,347 vehicles."
+codex_id = &"tiger_i"

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="TowerStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/tower_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"tuskegee"
+display_name = "Tuskegee Airmen"
+faction = &"us"
+color = Color(0.85, 0.10, 0.15, 1)
+cost = 160
+damage = 25.0
+fire_rate = 1.5
+range_px = 220.0
+can_hit = 2
+default_targeting = &"first"
+adjacency_buffs = Array[StringName]([&"us"])
+adjacency_consumes = Array[StringName]([&"us"])
+tooltip_lore = "332nd Fighter Group. African-American P-51 escort pilots — \"Red Tails.\" Anti-air specialist; ground-blind."
+codex_id = &"tuskegee"

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"tuskegee"
+title = "Tuskegee Airmen — 332nd Fighter Group"
+body = "The first African-American military aviators in the U.S. armed forces, trained at Tuskegee Army Air Field, Alabama, beginning in 1941. The program was the result of decades of pressure from the NAACP and Black newspapers against the segregated U.S. military's exclusion of Black pilots.
+
+The 99th Fighter Squadron (later joined to the 332nd Fighter Group as the 99th, 100th, 301st and 302nd squadrons) flew P-40s, P-39s, P-47s, and finally the P-51 Mustang — distinctively painted with red tails — over North Africa, Sicily, Italy, southern France, and Germany. They flew over 15,000 sorties, including more than 200 long-range bomber-escort missions.
+
+The Tuskegee Airmen earned 96 Distinguished Flying Crosses and lost 66 pilots in combat. They were among the units integrated into the postwar U.S. Air Force when President Truman ended military segregation by executive order in 1948."
+sources = "Sources: Tuskegee Airmen National Historic Site (NPS), Air Force Historical Research Agency, The Tuskegee Airmen: An Illustrated History (J. Alfred Phelps, 1999)."

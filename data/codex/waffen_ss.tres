@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"waffen_ss"
+title = "Waffen-SS"
+body = "The combat formations of the Schutzstaffel — distinct from the Wehrmacht's Heer (Army), although they fought alongside it. Originally a small ideological elite, the Waffen-SS expanded to roughly 800,000 personnel in 38 divisions by 1945.
+
+Recruitment was initially limited to \"racially pure\" volunteers, but later included foreign volunteers from occupied Europe (Dutch, Belgian, Norwegian, Baltic, French, and others) and conscripted ethnic Germans (Volksdeutsche).
+
+Waffen-SS units were repeatedly implicated in atrocities — the Oradour-sur-Glane massacre (10 June 1944, 642 French civilians murdered by the 2nd SS Panzer Division Das Reich), the Malmedy massacre (17 December 1944, 84 American POWs murdered by Kampfgruppe Peiper), the destruction of Lidice and Marzabotto, and extensive participation in anti-partisan reprisals on the Eastern Front.
+
+The 1946 Nuremberg verdict declared the SS a criminal organization in its entirety. Conscripted members were exempted; voluntary ones were not."
+sources = "Sources: USHMM, Bundesarchiv-Militärarchiv, Nuremberg Trial transcripts, The Waffen-SS: A European History (Jochen Böhler & Robert Gerwarth, 2017)."
