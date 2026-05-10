@@ -23,6 +23,7 @@ signal tower_selection_changed(stats: Resource)  ## active palette selection
 signal tower_hovered(tower: Node)
 signal tower_unhovered(tower: Node)
 signal tower_clicked(tower: Node)  ## opens info panel
+signal tower_buffs_changed(tower: Node)  ## adjacency recompute applied
 
 # Codex
 signal codex_entry_unlocked(entry_id: StringName)

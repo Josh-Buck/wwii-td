@@ -53,6 +53,8 @@ func _ready() -> void:
 	wave_director.wave_ended.connect(_on_wave_ended)
 	wave_director.all_waves_completed.connect(_on_all_waves_completed)
 	EventBus.run_ended.connect(_on_run_ended)
+	EventBus.tower_placed.connect(_on_tower_placed_for_synergy)
+	EventBus.tower_sold.connect(_on_tower_sold_for_synergy)
 
 	# Default M1: auto-select the first tower; 1-4 hotkeys swap.
 	if available_towers.size() > 0:
@@ -128,3 +130,10 @@ func _on_all_waves_completed() -> void:
 func _on_run_ended(victory: bool) -> void:
 	if hud and hud.has_method("show_end_screen"):
 		hud.show_end_screen(victory)
+
+func _on_tower_placed_for_synergy(tower: Node) -> void:
+	AdjacencySystem.recompute_in_radius(tower)
+
+func _on_tower_sold_for_synergy(tower: Node, _refund: int) -> void:
+	if tower and is_instance_valid(tower):
+		AdjacencySystem.recompute_after_removal(tower.global_position, tower.get_tree())

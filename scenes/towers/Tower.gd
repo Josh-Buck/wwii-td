@@ -25,6 +25,7 @@ func _ready() -> void:
 	if stats == null:
 		push_error("Tower spawned without TowerStats")
 		return
+	add_to_group("towers")
 	# Always assign a fresh shape per tower so range tweaks don't leak
 	# across instances via a shared scene-level sub_resource.
 	if range_collision:
@@ -68,17 +69,29 @@ func sell() -> void:
 	if owning_slot and is_instance_valid(owning_slot) and owning_slot.has_method("clear_tower"):
 		owning_slot.clear_tower()
 	GameState.add_gold(refund)
+	# Leave the towers group BEFORE emitting tower_sold so adjacency
+	# recompute on the remaining towers doesn't see this one.
+	remove_from_group("towers")
 	EventBus.tower_sold.emit(self, refund)
 	queue_free()
 
 func effective_damage() -> float:
-	return stats.damage  # M2 will fold in adjacency buffs
+	return stats.damage
 
 func effective_fire_rate() -> float:
-	return stats.fire_rate
+	if stats == null:
+		return 1.0
+	var multiplier := 1.0 + AdjacencySystem.RATE_BONUS_PER_BUFF * active_buffs.size()
+	return stats.fire_rate * multiplier
 
 func effective_range() -> float:
 	return stats.range_px
+
+func apply_buffs() -> void:
+	if fire_timer:
+		fire_timer.wait_time = 1.0 / max(0.0001, effective_fire_rate())
+	queue_redraw()
+	EventBus.tower_buffs_changed.emit(self)
 
 func _on_target_entered(body: Node) -> void:
 	if body is Enemy and not body in targets_in_range:
@@ -133,3 +146,6 @@ func _draw() -> void:
 	# Placeholder visual: filled circle in faction color with darker rim.
 	draw_circle(Vector2.ZERO, 18.0, stats.color)
 	draw_arc(Vector2.ZERO, 18.0, 0, TAU, 24, stats.color.darkened(0.4), 2.0)
+	# Synergy indicator: golden ring when at least one adjacency buff is active.
+	if active_buffs.size() > 0:
+		draw_arc(Vector2.ZERO, 26.0, 0, TAU, 32, Color(1.0, 0.85, 0.3, 0.85), 2.5)
