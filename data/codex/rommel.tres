@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"rommel"
+title = "Erwin Rommel (1891-1944)"
+body = "Born in Heidenheim, Württemberg. A Pour le Mérite recipient in WWI for action at Caporetto. In WWII he commanded the 7th Panzer Division in the 1940 invasion of France, where his rapid advance earned the unit the nickname \"Gespensterdivision\" (Ghost Division).
+
+From February 1941 he led the Afrika Korps in North Africa. His desert maneuvering against British and Commonwealth forces — the early-1942 advances on Gazala and Tobruk — earned him the nickname \"Wüstenfuchs\" (Desert Fox). He was decisively beaten by Montgomery at the Second Battle of El Alamein in November 1942 and pushed out of Africa by May 1943.
+
+Subsequently commanded Army Group B in northern France, charged with anti-invasion preparations along the Atlantic Wall. Wounded by an Allied air strike on 17 July 1944, days after D-Day. Implicated peripherally in the 20 July plot against Hitler. He was forced to commit suicide by cyanide on 14 October 1944 in exchange for the regime's protection of his family; his death was publicly announced as \"wounds from the air attack\" to preserve the propaganda value of his reputation."
+sources = "Sources: Bundesarchiv-Militärarchiv, Imperial War Museum (Africa archives), The Rommel Papers (B.H. Liddell Hart, 1953)."

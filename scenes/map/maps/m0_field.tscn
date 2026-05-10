@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://scenes/map/Map.gd" id="1_map"]
 [ext_resource type="Script" path="res://scenes/map/PlacementSlot.gd" id="2_slot"]
@@ -15,6 +15,7 @@
 [ext_resource type="Resource" path="res://data/enemies/stuka.tres" id="13_stuka"]
 [ext_resource type="Resource" path="res://data/towers/montgomery.tres" id="14_monty"]
 [ext_resource type="Resource" path="res://data/towers/pavlichenko.tres" id="15_pavli"]
+[ext_resource type="Resource" path="res://data/enemies/rommel.tres" id="16_rommel"]
 
 [sub_resource type="Curve2D" id="curve"]
 _data = {
@@ -31,7 +32,8 @@ available_towers = [ExtResource("7_patton"), ExtResource("9_eisen"), ExtResource
 enemy_set = {
 &"wehrmacht_infantry": ExtResource("8_wm"),
 &"panzer_iii": ExtResource("12_panzer"),
-&"stuka": ExtResource("13_stuka")
+&"stuka": ExtResource("13_stuka"),
+&"rommel": ExtResource("16_rommel")
 }
 tower_scene = ExtResource("4_tower")
 enemy_scene = ExtResource("5_enemy")

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="EnemyStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"rommel"
+display_name = "Erwin Rommel"
+color = Color(0.55, 0.45, 0.35, 1)
+radius = 24.0
+max_hp = 800.0
+speed = 80.0
+armor = 0.5
+flags = 5
+lives_lost_on_leak = 10
+regen_per_sec = 8.0
+is_boss = true
+kill_reward = 100
+bond_reward = 0
+tooltip_lore = "Erwin Rommel — the \"Desert Fox\". Field Marshal of the Wehrmacht; armored manoeuvre specialist. Heals on the move."
+codex_id = &"rommel"

@@ -43,6 +43,10 @@ func _process(delta: float) -> void:
 	if dead:
 		return
 	progress += stats.speed * delta
+	if stats.regen_per_sec > 0.0 and hp < max_hp:
+		hp = minf(max_hp, hp + stats.regen_per_sec * delta)
+		if health_bar:
+			health_bar.value = hp
 	if progress_ratio >= 1.0:
 		_reach_end()
 
@@ -91,3 +95,7 @@ func _draw() -> void:
 		# Infantry: circle (default).
 		draw_circle(Vector2.ZERO, r, stats.color)
 		draw_arc(Vector2.ZERO, r, 0, TAU, 16, stats.color.darkened(0.5), 1.5)
+	if stats.is_boss:
+		# Glowing crown halo for bosses.
+		draw_arc(Vector2.ZERO, r + 4.0, 0, TAU, 32, Color(1.0, 0.85, 0.3, 0.85), 2.5)
+		draw_arc(Vector2.ZERO, r + 8.0, 0, TAU, 32, Color(1.0, 0.6, 0.2, 0.45), 1.5)

@@ -12,6 +12,8 @@ class_name EnemyStats extends Resource
 @export_range(0.0, 0.95) var armor: float = 0.0  ## damage reduction multiplier
 @export_flags("Ground", "Air", "Armor", "Camo") var flags: int = 1
 @export var lives_lost_on_leak: int = 1
+@export var regen_per_sec: float = 0.0  ## boss/elite trait; 0 = no regen
+@export var is_boss: bool = false  ## drives larger visual + boss markers
 
 @export_group("Rewards")
 @export var kill_reward: int = 5

@@ -41,6 +41,7 @@ func _ready() -> void:
 			&"wehrmacht_infantry": load("res://data/enemies/wehrmacht_infantry.tres"),
 			&"panzer_iii": load("res://data/enemies/panzer_iii.tres"),
 			&"stuka": load("res://data/enemies/stuka.tres"),
+			&"rommel": load("res://data/enemies/rommel.tres"),
 		}
 	if available_bonds.is_empty():
 		available_bonds = [
@@ -140,9 +141,10 @@ func _on_all_waves_completed() -> void:
 func _on_run_ended(victory: bool) -> void:
 	var waves_cleared := GameState.wave_index + (1 if victory else 0)
 	var earned := waves_cleared
+	var total := wave_director.wave_count() if wave_director else 9
 	MetaProgress.award_war_effort(earned)
 	if hud and hud.has_method("show_end_screen"):
-		hud.show_end_screen(victory, waves_cleared, earned)
+		hud.show_end_screen(victory, waves_cleared, earned, total)
 
 func _on_tower_placed_for_synergy(tower: Node) -> void:
 	AdjacencySystem.recompute_in_radius(tower)

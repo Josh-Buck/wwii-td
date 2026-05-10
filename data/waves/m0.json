@@ -53,5 +53,15 @@
       {"enemy": "panzer_iii", "count": 10, "interval": 1.0, "delay": 1.0},
       {"enemy": "stuka", "count": 8, "interval": 1.0, "delay": 4.0}
     ]
+  },
+  {
+    "wave": 9,
+    "spawns": [
+      {"enemy": "wehrmacht_infantry", "count": 6, "interval": 0.5},
+      {"enemy": "panzer_iii", "count": 3, "interval": 1.5, "delay": 2.0},
+      {"enemy": "rommel", "count": 1, "delay": 8.0},
+      {"enemy": "stuka", "count": 4, "interval": 2.0, "delay": 12.0},
+      {"enemy": "wehrmacht_infantry", "count": 12, "interval": 0.3, "delay": 18.0}
+    ]
   }
 ]

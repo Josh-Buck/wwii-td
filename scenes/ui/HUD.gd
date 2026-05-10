@@ -65,6 +65,7 @@ const _CODEX_ENTRY_PATHS: Array[String] = [
 	"res://data/codex/wehrmacht_infantry.tres",
 	"res://data/codex/panzer_iii.tres",
 	"res://data/codex/stuka.tres",
+	"res://data/codex/rommel.tres",
 ]
 
 var _selected_tower: Node = null
@@ -478,9 +479,9 @@ func _on_codex_entry_unlocked(_entry_id: StringName) -> void:
 	if codex_panel.visible:
 		_refresh_codex()
 
-func show_end_screen(victory: bool, waves_cleared: int = 0, earned: int = 0) -> void:
+func show_end_screen(victory: bool, waves_cleared: int = 0, earned: int = 0, total_waves: int = 9) -> void:
 	end_label.text = "VICTORY" if victory else "DEFEAT"
-	end_waves_label.text = "Waves cleared: %d / 8" % waves_cleared
+	end_waves_label.text = "Waves cleared: %d / %d" % [waves_cleared, total_waves]
 	end_earned_label.text = "+%d War Effort earned" % earned
 	end_total_label.text = "Total War Effort: %d" % MetaProgress.war_effort_points
 	_refresh_perk_button()
