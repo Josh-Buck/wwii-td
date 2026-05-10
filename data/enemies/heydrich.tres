@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="EnemyStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"heydrich"
+display_name = "Reinhard Heydrich"
+color = Color(0.16, 0.16, 0.18, 1)
+radius = 22.0
+max_hp = 600.0
+speed = 100.0
+armor = 0.3
+flags = 5
+lives_lost_on_leak = 8
+regen_per_sec = 0.0
+is_boss = true
+kill_reward = 90
+bond_reward = 0
+tooltip_lore = "Reinhard Heydrich — \"the Butcher of Prague\". The fastest boss; assassinated in 1942 by the Czech and Slovak resistance (Operation Anthropoid)."
+codex_id = &"heydrich"

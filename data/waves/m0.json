@@ -63,5 +63,54 @@
       {"enemy": "stuka", "count": 4, "interval": 2.0, "delay": 12.0},
       {"enemy": "wehrmacht_infantry", "count": 12, "interval": 0.3, "delay": 18.0}
     ]
+  },
+  {
+    "wave": 10,
+    "spawns": [
+      {"enemy": "panzer_iii", "count": 8, "interval": 0.8},
+      {"enemy": "stuka", "count": 6, "interval": 1.0, "delay": 4.0},
+      {"enemy": "wehrmacht_infantry", "count": 16, "interval": 0.4, "delay": 6.0}
+    ]
+  },
+  {
+    "wave": 11,
+    "spawns": [
+      {"enemy": "wehrmacht_infantry", "count": 6, "interval": 0.5},
+      {"enemy": "eichmann", "count": 1, "delay": 4.0},
+      {"enemy": "panzer_iii", "count": 4, "interval": 1.5, "delay": 8.0}
+    ]
+  },
+  {
+    "wave": 12,
+    "spawns": [
+      {"enemy": "stuka", "count": 6, "interval": 0.8},
+      {"enemy": "heydrich", "count": 1, "delay": 5.0},
+      {"enemy": "wehrmacht_infantry", "count": 14, "interval": 0.3, "delay": 8.0}
+    ]
+  },
+  {
+    "wave": 13,
+    "spawns": [
+      {"enemy": "wehrmacht_infantry", "count": 8, "interval": 0.4},
+      {"enemy": "mengele", "count": 1, "delay": 6.0},
+      {"enemy": "panzer_iii", "count": 6, "interval": 1.0, "delay": 10.0}
+    ]
+  },
+  {
+    "wave": 14,
+    "spawns": [
+      {"enemy": "panzer_iii", "count": 10, "interval": 0.7},
+      {"enemy": "himmler", "count": 1, "delay": 6.0},
+      {"enemy": "stuka", "count": 6, "interval": 1.2, "delay": 12.0}
+    ]
+  },
+  {
+    "wave": 15,
+    "spawns": [
+      {"enemy": "wehrmacht_infantry", "count": 14, "interval": 0.3},
+      {"enemy": "stuka", "count": 8, "interval": 1.0, "delay": 3.0},
+      {"enemy": "tojo", "count": 1, "delay": 8.0},
+      {"enemy": "panzer_iii", "count": 8, "interval": 0.8, "delay": 14.0}
+    ]
   }
 ]

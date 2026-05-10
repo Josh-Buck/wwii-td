@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"himmler"
+title = "Heinrich Himmler (1900-1945)"
+body = "Born in Munich. Reichsführer-SS from 1929, he transformed the Schutzstaffel from Hitler's bodyguard unit into the Reich's principal instrument of terror, comprising the General SS, the Waffen-SS combat formations, the Sicherheitsdienst, the Gestapo, and the entire concentration- and extermination-camp system. He also held the post of Chief of the German Police from 1936.
+
+The Holocaust was administered through his apparatus. He personally ordered, oversaw, or signed off on the Einsatzgruppen mass-shooting campaigns in Eastern Europe (an estimated 1.5 to 2 million murders by mid-1942), the construction and operation of the death camps at Bełżec, Sobibór, Treblinka, and Auschwitz-Birkenau, and the broader extermination of European Jews, Roma, Soviet POWs, and political prisoners.
+
+In April 1945, anticipating defeat, he attempted to negotiate a separate peace with the Western Allies through Folke Bernadotte. Hitler stripped him of all positions on hearing this. Captured by British forces near Bremervörde on 21 May 1945, he committed suicide by cyanide on 23 May 1945 before he could be interrogated."
+sources = "Sources: USHMM, Yad Vashem, Bundesarchiv-Militärarchiv, Himmler: A Life (Peter Longerich, 2008)."

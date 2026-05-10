@@ -54,6 +54,11 @@ func _ready() -> void:
 			&"panzer_iii": load("res://data/enemies/panzer_iii.tres"),
 			&"stuka": load("res://data/enemies/stuka.tres"),
 			&"rommel": load("res://data/enemies/rommel.tres"),
+			&"eichmann": load("res://data/enemies/eichmann.tres"),
+			&"heydrich": load("res://data/enemies/heydrich.tres"),
+			&"mengele": load("res://data/enemies/mengele.tres"),
+			&"himmler": load("res://data/enemies/himmler.tres"),
+			&"tojo": load("res://data/enemies/tojo.tres"),
 		}
 	if available_bonds.is_empty():
 		available_bonds = [

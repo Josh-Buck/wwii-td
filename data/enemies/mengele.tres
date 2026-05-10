@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="EnemyStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"mengele"
+display_name = "Josef Mengele"
+color = Color(0.55, 0.55, 0.55, 1)
+radius = 22.0
+max_hp = 1200.0
+speed = 75.0
+armor = 0.4
+flags = 5
+lives_lost_on_leak = 0
+regen_per_sec = 12.0
+is_boss = true
+escapes_at_path_end = true
+kill_reward = 200
+bond_reward = 0
+tooltip_lore = "Josef Mengele — Auschwitz camp doctor. Heals while moving. If he reaches the end of the path he ESCAPES, mirroring his historical evasion of justice in South America."
+codex_id = &"mengele"

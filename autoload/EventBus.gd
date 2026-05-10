@@ -13,6 +13,7 @@ signal enemy_killed(enemy: Node, reward: int)
 signal enemy_reached_end(enemy: Node)
 signal enemy_hovered(enemy: Node)
 signal enemy_unhovered(enemy: Node)
+signal boss_escaped(boss: Node, boss_id: StringName)  ## Mengele escape mechanic
 
 # Towers
 signal tower_placed(tower: Node)

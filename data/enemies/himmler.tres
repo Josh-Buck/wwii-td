@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"himmler"
+display_name = "Heinrich Himmler"
+color = Color(0.20, 0.22, 0.25, 1)
+radius = 22.0
+max_hp = 800.0
+speed = 55.0
+armor = 0.5
+flags = 5
+lives_lost_on_leak = 9
+regen_per_sec = 0.0
+is_boss = true
+summon_interval = 8.0
+summon_enemy_id = &"wehrmacht_infantry"
+kill_reward = 100
+bond_reward = 0
+tooltip_lore = "Heinrich Himmler — Reichsführer-SS; head of the entire Nazi terror apparatus. Surrounded by SS bodyguards (regular spawn)."
+codex_id = &"himmler"

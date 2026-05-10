@@ -15,6 +15,9 @@ class_name EnemyStats extends Resource
 @export var lives_lost_on_leak: int = 1
 @export var regen_per_sec: float = 0.0  ## boss/elite trait; 0 = no regen
 @export var is_boss: bool = false  ## drives larger visual + boss markers
+@export var escapes_at_path_end: bool = false  ## true → no life loss on leak (Mengele)
+@export var summon_interval: float = 0.0   ## seconds between reinforcement spawns; 0 = none
+@export var summon_enemy_id: StringName = &""  ## enemy id to summon
 
 @export_group("Rewards")
 @export var kill_reward: int = 5

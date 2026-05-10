@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"tojo"
+title = "Hideki Tojo (1884-1948)"
+body = "Born in Tokyo. Career officer in the Imperial Japanese Army; chief of staff of the Kwantung Army from 1937, where he was implicated in the early actions of Japan's expansion into Manchuria and the Second Sino-Japanese War. Appointed Army Minister in July 1940 and Prime Minister on 17 October 1941.
+
+Tojo's government authorized the December 1941 attacks on Pearl Harbor and across the British and Dutch Pacific colonies, opening the Pacific War. As Prime Minister and concurrent Army Minister, he held wartime authority over the conduct of operations and the policies governing occupied territories — including the brutal regime of forced labour, the \"comfort women\" system, and the treatment of Allied POWs. He was forced to resign on 18 July 1944 after the loss of Saipan made the home islands' bombing campaign inevitable.
+
+Arrested by U.S. forces on 11 September 1945 (he attempted suicide by gunshot but survived). Tried by the International Military Tribunal for the Far East — the Tokyo Trial — convicted on multiple counts including waging aggressive war and crimes against humanity in Manchuria and China, and hanged at Sugamo Prison on 23 December 1948."
+sources = "Sources: International Military Tribunal for the Far East transcripts, USHMM (Pacific theatre archives), Tojo: The Last Banzai (Courtney Browne, 1967)."

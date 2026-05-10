@@ -8,6 +8,7 @@ var dead: bool = false
 var _slow_factor: float = 1.0
 var _slow_until: float = 0.0
 var _slow_active_prev: bool = false
+var _summon_timer: Timer = null
 
 @onready var hitbox: Area2D = $Hitbox
 @onready var hitbox_collision: CollisionShape2D = $Hitbox/CollisionShape2D
@@ -33,7 +34,29 @@ func _ready() -> void:
 		hitbox.input_pickable = true
 		hitbox.mouse_entered.connect(_on_hover_entered)
 		hitbox.mouse_exited.connect(_on_hover_exited)
+	# Boss reinforcement summons (e.g., Eichmann's transports, Tojo's air support).
+	if stats.summon_interval > 0.0 and stats.summon_enemy_id != &"":
+		_summon_timer = Timer.new()
+		_summon_timer.process_mode = Node.PROCESS_MODE_PAUSABLE
+		_summon_timer.wait_time = stats.summon_interval
+		_summon_timer.one_shot = false
+		_summon_timer.timeout.connect(_on_summon_tick)
+		add_child(_summon_timer)
+		_summon_timer.start()
 	queue_redraw()
+
+func _on_summon_tick() -> void:
+	if dead:
+		return
+	var tree := get_tree()
+	if tree == null:
+		return
+	var wd_nodes := tree.get_nodes_in_group("wave_director")
+	if wd_nodes.is_empty():
+		return
+	var wd = wd_nodes[0]
+	if wd.has_method("spawn_enemy_external"):
+		wd.spawn_enemy_external(stats.summon_enemy_id)
 
 func _on_hover_entered() -> void:
 	if not dead:
@@ -90,6 +113,12 @@ func _die() -> void:
 
 func _reach_end() -> void:
 	dead = true
+	if stats.escapes_at_path_end:
+		# Mengele-style escape: no life loss, but the boss vanishes and a
+		# narrative beat fires. Codex entry covers his historical evasion.
+		EventBus.boss_escaped.emit(self, stats.id)
+		queue_free()
+		return
 	for _i in stats.lives_lost_on_leak:
 		EventBus.enemy_reached_end.emit(self)
 	queue_free()

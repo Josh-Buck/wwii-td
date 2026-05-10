@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"mengele"
+title = "Josef Mengele (1911-1979)"
+body = "Born in Günzburg, Bavaria. Joined the NSDAP and the SS in the early 1930s; obtained doctorates in anthropology and medicine. Assigned to Auschwitz-Birkenau on 30 May 1943, where he served as one of approximately thirty SS doctors performing \"selection\" on the camp ramp — choosing which arrivals would die immediately in the gas chambers and which would be enslaved as forced labour.
+
+His \"experiments\" on prisoners — particularly on twins, dwarves, and people with heritable disorders — caused the deaths of an unknown number of victims and were medically worthless. His name became synonymous with sadism even among other camp doctors.
+
+After the war, Mengele evaded capture by hiding in Bavaria, then fleeing through ratlines to Argentina (1949), Paraguay (1959), and Brazil (1960). Despite Israeli, German, and West German efforts to find him, he was never apprehended. He died of a stroke while swimming at Bertioga, Brazil, on 7 February 1979. His remains were identified by DNA analysis in 1992.
+
+His historical escape is reflected in this game's mechanic: if Mengele reaches the end of the path, he disappears. The codex preserves the record."
+sources = "Sources: Yad Vashem, USHMM (Mengele dossier), Simon Wiesenthal Center, Mengele: The Complete Story (Posner & Ware, 1986)."

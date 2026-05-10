@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"eichmann"
+title = "Adolf Eichmann (1906-1962)"
+body = "Born in Solingen, Rhineland. Joined the Austrian NSDAP in 1932 and the SS the following year. From 1939 he headed the Reichssicherheitshauptamt's Department IV-B-4, which planned and coordinated the deportation of Jews to ghettos and extermination camps. The 20 January 1942 Wannsee Conference, at which Heydrich formally launched the Final Solution, was administered through Eichmann's office.
+
+After Germany's defeat he escaped through ratlines to Argentina, where he lived under the name Ricardo Klement until 11 May 1960, when Mossad agents abducted him from a Buenos Aires bus stop. Smuggled to Israel, he was tried in Jerusalem in 1961-62 on fifteen charges including crimes against the Jewish people and crimes against humanity, convicted, and hanged on 1 June 1962 at Ramla Prison.
+
+Hannah Arendt's book Eichmann in Jerusalem (1963) coined the phrase \"banality of evil\" to describe his bureaucratic ordinariness on the witness stand."
+sources = "Sources: Yad Vashem, USHMM, Eichmann Trial transcripts (Israel State Archives), Eichmann in Jerusalem (Hannah Arendt, 1963)."

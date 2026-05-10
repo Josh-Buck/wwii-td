@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"eichmann"
+display_name = "Adolf Eichmann"
+color = Color(0.30, 0.30, 0.34, 1)
+radius = 22.0
+max_hp = 500.0
+speed = 60.0
+armor = 0.3
+flags = 5
+lives_lost_on_leak = 7
+regen_per_sec = 0.0
+is_boss = true
+summon_interval = 5.0
+summon_enemy_id = &"wehrmacht_infantry"
+kill_reward = 80
+bond_reward = 0
+tooltip_lore = "Adolf Eichmann — SS-Obersturmbannführer; logistical architect of the deportations to the camps. Calls in transports while alive."
+codex_id = &"eichmann"

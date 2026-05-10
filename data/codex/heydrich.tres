@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"heydrich"
+title = "Reinhard Heydrich (1904-1942)"
+body = "Born in Halle, Saxony. Joined the SS in 1931 after being dismissed from the German Navy. Architect of the Sicherheitsdienst (SD) intelligence service and one of the principal designers of Nazi Germany's repression apparatus. He chaired the 20 January 1942 Wannsee Conference that codified the Final Solution as a coordinated state programme.
+
+Appointed Reich Protector of Bohemia and Moravia in September 1941, his brutal pacification of the Czech population earned him the nickname \"the Butcher of Prague\". On 27 May 1942, two SOE-trained Czechoslovak agents — Jozef Gabčík and Jan Kubiš — attacked his car in Prague (Operation Anthropoid). Heydrich died of his wounds on 4 June 1942.
+
+In reprisal, the SS razed the village of Lidice on 10 June 1942: 173 men were shot, the women and most children were sent to camps, and the village was demolished. Lidice was rebuilt after the war and remains a memorial."
+sources = "Sources: USHMM, Imperial War Museum (SOE Anthropoid archives), The Killing of SS Obergruppenführer Reinhard Heydrich (Callum MacDonald, 1989), Lidice Memorial."

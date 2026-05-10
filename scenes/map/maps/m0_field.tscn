@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="Script" path="res://scenes/map/Map.gd" id="1_map"]
 [ext_resource type="Script" path="res://scenes/map/PlacementSlot.gd" id="2_slot"]
@@ -19,6 +19,11 @@
 [ext_resource type="Resource" path="res://data/towers/fdr.tres" id="17_fdr"]
 [ext_resource type="Resource" path="res://data/towers/bletchley.tres" id="18_bletchley"]
 [ext_resource type="Resource" path="res://data/towers/airborne_101.tres" id="19_airborne"]
+[ext_resource type="Resource" path="res://data/enemies/eichmann.tres" id="20_eich"]
+[ext_resource type="Resource" path="res://data/enemies/heydrich.tres" id="21_heyd"]
+[ext_resource type="Resource" path="res://data/enemies/mengele.tres" id="22_meng"]
+[ext_resource type="Resource" path="res://data/enemies/himmler.tres" id="23_himm"]
+[ext_resource type="Resource" path="res://data/enemies/tojo.tres" id="24_tojo"]
 
 [sub_resource type="Curve2D" id="curve"]
 _data = {
@@ -36,7 +41,12 @@ enemy_set = {
 &"wehrmacht_infantry": ExtResource("8_wm"),
 &"panzer_iii": ExtResource("12_panzer"),
 &"stuka": ExtResource("13_stuka"),
-&"rommel": ExtResource("16_rommel")
+&"rommel": ExtResource("16_rommel"),
+&"eichmann": ExtResource("20_eich"),
+&"heydrich": ExtResource("21_heyd"),
+&"mengele": ExtResource("22_meng"),
+&"himmler": ExtResource("23_himm"),
+&"tojo": ExtResource("24_tojo")
 }
 tower_scene = ExtResource("4_tower")
 enemy_scene = ExtResource("5_enemy")

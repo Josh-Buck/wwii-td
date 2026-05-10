@@ -104,6 +104,10 @@ func _spawn_wave_async(spawns: Array) -> void:
 	_spawning_active = false
 	_check_wave_end()
 
+func spawn_enemy_external(enemy_id: StringName) -> void:
+	# Allows boss minions / scripted spawns to reuse the same instantiation path.
+	_spawn_enemy(enemy_id)
+
 func _spawn_enemy(enemy_id: StringName) -> void:
 	if enemy_scene == null:
 		push_error("WaveDirector.enemy_scene not set")
