@@ -10,6 +10,8 @@ var style: StringName = &"bullet"   ## bullet | shell | laser | drop
 var slow_factor: float = 1.0        ## 1.0 = no slow; <1.0 multiplies enemy speed
 var slow_duration: float = 0.0
 var knockback: float = 0.0          ## px to push enemy backward along path
+var pierce_armor: bool = false      ## ignore enemy armor reduction
+var instakill_below_hp: float = 0.0 ## kill outright if target hp <= this
 var _spawn_pos: Vector2
 
 func setup(target_enemy: Node, dmg: float, opts: Dictionary = {}) -> void:
@@ -21,6 +23,8 @@ func setup(target_enemy: Node, dmg: float, opts: Dictionary = {}) -> void:
 	slow_factor = opts.get("slow_factor", 1.0)
 	slow_duration = opts.get("slow_duration", 0.0)
 	knockback = opts.get("knockback", 0.0)
+	pierce_armor = opts.get("pierce_armor", false)
+	instakill_below_hp = opts.get("instakill_below_hp", 0.0)
 
 func _ready() -> void:
 	_spawn_pos = global_position
@@ -65,8 +69,13 @@ func _resolve_hit(impact_pos: Vector2) -> void:
 func _apply_to(enemy: Node, _impact: Vector2) -> void:
 	if enemy == null or not is_instance_valid(enemy):
 		return
+	# Instakill below threshold (Pavlichenko's White Death).
+	if instakill_below_hp > 0.0 and enemy.hp <= instakill_below_hp:
+		if enemy.has_method("take_damage"):
+			enemy.take_damage(99999.0, true)
+		return
 	if enemy.has_method("take_damage"):
-		enemy.take_damage(damage)
+		enemy.take_damage(damage, pierce_armor)
 	if slow_factor < 1.0 and slow_duration > 0.0 and enemy.has_method("apply_slow"):
 		enemy.apply_slow(slow_factor, slow_duration)
 	if knockback > 0.0 and enemy.has_method("apply_knockback"):

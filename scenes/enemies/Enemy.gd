@@ -96,10 +96,12 @@ func apply_knockback(amount: float) -> void:
 func is_camo() -> bool:
 	return stats.is_camo() if stats else false
 
-func take_damage(dmg: float) -> void:
+func take_damage(dmg: float, pierce_armor: bool = false) -> void:
 	if dead or stats == null:
 		return
-	var effective: float = dmg * (1.0 - clampf(stats.armor, 0.0, 0.95))
+	var effective: float = dmg
+	if not pierce_armor:
+		effective = dmg * (1.0 - clampf(stats.armor, 0.0, 0.95))
 	hp -= effective
 	if health_bar:
 		health_bar.value = hp

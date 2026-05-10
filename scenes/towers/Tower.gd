@@ -243,10 +243,45 @@ func _on_fire_tick() -> void:
 	targets_in_range = targets_in_range.filter(func(e): return is_instance_valid(e) and not e.dead)
 	if targets_in_range.is_empty():
 		return
-	var target = TargetingSystem.pick(targets_in_range, targeting_mode, global_position)
-	if target == null:
+	var n: int = 1 + _effective_extra_targets()
+	if n <= 1:
+		var target = TargetingSystem.pick(targets_in_range, targeting_mode, global_position)
+		if target == null:
+			return
+		_fire_at(target)
 		return
-	_fire_at(target)
+	# Multi-target: fire one projectile at each of the top N targets.
+	var picked := _pick_top_n_targets(n)
+	for t in picked:
+		_fire_at(t)
+
+func _effective_extra_targets() -> int:
+	var n: int = 0
+	for step in _active_upgrade_steps():
+		n += step.get("extra_targets", 0)
+	return n
+
+func _pick_top_n_targets(n: int) -> Array:
+	var sorted: Array = targets_in_range.duplicate()
+	match targeting_mode:
+		&"first":
+			sorted.sort_custom(func(a, b): return a.progress > b.progress)
+		&"last":
+			sorted.sort_custom(func(a, b): return a.progress < b.progress)
+		&"strong":
+			sorted.sort_custom(func(a, b): return a.hp > b.hp)
+		&"close":
+			var p: Vector2 = global_position
+			sorted.sort_custom(func(a, b):
+				return p.distance_squared_to(a.global_position) < p.distance_squared_to(b.global_position))
+		&"camo":
+			sorted.sort_custom(func(a, b):
+				var ac: bool = a.has_method("is_camo") and a.is_camo()
+				var bc: bool = b.has_method("is_camo") and b.is_camo()
+				if ac != bc:
+					return ac
+				return a.progress > b.progress)
+	return sorted.slice(0, min(n, sorted.size()))
 
 func _fire_at(target: Node) -> void:
 	if not is_instance_valid(target):
@@ -259,6 +294,8 @@ func _fire_at(target: Node) -> void:
 		"slow_factor": _effective_slow_factor(),
 		"slow_duration": _effective_slow_duration(),
 		"knockback": _effective_knockback(),
+		"pierce_armor": _effective_pierce_armor(),
+		"instakill_below_hp": _effective_instakill_threshold(),
 	}
 	projectile.setup(target, damage_for_target(target), opts)
 	projectile.global_position = global_position
@@ -298,6 +335,18 @@ func _effective_knockback() -> float:
 	for step in _active_upgrade_steps():
 		k += step.get("knockback", 0.0)
 	return k
+
+func _effective_pierce_armor() -> bool:
+	for step in _active_upgrade_steps():
+		if step.get("pierce_armor", false):
+			return true
+	return false
+
+func _effective_instakill_threshold() -> float:
+	var threshold: float = 0.0
+	for step in _active_upgrade_steps():
+		threshold = maxf(threshold, step.get("instakill_below_hp", 0.0))
+	return threshold
 
 func _find_projectiles_container() -> Node:
 	var n: Node = get_parent()
