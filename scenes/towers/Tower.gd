@@ -123,7 +123,8 @@ func _fire_at(target: Node) -> void:
 	if not is_instance_valid(target):
 		return
 	var projectile := _PROJECTILE_SCENE.instantiate()
-	projectile.setup(target, effective_damage())
+	var aoe: float = stats.aoe_radius if stats else 0.0
+	projectile.setup(target, effective_damage(), aoe)
 	projectile.global_position = global_position
 	var container := _find_projectiles_container()
 	if container:

@@ -15,6 +15,7 @@ class_name TowerStats extends Resource
 @export var damage: float = 10.0
 @export var fire_rate: float = 1.0  ## shots per second
 @export var range_px: float = 160.0
+@export var aoe_radius: float = 0.0  ## > 0 → projectile damages all enemies within this radius on impact
 @export var projectile: PackedScene
 @export_flags("Ground", "Air", "Armor", "Camo") var can_hit: int = 1
 

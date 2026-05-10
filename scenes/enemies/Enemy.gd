@@ -16,6 +16,7 @@ func _ready() -> void:
 	if stats == null:
 		push_error("Enemy spawned without EnemyStats")
 		return
+	add_to_group("enemies")
 	max_hp = stats.max_hp
 	hp = max_hp
 	if hitbox_collision and hitbox_collision.shape == null:

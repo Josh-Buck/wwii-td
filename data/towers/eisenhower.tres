@@ -12,6 +12,7 @@ cost = 250
 damage = 60.0
 fire_rate = 0.2
 range_px = 220.0
+aoe_radius = 70.0
 can_hit = 7
 adjacency_buffs = Array[StringName]([&"us"])
 adjacency_consumes = Array[StringName]([&"us"])
