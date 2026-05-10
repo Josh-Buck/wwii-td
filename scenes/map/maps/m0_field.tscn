@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scenes/map/Map.gd" id="1_map"]
 [ext_resource type="Script" path="res://scenes/map/PlacementSlot.gd" id="2_slot"]
@@ -13,6 +13,8 @@
 [ext_resource type="Resource" path="res://data/towers/anne_frank.tres" id="11_frank"]
 [ext_resource type="Resource" path="res://data/enemies/panzer_iii.tres" id="12_panzer"]
 [ext_resource type="Resource" path="res://data/enemies/stuka.tres" id="13_stuka"]
+[ext_resource type="Resource" path="res://data/towers/montgomery.tres" id="14_monty"]
+[ext_resource type="Resource" path="res://data/towers/pavlichenko.tres" id="15_pavli"]
 
 [sub_resource type="Curve2D" id="curve"]
 _data = {
@@ -25,7 +27,7 @@ radius = 28.0
 
 [node name="M0Field" type="Node2D"]
 script = ExtResource("1_map")
-available_towers = [ExtResource("7_patton"), ExtResource("9_eisen"), ExtResource("10_church"), ExtResource("11_frank")]
+available_towers = [ExtResource("7_patton"), ExtResource("9_eisen"), ExtResource("10_church"), ExtResource("11_frank"), ExtResource("14_monty"), ExtResource("15_pavli")]
 enemy_set = {
 &"wehrmacht_infantry": ExtResource("8_wm"),
 &"panzer_iii": ExtResource("12_panzer"),

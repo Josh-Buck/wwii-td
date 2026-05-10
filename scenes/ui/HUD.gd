@@ -36,6 +36,8 @@ const _CODEX_ENTRY_PATHS: Array[String] = [
 	"res://data/codex/eisenhower.tres",
 	"res://data/codex/churchill.tres",
 	"res://data/codex/anne_frank.tres",
+	"res://data/codex/montgomery.tres",
+	"res://data/codex/pavlichenko.tres",
 	"res://data/codex/wehrmacht_infantry.tres",
 	"res://data/codex/panzer_iii.tres",
 	"res://data/codex/stuka.tres",
@@ -81,7 +83,7 @@ func _ready() -> void:
 	lives_label.text = "Lives: %d" % GameState.lives
 	wave_label.text = "Wave 1"
 	if hint_label:
-		hint_label.text = "Click a slot to deploy. Press 1-4 to switch tower. Click placed towers for sell/target."
+		hint_label.text = "Click a slot to deploy. Press 1-6 to switch tower. Click placed towers for sell/target. C for codex, P to pause."
 	if selection_label:
 		selection_label.text = "Selected: —"
 

@@ -33,6 +33,8 @@ func _ready() -> void:
 			load("res://data/towers/eisenhower.tres"),
 			load("res://data/towers/churchill.tres"),
 			load("res://data/towers/anne_frank.tres"),
+			load("res://data/towers/montgomery.tres"),
+			load("res://data/towers/pavlichenko.tres"),
 		]
 	if enemy_set.is_empty():
 		enemy_set = {
@@ -81,6 +83,11 @@ func _input(event: InputEvent) -> void:
 		KEY_2: idx = 1
 		KEY_3: idx = 2
 		KEY_4: idx = 3
+		KEY_5: idx = 4
+		KEY_6: idx = 5
+		KEY_7: idx = 6
+		KEY_8: idx = 7
+		KEY_9: idx = 8
 	if idx >= 0 and idx < available_towers.size():
 		_select_tower_index(idx)
 
