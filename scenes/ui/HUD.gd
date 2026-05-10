@@ -132,9 +132,11 @@ func _on_map_ready(towers: Array) -> void:
 		btn.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		btn.modulate = stats.color.lerp(Color.WHITE, 0.5)
 		btn.flat = true
-		var idx := i
-		btn.pressed.connect(func(): EventBus.tower_palette_pick.emit(idx))
+		btn.pressed.connect(_on_palette_btn_pressed.bind(i))
 		palette_container.add_child(btn)
+
+func _on_palette_btn_pressed(idx: int) -> void:
+	EventBus.tower_palette_pick.emit(idx)
 
 func _refresh_palette_highlight(active_stats: Resource) -> void:
 	for i in palette_container.get_child_count():
@@ -257,7 +259,6 @@ func _refresh_shop_bonds() -> void:
 		c.queue_free()
 	for bond in _shop_bonds:
 		var row := HBoxContainer.new()
-		row.theme_override_constants_separation = 12
 		var label := Label.new()
 		label.text = "%s — pay %dg, receive %dg in %d waves" % [
 			bond.display_name, bond.cost, bond.payout, bond.maturity_waves
@@ -266,14 +267,11 @@ func _refresh_shop_bonds() -> void:
 		var btn := Button.new()
 		btn.text = "Buy %dg" % bond.cost
 		btn.disabled = bond.cost > GameState.gold
-		btn.pressed.connect(_make_buy_callback(bond))
+		btn.pressed.connect(_on_buy_bond.bind(bond))
 		row.add_child(label)
 		row.add_child(btn)
 		shop_bonds_container.add_child(row)
 	shop_gold_label.text = "Gold: %d   Lives: %d" % [GameState.gold, GameState.lives]
-
-func _make_buy_callback(bond: Resource) -> Callable:
-	return func(): _on_buy_bond(bond)
 
 func _on_buy_bond(bond: Resource) -> void:
 	if GameState.buy_bond(bond):
