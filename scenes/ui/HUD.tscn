@@ -38,6 +38,9 @@ text = "Lives: 20"
 mouse_filter = 2
 custom_minimum_size = Vector2(16, 0)
 
+[node name="SpeedButton" type="Button" parent="TopBar"]
+text = "Speed: 1x"
+
 [node name="CodexButton" type="Button" parent="TopBar"]
 text = "Codex (C)"
 

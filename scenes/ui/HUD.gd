@@ -19,6 +19,10 @@ extends CanvasLayer
 @onready var pause_btn: Button = $TopBar/PauseButton
 @onready var pause_overlay: Control = $PauseOverlay
 @onready var resume_btn: Button = $PauseOverlay/Center/VBox/ResumeButton
+@onready var speed_btn: Button = $TopBar/SpeedButton
+
+const _SPEED_CYCLE: Array[float] = [1.0, 2.0, 4.0]
+var _speed_idx: int = 0
 @onready var shop_panel: PanelContainer = $ShopPanel
 @onready var shop_title: Label = $ShopPanel/VBox/Title
 @onready var shop_gold_label: Label = $ShopPanel/VBox/GoldLabel
@@ -66,6 +70,8 @@ func _ready() -> void:
 	pause_btn.pressed.connect(toggle_pause)
 	resume_btn.pressed.connect(toggle_pause)
 	pause_overlay.visible = false
+	speed_btn.pressed.connect(_cycle_speed)
+	_apply_speed()
 	shop_panel.visible = false
 	shop_next_btn.pressed.connect(_on_shop_next_pressed)
 	EventBus.shop_opened.connect(_on_shop_opened)
@@ -171,6 +177,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_C:
 			_toggle_codex()
 			get_viewport().set_input_as_handled()
+		KEY_SPACE:
+			_cycle_speed()
+			get_viewport().set_input_as_handled()
 
 func toggle_pause() -> void:
 	var p := not get_tree().paused
@@ -178,6 +187,14 @@ func toggle_pause() -> void:
 	pause_overlay.visible = p
 	pause_btn.text = "Resume (P)" if p else "Pause (P)"
 	EventBus.pause_toggled.emit(p)
+
+func _cycle_speed() -> void:
+	_speed_idx = (_speed_idx + 1) % _SPEED_CYCLE.size()
+	_apply_speed()
+
+func _apply_speed() -> void:
+	Engine.time_scale = _SPEED_CYCLE[_speed_idx]
+	speed_btn.text = "Speed: %dx" % int(_SPEED_CYCLE[_speed_idx])
 
 func _on_shop_opened(bonds: Array) -> void:
 	_shop_bonds = bonds
