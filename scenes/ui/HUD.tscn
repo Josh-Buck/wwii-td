@@ -63,12 +63,42 @@ offset_bottom = 672.0
 mouse_filter = 2
 text = "Selected: —"
 
-[node name="TowerPalette" type="HBoxContainer" parent="."]
-offset_left = 12.0
-offset_top = 580.0
-offset_right = 1268.0
-offset_bottom = 642.0
-theme_override_constants/separation = 6
+[node name="TowerSidebar" type="PanelContainer" parent="."]
+offset_left = 1064.0
+offset_top = 56.0
+offset_right = 1276.0
+offset_bottom = 632.0
+
+[node name="VBox" type="VBoxContainer" parent="TowerSidebar"]
+theme_override_constants/separation = 4
+
+[node name="HeaderRow" type="HBoxContainer" parent="TowerSidebar/VBox"]
+
+[node name="HeaderLabel" type="Label" parent="TowerSidebar/VBox/HeaderRow"]
+text = "Defenders"
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+
+[node name="CollapseButton" type="Button" parent="TowerSidebar/VBox/HeaderRow"]
+text = "−"
+custom_minimum_size = Vector2(28, 0)
+
+[node name="HSep" type="HSeparator" parent="TowerSidebar/VBox"]
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TowerSidebar/VBox"]
+size_flags_vertical = 3
+
+[node name="PaletteList" type="VBoxContainer" parent="TowerSidebar/VBox/ScrollContainer"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="TowerSidebarTab" type="Button" parent="."]
+visible = false
+offset_left = 1240.0
+offset_top = 56.0
+offset_right = 1276.0
+offset_bottom = 100.0
+text = "◂"
 
 [node name="Tooltip" type="PanelContainer" parent="."]
 visible = false

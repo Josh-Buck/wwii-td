@@ -25,11 +25,16 @@ extends CanvasLayer
 @onready var pause_overlay: Control = $PauseOverlay
 @onready var resume_btn: Button = $PauseOverlay/Center/VBox/ResumeButton
 @onready var speed_btn: Button = $TopBar/SpeedButton
-@onready var palette_container: HBoxContainer = $TowerPalette
+@onready var sidebar: PanelContainer = $TowerSidebar
+@onready var sidebar_list: VBoxContainer = $TowerSidebar/VBox/ScrollContainer/PaletteList
+@onready var sidebar_collapse_btn: Button = $TowerSidebar/VBox/HeaderRow/CollapseButton
+@onready var sidebar_tab: Button = $TowerSidebarTab
 
 const _SPEED_CYCLE: Array[float] = [1.0, 2.0, 4.0]
 var _speed_idx: int = 0
 var _palette_towers: Array = []
+var _palette_btns: Array = []
+var _sidebar_collapsed: bool = false
 @onready var shop_panel: PanelContainer = $ShopPanel
 @onready var shop_title: Label = $ShopPanel/VBox/Title
 @onready var shop_gold_label: Label = $ShopPanel/VBox/GoldLabel
@@ -82,6 +87,8 @@ func _ready() -> void:
 	end_perk_btn.pressed.connect(_on_perk_btn_pressed)
 	end_restart_btn.pressed.connect(_on_restart_pressed)
 	EventBus.map_ready.connect(_on_map_ready)
+	sidebar_collapse_btn.pressed.connect(_toggle_sidebar)
+	sidebar_tab.pressed.connect(_toggle_sidebar)
 	shop_panel.visible = false
 	shop_next_btn.pressed.connect(_on_shop_next_pressed)
 	EventBus.shop_opened.connect(_on_shop_opened)
@@ -122,31 +129,62 @@ func _on_selection_changed(stats: Resource) -> void:
 
 func _on_map_ready(towers: Array) -> void:
 	_palette_towers = towers
-	for c in palette_container.get_children():
+	_palette_btns.clear()
+	for c in sidebar_list.get_children():
 		c.queue_free()
 	for i in towers.size():
 		var stats = towers[i]
-		var btn := Button.new()
-		btn.text = "%d: %s\n%dg" % [i + 1, _short_figure_name(stats.display_name), stats.cost]
-		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		btn.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		btn.modulate = stats.color.lerp(Color.WHITE, 0.5)
-		btn.flat = true
-		btn.pressed.connect(_on_palette_btn_pressed.bind(i))
-		palette_container.add_child(btn)
+		var card := _build_sidebar_card(i, stats)
+		sidebar_list.add_child(card)
+		_palette_btns.append(card)
+
+func _build_sidebar_card(idx: int, stats: Resource) -> Button:
+	var btn := Button.new()
+	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	btn.custom_minimum_size = Vector2(0, 64)
+	btn.toggle_mode = true
+	btn.flat = false
+	# Compose card text. Portrait would be a child icon; for now, faction-tinted
+	# button + multi-line text gives readable info at a glance.
+	btn.text = "%d. %s\n  %dg  %s" % [
+		idx + 1,
+		stats.display_name,
+		stats.cost,
+		_short_target_label(stats.default_targeting),
+	]
+	btn.add_theme_color_override("font_color", Color.WHITE)
+	btn.modulate = stats.color.lerp(Color.WHITE, 0.4)
+	btn.pressed.connect(_on_palette_btn_pressed.bind(idx))
+	# If a portrait texture exists, drop it into the button as an icon.
+	if stats.portrait != null:
+		btn.icon = stats.portrait
+		btn.expand_icon = true
+	return btn
+
+func _short_target_label(mode: StringName) -> String:
+	match mode:
+		&"first": return "→ first"
+		&"last": return "→ last"
+		&"strong": return "→ strong"
+		&"close": return "→ close"
+		&"camo": return "→ camo"
+	return ""
 
 func _on_palette_btn_pressed(idx: int) -> void:
 	EventBus.tower_palette_pick.emit(idx)
 
 func _refresh_palette_highlight(active_stats: Resource) -> void:
-	for i in palette_container.get_child_count():
-		var btn := palette_container.get_child(i) as Button
-		if btn == null:
+	for i in _palette_btns.size():
+		var btn: Button = _palette_btns[i]
+		if not is_instance_valid(btn):
 			continue
-		if i < _palette_towers.size() and _palette_towers[i] == active_stats:
-			btn.flat = false
-		else:
-			btn.flat = true
+		var is_active: bool = i < _palette_towers.size() and _palette_towers[i] == active_stats
+		btn.button_pressed = is_active
+
+func _toggle_sidebar() -> void:
+	_sidebar_collapsed = not _sidebar_collapsed
+	sidebar.visible = not _sidebar_collapsed
+	sidebar_tab.visible = _sidebar_collapsed
 
 func _short_figure_name(full: String) -> String:
 	var parts := full.split(" ")
