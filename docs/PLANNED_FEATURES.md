@@ -33,6 +33,7 @@ Features intentionally deferred. **Add to this list whenever we decide "good ide
 - **Touch-friendly controls** (mobile browser playtest).
 - **Sound effects + music** — period-appropriate per design plan (big-band swing, marches) over modern cinematic.
 - **Range preview when picking a tower** — hover a slot or palette button while a tower is selected to see its placement range, not just after it's down.
+- **Detailed defender menu** (Josh request 2026-05-10) — instead of the compact palette buttons, a full menu showing each tower's strengths, weaknesses, ability description, current upgrade tree (when implemented), and what enemies it counters. Click a palette button → expanded info panel. Pairs with the upgrade-tree feature.
 
 ### Maps & placement (deferred — Josh request 2026-05-10)
 
