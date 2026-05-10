@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"pavlichenko"
+title = "Lyudmila Pavlichenko (1916-1974)"
+body = "Born in Bila Tserkva, Russian Empire (now Ukraine). A history graduate of Kyiv University, she enlisted in June 1941 days after the German invasion of the USSR.
+
+Assigned to the 25th Rifle Division, she became one of the most successful snipers in military history with 309 confirmed kills, including 36 enemy snipers, during fighting at Odessa and Sevastopol. Wounded by mortar shrapnel in 1942, she was evacuated to safer duty as a sniper instructor.
+
+In 1942 she toured the United States, Canada and Britain to advocate opening a second front; she met Eleanor Roosevelt and addressed audiences who were often more interested in her appearance than her record. She told reporters: \"I am 25 years old, and I have killed 309 fascist invaders by now. Don't you think, gentlemen, that you have been hiding behind my back for too long?\""
+sources = "Sources: Russian State Archive of Socio-Political History, USHMM (Soviet veterans' testimonies), Pavlichenko's autobiography (1974)."

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="TowerStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/tower_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"montgomery"
+display_name = "Bernard Montgomery"
+faction = &"uk"
+color = Color(0.55, 0.5, 0.3, 1)
+cost = 130
+damage = 35.0
+fire_rate = 0.5
+range_px = 200.0
+can_hit = 5
+adjacency_buffs = Array[StringName]([&"uk"])
+adjacency_consumes = Array[StringName]([&"uk"])
+tooltip_lore = "Methodical British general, decisive at El Alamein in 1942 — the Allies' first major land victory of the war. Anti-armor specialist."
+codex_id = &"montgomery"

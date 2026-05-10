@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"montgomery"
+title = "Bernard Montgomery (1887-1976)"
+body = "Born in Kennington, London. Sandhurst class of 1908; commanded a battalion in Belgium in 1914 where he was severely wounded.
+
+He took command of the Eighth Army in North Africa in August 1942, defeating Rommel's Panzerarmee Afrika at El Alamein in October-November 1942 — the Allies' first major land victory and a turning point in the war. Subsequently led Eighth Army through Sicily and into Italy, then commanded all Allied ground forces in the Normandy invasion (June-September 1944) before transitioning to command of the 21st Army Group in the Rhine campaign.
+
+His insistence on the meticulous \"set-piece battle\" — methodical, materially-overwhelming attacks — was both his strength and the basis for friction with U.S. commanders, particularly during Operation Market Garden and the Battle of the Bulge."
+sources = "Sources: Imperial War Museum, Liddell Hart Centre for Military Archives, A Full Life (Sir Brian Horrocks)."
