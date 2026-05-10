@@ -144,15 +144,31 @@ func _find_projectiles_container() -> Node:
 func _draw() -> void:
 	if stats == null:
 		return
-	# Placeholder visual: faction-colored disc with last-name initials and a
-	# faction flag stripe up top. Replaces with portrait sprite once art lands.
-	draw_circle(Vector2.ZERO, 22.0, stats.color)
-	draw_arc(Vector2.ZERO, 22.0, 0, TAU, 32, stats.color.darkened(0.4), 2.0)
+	if stats.portrait != null:
+		_draw_portrait()
+	else:
+		# Placeholder visual: faction-colored disc with last-name initials.
+		draw_circle(Vector2.ZERO, 22.0, stats.color)
+		draw_arc(Vector2.ZERO, 22.0, 0, TAU, 32, stats.color.darkened(0.4), 2.0)
+		_draw_initials()
 	# Synergy indicator: golden ring when at least one adjacency buff is active.
 	if active_buffs.size() > 0:
 		draw_arc(Vector2.ZERO, 30.0, 0, TAU, 32, Color(1.0, 0.85, 0.3, 0.85), 2.5)
+	# Faction flag stripe always shows (over portrait or placeholder).
 	_draw_flag_stripe(stats.faction)
-	_draw_initials()
+
+func _draw_portrait() -> void:
+	var tex: Texture2D = stats.portrait
+	if tex == null:
+		return
+	var tex_size: Vector2 = tex.get_size()
+	if tex_size.x <= 0 or tex_size.y <= 0:
+		return
+	var max_dim: float = maxf(tex_size.x, tex_size.y)
+	var scale: float = 44.0 / max_dim   # fit in ~44px circle
+	var draw_size: Vector2 = tex_size * scale
+	draw_texture_rect(tex, Rect2(-draw_size / 2.0, draw_size), false)
+	draw_arc(Vector2.ZERO, 23.0, 0, TAU, 32, stats.color.darkened(0.4), 2.0)
 
 func _draw_initials() -> void:
 	if stats == null or stats.display_name == "":
