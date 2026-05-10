@@ -41,6 +41,7 @@ func _ready() -> void:
 	EventBus.enemy_killed.connect(_on_enemy_killed)
 	EventBus.enemy_reached_end.connect(_on_enemy_reached_end)
 	EventBus.wave_started.connect(_on_wave_started_for_bonds)
+	EventBus.wave_started.connect(func(idx: int): wave_index = idx)
 
 func buy_bond(bond: Resource) -> bool:
 	if bond == null:

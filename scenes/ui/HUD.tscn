@@ -229,12 +229,35 @@ offset_bottom = 720.0
 color = Color(0, 0, 0, 0.65)
 
 [node name="Panel" type="PanelContainer" parent="EndScreen"]
-offset_left = 440.0
-offset_top = 280.0
-offset_right = 840.0
-offset_bottom = 440.0
+offset_left = 380.0
+offset_top = 200.0
+offset_right = 900.0
+offset_bottom = 520.0
 
-[node name="Label" type="Label" parent="EndScreen/Panel"]
+[node name="VBox" type="VBoxContainer" parent="EndScreen/Panel"]
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="EndScreen/Panel/VBox"]
 text = "VICTORY"
 horizontal_alignment = 1
-vertical_alignment = 1
+theme_override_font_sizes/font_size = 32
+
+[node name="WavesLabel" type="Label" parent="EndScreen/Panel/VBox"]
+text = "Waves cleared: 0 / 8"
+horizontal_alignment = 1
+
+[node name="EarnedLabel" type="Label" parent="EndScreen/Panel/VBox"]
+text = "+0 War Effort earned"
+horizontal_alignment = 1
+
+[node name="TotalLabel" type="Label" parent="EndScreen/Panel/VBox"]
+text = "Total War Effort: 0"
+horizontal_alignment = 1
+
+[node name="HSep" type="HSeparator" parent="EndScreen/Panel/VBox"]
+
+[node name="PerkButton" type="Button" parent="EndScreen/Panel/VBox"]
+text = "Buy: +100 starting gold (10 WEP)"
+
+[node name="RestartButton" type="Button" parent="EndScreen/Panel/VBox"]
+text = "Restart"

@@ -135,8 +135,11 @@ func _on_all_waves_completed() -> void:
 		EventBus.run_ended.emit(true)
 
 func _on_run_ended(victory: bool) -> void:
+	var waves_cleared := GameState.wave_index + (1 if victory else 0)
+	var earned := waves_cleared
+	MetaProgress.award_war_effort(earned)
 	if hud and hud.has_method("show_end_screen"):
-		hud.show_end_screen(victory)
+		hud.show_end_screen(victory, waves_cleared, earned)
 
 func _on_tower_placed_for_synergy(tower: Node) -> void:
 	AdjacencySystem.recompute_in_radius(tower)

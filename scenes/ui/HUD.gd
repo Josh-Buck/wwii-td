@@ -4,7 +4,12 @@ extends CanvasLayer
 @onready var wave_label: Label = $TopBar/WaveLabel
 @onready var lives_label: Label = $TopBar/LivesLabel
 @onready var end_screen: Control = $EndScreen
-@onready var end_label: Label = $EndScreen/Panel/Label
+@onready var end_label: Label = $EndScreen/Panel/VBox/Label
+@onready var end_waves_label: Label = $EndScreen/Panel/VBox/WavesLabel
+@onready var end_earned_label: Label = $EndScreen/Panel/VBox/EarnedLabel
+@onready var end_total_label: Label = $EndScreen/Panel/VBox/TotalLabel
+@onready var end_perk_btn: Button = $EndScreen/Panel/VBox/PerkButton
+@onready var end_restart_btn: Button = $EndScreen/Panel/VBox/RestartButton
 @onready var hint_label: Label = $HintLabel
 @onready var selection_label: Label = $SelectionLabel
 @onready var tooltip: PanelContainer = $Tooltip
@@ -72,6 +77,8 @@ func _ready() -> void:
 	pause_overlay.visible = false
 	speed_btn.pressed.connect(_cycle_speed)
 	_apply_speed()
+	end_perk_btn.pressed.connect(_on_perk_btn_pressed)
+	end_restart_btn.pressed.connect(_on_restart_pressed)
 	shop_panel.visible = false
 	shop_next_btn.pressed.connect(_on_shop_next_pressed)
 	EventBus.shop_opened.connect(_on_shop_opened)
@@ -310,6 +317,32 @@ func _on_codex_entry_unlocked(_entry_id: StringName) -> void:
 	if codex_panel.visible:
 		_refresh_codex()
 
-func show_end_screen(victory: bool) -> void:
+func show_end_screen(victory: bool, waves_cleared: int = 0, earned: int = 0) -> void:
 	end_label.text = "VICTORY" if victory else "DEFEAT"
+	end_waves_label.text = "Waves cleared: %d / 8" % waves_cleared
+	end_earned_label.text = "+%d War Effort earned" % earned
+	end_total_label.text = "Total War Effort: %d" % MetaProgress.war_effort_points
+	_refresh_perk_button()
 	end_screen.visible = true
+
+func _refresh_perk_button() -> void:
+	var perk_id: StringName = MetaProgress.PERK_STARTING_GOLD_BONUS
+	if perk_id in MetaProgress.unlocked_perks:
+		end_perk_btn.text = "✓ %s (unlocked)" % MetaProgress.PERK_LABELS[perk_id]
+		end_perk_btn.disabled = true
+	else:
+		var cost: int = MetaProgress.PERK_COSTS.get(perk_id, 0)
+		end_perk_btn.text = "Buy: %s (%d WEP)" % [MetaProgress.PERK_LABELS[perk_id], cost]
+		end_perk_btn.disabled = MetaProgress.war_effort_points < cost
+
+func _on_perk_btn_pressed() -> void:
+	if MetaProgress.unlock_perk(MetaProgress.PERK_STARTING_GOLD_BONUS):
+		end_total_label.text = "Total War Effort: %d" % MetaProgress.war_effort_points
+		_refresh_perk_button()
+
+func _on_restart_pressed() -> void:
+	end_screen.visible = false
+	_speed_idx = 0
+	_apply_speed()
+	get_tree().paused = false
+	get_tree().reload_current_scene()
