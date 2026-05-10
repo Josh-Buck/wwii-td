@@ -38,6 +38,9 @@ text = "Lives: 20"
 mouse_filter = 2
 custom_minimum_size = Vector2(16, 0)
 
+[node name="CodexButton" type="Button" parent="TopBar"]
+text = "Codex (C)"
+
 [node name="PauseButton" type="Button" parent="TopBar"]
 text = "Pause (P)"
 
@@ -175,6 +178,41 @@ custom_minimum_size = Vector2(0, 12)
 
 [node name="NextWaveButton" type="Button" parent="ShopPanel/VBox"]
 text = "Next Wave"
+
+[node name="CodexPanel" type="PanelContainer" parent="."]
+visible = false
+mouse_filter = 0
+offset_left = 160.0
+offset_top = 40.0
+offset_right = 1120.0
+offset_bottom = 680.0
+
+[node name="VBox" type="VBoxContainer" parent="CodexPanel"]
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="CodexPanel/VBox"]
+text = "Codex"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+
+[node name="Hint" type="Label" parent="CodexPanel/VBox"]
+text = "Hover units in-game to unlock entries."
+horizontal_alignment = 1
+modulate = Color(1, 1, 1, 0.7)
+
+[node name="HSep" type="HSeparator" parent="CodexPanel/VBox"]
+
+[node name="Scroll" type="ScrollContainer" parent="CodexPanel/VBox"]
+custom_minimum_size = Vector2(0, 480)
+size_flags_vertical = 3
+
+[node name="EntryList" type="VBoxContainer" parent="CodexPanel/VBox/Scroll"]
+size_flags_horizontal = 3
+
+[node name="HSep2" type="HSeparator" parent="CodexPanel/VBox"]
+
+[node name="CloseButton" type="Button" parent="CodexPanel/VBox"]
+text = "Close (C)"
 
 [node name="EndScreen" type="Control" parent="."]
 visible = false

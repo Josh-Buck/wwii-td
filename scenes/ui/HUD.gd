@@ -25,9 +25,25 @@ extends CanvasLayer
 @onready var shop_bonds_container: VBoxContainer = $ShopPanel/VBox/BondsContainer
 @onready var shop_held_container: VBoxContainer = $ShopPanel/VBox/HeldContainer
 @onready var shop_next_btn: Button = $ShopPanel/VBox/NextWaveButton
+@onready var codex_btn: Button = $TopBar/CodexButton
+@onready var codex_panel: PanelContainer = $CodexPanel
+@onready var codex_title: Label = $CodexPanel/VBox/Title
+@onready var codex_list: VBoxContainer = $CodexPanel/VBox/Scroll/EntryList
+@onready var codex_close_btn: Button = $CodexPanel/VBox/CloseButton
+
+const _CODEX_ENTRY_PATHS: Array[String] = [
+	"res://data/codex/patton.tres",
+	"res://data/codex/eisenhower.tres",
+	"res://data/codex/churchill.tres",
+	"res://data/codex/anne_frank.tres",
+	"res://data/codex/wehrmacht_infantry.tres",
+	"res://data/codex/panzer_iii.tres",
+	"res://data/codex/stuka.tres",
+]
 
 var _selected_tower: Node = null
 var _shop_bonds: Array = []
+var _codex_entries: Array = []
 
 func _ready() -> void:
 	end_screen.visible = false
@@ -53,6 +69,14 @@ func _ready() -> void:
 	EventBus.shop_opened.connect(_on_shop_opened)
 	EventBus.gold_changed.connect(_on_gold_changed_for_shop)
 	EventBus.bond_matured.connect(_on_bond_matured_in_shop)
+	codex_panel.visible = false
+	codex_btn.pressed.connect(_toggle_codex)
+	codex_close_btn.pressed.connect(_toggle_codex)
+	EventBus.codex_entry_unlocked.connect(_on_codex_entry_unlocked)
+	for path in _CODEX_ENTRY_PATHS:
+		var entry: Resource = load(path)
+		if entry != null:
+			_codex_entries.append(entry)
 	gold_label.text = "Gold: %d" % GameState.gold
 	lives_label.text = "Lives: %d" % GameState.lives
 	wave_label.text = "Wave 1"
@@ -87,6 +111,8 @@ func _show_tooltip_for_stats(stats: Resource) -> void:
 func _on_tower_hovered(tower: Node) -> void:
 	if tower and tower.stats:
 		_show_tooltip_for_stats(tower.stats)
+		if tower.stats.codex_id != &"":
+			MetaProgress.mark_codex_seen(tower.stats.codex_id)
 
 func _on_tower_unhovered(_tower: Node) -> void:
 	tooltip.visible = false
@@ -94,6 +120,8 @@ func _on_tower_unhovered(_tower: Node) -> void:
 func _on_enemy_hovered(enemy: Node) -> void:
 	if enemy and enemy.stats:
 		_show_tooltip_for_stats(enemy.stats)
+		if enemy.stats.codex_id != &"":
+			MetaProgress.mark_codex_seen(enemy.stats.codex_id)
 
 func _on_enemy_unhovered(_enemy: Node) -> void:
 	tooltip.visible = false
@@ -132,9 +160,15 @@ func _on_close_btn_pressed() -> void:
 	info_panel.visible = false
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_P:
-		toggle_pause()
-		get_viewport().set_input_as_handled()
+	if not (event is InputEventKey and event.pressed and not event.echo):
+		return
+	match event.keycode:
+		KEY_P:
+			toggle_pause()
+			get_viewport().set_input_as_handled()
+		KEY_C:
+			_toggle_codex()
+			get_viewport().set_input_as_handled()
 
 func toggle_pause() -> void:
 	var p := not get_tree().paused
@@ -209,6 +243,53 @@ func _on_gold_changed_for_shop(_g: int) -> void:
 func _on_bond_matured_in_shop(_bond: Resource, _payout: int) -> void:
 	if shop_panel.visible:
 		_refresh_held_bonds()
+
+func _toggle_codex() -> void:
+	codex_panel.visible = not codex_panel.visible
+	if codex_panel.visible:
+		_refresh_codex()
+
+func _refresh_codex() -> void:
+	var unlocked_count := 0
+	for entry in _codex_entries:
+		if entry.id in MetaProgress.codex_seen:
+			unlocked_count += 1
+	codex_title.text = "Codex — %d / %d unlocked" % [unlocked_count, _codex_entries.size()]
+	for c in codex_list.get_children():
+		c.queue_free()
+	for entry in _codex_entries:
+		var unlocked: bool = entry.id in MetaProgress.codex_seen
+		var entry_box := VBoxContainer.new()
+		entry_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var title_label := Label.new()
+		title_label.add_theme_font_size_override("font_size", 18)
+		if unlocked:
+			title_label.text = entry.title
+		else:
+			title_label.text = "??? (encounter to unlock)"
+			title_label.modulate = Color(1, 1, 1, 0.4)
+		entry_box.add_child(title_label)
+		if unlocked:
+			var body_label := Label.new()
+			body_label.text = entry.body
+			body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			body_label.custom_minimum_size = Vector2(700, 0)
+			entry_box.add_child(body_label)
+			if entry.sources != "":
+				var src_label := Label.new()
+				src_label.text = entry.sources
+				src_label.modulate = Color(0.7, 0.7, 0.7, 1)
+				src_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+				src_label.custom_minimum_size = Vector2(700, 0)
+				entry_box.add_child(src_label)
+		var spacer := Control.new()
+		spacer.custom_minimum_size = Vector2(0, 16)
+		entry_box.add_child(spacer)
+		codex_list.add_child(entry_box)
+
+func _on_codex_entry_unlocked(_entry_id: StringName) -> void:
+	if codex_panel.visible:
+		_refresh_codex()
 
 func show_end_screen(victory: bool) -> void:
 	end_label.text = "VICTORY" if victory else "DEFEAT"
