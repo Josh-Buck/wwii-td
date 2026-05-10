@@ -3,7 +3,7 @@ class_name Map extends Node2D
 ## Base class for all map scenes. Subclassed maps (m0_field, ardennes, etc.)
 ## set their own path curve, slot positions, and enemy/tower registries.
 
-@export var available_towers: Array[Resource] = []  ## TowerStats list
+@export var available_towers: Array = []  ## TowerStats list (untyped to avoid scene-export quirks)
 @export var enemy_set: Dictionary = {}  ## StringName -> EnemyStats
 @export var tower_scene: PackedScene
 @export var enemy_scene: PackedScene
@@ -19,6 +19,18 @@ var slots: Array = []
 var selected_tower_stats: TowerStats = null
 
 func _ready() -> void:
+	# Fallback bindings: if scene-level exports didn't populate (typed
+	# array quirks, version differences, etc.), load sensible defaults
+	# so M0 is playable out of the box.
+	if tower_scene == null:
+		tower_scene = preload("res://scenes/towers/Tower.tscn")
+	if enemy_scene == null:
+		enemy_scene = preload("res://scenes/enemies/Enemy.tscn")
+	if available_towers.is_empty():
+		available_towers = [load("res://data/towers/patton.tres")]
+	if enemy_set.is_empty():
+		enemy_set = {&"wehrmacht_infantry": load("res://data/enemies/wehrmacht_infantry.tres")}
+
 	# Wire WaveDirector to our enemy registry & path.
 	wave_director.enemy_scene = enemy_scene
 	wave_director.enemy_registry = enemy_set
@@ -30,9 +42,10 @@ func _ready() -> void:
 	if available_towers.size() > 0:
 		selected_tower_stats = available_towers[0]
 
-	# Hook up slots.
+	# Hook up slots. Use signal-based detection so robustness doesn't
+	# depend on the class_name resolving correctly.
 	for slot in slots_container.get_children():
-		if slot is PlacementSlot:
+		if slot is Area2D and slot.has_signal("slot_clicked"):
 			slots.append(slot)
 			slot.slot_clicked.connect(_on_slot_clicked)
 

@@ -28,6 +28,9 @@ func _input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 		slot_clicked.emit(self)
 
 func _draw() -> void:
-	var alpha := 0.15 if occupied() else 0.30
-	draw_circle(Vector2.ZERO, radius, Color(1, 1, 1, alpha))
-	draw_arc(Vector2.ZERO, radius, 0, TAU, 32, Color(1, 1, 1, 0.6), 2.0)
+	# Empty slots: bright cyan ring on faint cyan fill so they stand out
+	# from the dirt path and the red enemies. Occupied slots fade.
+	var fill_alpha := 0.08 if occupied() else 0.25
+	draw_circle(Vector2.ZERO, radius, Color(0.2, 0.7, 1.0, fill_alpha))
+	var rim_alpha := 0.4 if occupied() else 0.95
+	draw_arc(Vector2.ZERO, radius, 0, TAU, 32, Color(0.55, 0.85, 1.0, rim_alpha), 3.0)

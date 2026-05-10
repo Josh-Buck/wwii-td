@@ -6,7 +6,7 @@
 script = ExtResource("1")
 id = &"wehrmacht_infantry"
 display_name = "Wehrmacht Infantry"
-color = Color(0.55, 0.55, 0.5, 1)
+color = Color(0.7, 0.25, 0.2, 1)
 radius = 12.0
 max_hp = 30.0
 speed = 70.0
