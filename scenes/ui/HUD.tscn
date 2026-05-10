@@ -160,6 +160,18 @@ text = ""
 custom_minimum_size = Vector2(300, 0)
 autowrap_mode = 2
 
+[node name="HSep3" type="HSeparator" parent="DefenderInfoPanel/VBox"]
+
+[node name="UpgradesHeader" type="Label" parent="DefenderInfoPanel/VBox"]
+mouse_filter = 2
+text = "Upgrades (place a tower to purchase)"
+modulate = Color(1, 1, 1, 0.7)
+
+[node name="UpgradesGrid" type="GridContainer" parent="DefenderInfoPanel/VBox"]
+columns = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 4
+
 [node name="Tooltip" type="PanelContainer" parent="."]
 visible = false
 mouse_filter = 2

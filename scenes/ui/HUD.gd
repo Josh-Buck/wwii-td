@@ -38,6 +38,11 @@ extends CanvasLayer
 @onready var def_strength: Label = $DefenderInfoPanel/VBox/StrengthLabel
 @onready var def_weakness: Label = $DefenderInfoPanel/VBox/WeaknessLabel
 @onready var def_lore: Label = $DefenderInfoPanel/VBox/LoreLabel
+@onready var def_upgrades_header: Label = $DefenderInfoPanel/VBox/UpgradesHeader
+@onready var def_upgrades_grid: GridContainer = $DefenderInfoPanel/VBox/UpgradesGrid
+
+var _info_active_tower: Node = null  ## tower currently shown in info panel (if placed)
+var _info_active_stats: Resource = null  ## stats currently shown (palette card or placed tower)
 
 const _SPEED_CYCLE: Array[float] = [1.0, 2.0, 4.0]
 var _speed_idx: int = 0
@@ -197,9 +202,11 @@ func _build_sidebar_card(idx: int, stats: Resource) -> Button:
 
 	return btn
 
-func _show_defender_info(stats: Resource) -> void:
+func _show_defender_info(stats: Resource, placed_tower: Node = null) -> void:
 	if stats == null:
 		return
+	_info_active_stats = stats
+	_info_active_tower = placed_tower if placed_tower and is_instance_valid(placed_tower) else null
 	def_name.text = "%s — %dg" % [stats.display_name, stats.cost]
 	def_faction.text = "Faction: %s" % _faction_label(stats.faction)
 	var dps: float = stats.damage * stats.fire_rate
@@ -216,10 +223,65 @@ func _show_defender_info(stats: Resource) -> void:
 	def_strength.text = "Strengths: %s" % _strengths_for(stats)
 	def_weakness.text = "Weaknesses: %s" % _weaknesses_for(stats)
 	def_lore.text = stats.tooltip_lore
+	_refresh_upgrades_grid()
 	def_info_panel.visible = true
 
 func _hide_defender_info() -> void:
 	def_info_panel.visible = false
+	_info_active_tower = null
+	_info_active_stats = null
+
+func _refresh_upgrades_grid() -> void:
+	for c in def_upgrades_grid.get_children():
+		c.queue_free()
+	if _info_active_stats == null:
+		return
+	var branches: Dictionary = UpgradeRegistry.get_branches(_info_active_stats.id)
+	if branches.is_empty():
+		def_upgrades_header.text = "Upgrades — none defined"
+		return
+	if _info_active_tower:
+		def_upgrades_header.text = "Upgrades — Branch A vs Branch B"
+	else:
+		def_upgrades_header.text = "Upgrades (place this tower to purchase)"
+	var branch_keys: Array = [&"branch_a", &"branch_b"]
+	for tier_idx in 3:
+		for branch in branch_keys:
+			var step: Dictionary = UpgradeRegistry.get_tier(_info_active_stats.id, branch, tier_idx)
+			if step.is_empty():
+				def_upgrades_grid.add_child(Control.new())
+				continue
+			var btn := Button.new()
+			btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			btn.text = _format_upgrade_btn_text(step, tier_idx, branch)
+			btn.disabled = not _can_purchase_upgrade(branch, tier_idx, step)
+			btn.tooltip_text = step.get("desc", "")
+			btn.pressed.connect(_on_upgrade_btn_pressed.bind(branch, tier_idx))
+			def_upgrades_grid.add_child(btn)
+
+func _format_upgrade_btn_text(step: Dictionary, tier_idx: int, branch: StringName) -> String:
+	var owned := false
+	if _info_active_tower:
+		var current_tier: int = _info_active_tower.upgrade_a_tier if branch == &"branch_a" else _info_active_tower.upgrade_b_tier
+		owned = current_tier > tier_idx
+	var prefix := "✓ " if owned else ""
+	return "%sT%d %s — %dg" % [prefix, tier_idx + 1, step.get("name", ""), step.get("cost", 0)]
+
+func _can_purchase_upgrade(branch: StringName, tier_idx: int, step: Dictionary) -> bool:
+	if _info_active_tower == null or not is_instance_valid(_info_active_tower):
+		return false
+	var current_tier: int = _info_active_tower.upgrade_a_tier if branch == &"branch_a" else _info_active_tower.upgrade_b_tier
+	if tier_idx < current_tier:
+		return false  # already owned
+	if tier_idx > current_tier:
+		return false  # need previous tier first
+	return GameState.gold >= int(step.get("cost", 0))
+
+func _on_upgrade_btn_pressed(branch: StringName, tier_idx: int) -> void:
+	if _info_active_tower == null or not is_instance_valid(_info_active_tower):
+		return
+	if _info_active_tower.purchase_upgrade(branch, tier_idx):
+		_refresh_upgrades_grid()
 
 func _faction_label(f: StringName) -> String:
 	match f:
@@ -336,6 +398,10 @@ func _on_tower_clicked(tower: Node) -> void:
 	_selected_tower = tower
 	_refresh_info_panel()
 	info_panel.visible = is_instance_valid(_selected_tower)
+	# Also open the defender info panel pinned to this placed tower so the
+	# upgrade grid is interactive.
+	if is_instance_valid(tower) and tower.stats:
+		_show_defender_info(tower.stats, tower)
 
 func _refresh_info_panel() -> void:
 	if _selected_tower == null or not is_instance_valid(_selected_tower):

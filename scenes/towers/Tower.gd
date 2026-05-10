@@ -15,6 +15,9 @@ var active_buffs: Dictionary = {}  ## adjacency tag -> source tower
 var aura_buffs: Dictionary = {}    ## source tower -> {fire_rate_bonus: float}
 var owning_slot: Node = null   ## set by Map on placement; cleared on sell
 var hovered: bool = false   ## drives range-preview visibility in _draw
+var upgrade_a_tier: int = 0  ## branch A tiers purchased (0..3)
+var upgrade_b_tier: int = 0  ## branch B tiers purchased (0..3)
+var total_invested: int = 0  ## base cost + all upgrade costs (for sell refund)
 
 const _PROJECTILE_SCENE: PackedScene = preload("res://scenes/projectiles/Projectile.tscn")
 
@@ -78,7 +81,8 @@ func sell() -> void:
 	if stats == null:
 		queue_free()
 		return
-	var refund := int(stats.cost * 0.75)
+	var base_invested: int = stats.cost + total_invested
+	var refund := int(base_invested * 0.75)
 	if owning_slot and is_instance_valid(owning_slot) and owning_slot.has_method("clear_tower"):
 		owning_slot.clear_tower()
 	GameState.add_gold(refund)
@@ -88,19 +92,104 @@ func sell() -> void:
 	EventBus.tower_sold.emit(self, refund)
 	queue_free()
 
+func _active_upgrade_steps() -> Array:
+	var steps: Array = []
+	if stats == null:
+		return steps
+	for i in upgrade_a_tier:
+		var step := UpgradeRegistry.get_tier(stats.id, &"branch_a", i)
+		if not step.is_empty():
+			steps.append(step)
+	for i in upgrade_b_tier:
+		var step := UpgradeRegistry.get_tier(stats.id, &"branch_b", i)
+		if not step.is_empty():
+			steps.append(step)
+	return steps
+
 func effective_damage() -> float:
-	return stats.damage
+	if stats == null:
+		return 1.0
+	var dmg := stats.damage
+	for step in _active_upgrade_steps():
+		dmg *= step.get("damage_mult", 1.0)
+	return dmg
 
 func effective_fire_rate() -> float:
 	if stats == null:
 		return 1.0
+	var rate := stats.fire_rate
+	for step in _active_upgrade_steps():
+		rate *= step.get("fire_rate_mult", 1.0)
 	var multiplier := 1.0 + AdjacencySystem.RATE_BONUS_PER_BUFF * active_buffs.size()
 	for source in aura_buffs.values():
 		multiplier += source.get("fire_rate_bonus", 0.0)
-	return stats.fire_rate * multiplier
+	return rate * multiplier
 
 func effective_range() -> float:
-	return stats.range_px
+	if stats == null:
+		return 100.0
+	var r := stats.range_px
+	for step in _active_upgrade_steps():
+		r *= step.get("range_mult", 1.0)
+	return r
+
+func effective_aoe_radius() -> float:
+	if stats == null:
+		return 0.0
+	var aoe := stats.aoe_radius
+	for step in _active_upgrade_steps():
+		aoe += step.get("aoe_radius_add", 0.0)
+	return aoe
+
+func effective_aura_radius() -> float:
+	if stats == null:
+		return 0.0
+	var r := stats.aura_radius
+	for step in _active_upgrade_steps():
+		r *= step.get("aura_radius_mult", 1.0)
+	return r
+
+func effective_aura_fire_rate_bonus() -> float:
+	if stats == null:
+		return 0.0
+	var b := stats.aura_fire_rate_bonus
+	for step in _active_upgrade_steps():
+		b += step.get("aura_fire_rate_add", 0.0)
+	return b
+
+func damage_for_target(enemy: Node) -> float:
+	var dmg := effective_damage()
+	if enemy and enemy.stats:
+		for step in _active_upgrade_steps():
+			if enemy.stats.is_armor():
+				dmg *= step.get("bonus_vs_armor", 1.0)
+			if enemy.stats.is_camo():
+				dmg *= step.get("bonus_vs_camo", 1.0)
+	return dmg
+
+func purchase_upgrade(branch: StringName, tier_idx: int) -> bool:
+	if stats == null:
+		return false
+	var current_tier: int = upgrade_a_tier if branch == &"branch_a" else upgrade_b_tier
+	if tier_idx != current_tier:
+		return false  # must purchase tiers in order
+	var step := UpgradeRegistry.get_tier(stats.id, branch, tier_idx)
+	if step.is_empty():
+		return false
+	var cost: int = step.get("cost", 0)
+	if not GameState.spend_gold(cost):
+		return false
+	total_invested += cost
+	if branch == &"branch_a":
+		upgrade_a_tier += 1
+	else:
+		upgrade_b_tier += 1
+	apply_buffs()
+	# Refresh the placed tower's range collision since range may have changed.
+	if range_collision and range_collision.shape is CircleShape2D:
+		range_collision.shape.radius = effective_range()
+	queue_redraw()
+	return true
 
 func apply_buffs() -> void:
 	if fire_timer:
@@ -138,8 +227,7 @@ func _fire_at(target: Node) -> void:
 	if not is_instance_valid(target):
 		return
 	var projectile := _PROJECTILE_SCENE.instantiate()
-	var aoe: float = stats.aoe_radius if stats else 0.0
-	projectile.setup(target, effective_damage(), aoe)
+	projectile.setup(target, damage_for_target(target), effective_aoe_radius())
 	projectile.global_position = global_position
 	var container := _find_projectiles_container()
 	if container:
