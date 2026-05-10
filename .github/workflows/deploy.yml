@@ -39,6 +39,12 @@ jobs:
           unzip -q /tmp/templates.tpz -d /tmp/templates_unzip
           mv /tmp/templates_unzip/templates/* "$HOME/.local/share/godot/export_templates/${TEMPLATE_DIR_NAME}/"
 
+      - name: Import resources
+        run: |
+          # First-run import on a clean clone needs a separate pass; export
+          # alone sometimes ships with stale or missing .import metadata.
+          godot --headless --import || true
+
       - name: Web build
         run: |
           mkdir -v -p build/web
