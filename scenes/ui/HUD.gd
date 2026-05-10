@@ -99,7 +99,7 @@ func _ready() -> void:
 	lives_label.text = "Lives: %d" % GameState.lives
 	wave_label.text = "Wave 1"
 	if hint_label:
-		hint_label.text = "Click a slot to deploy. Press 1-6 to switch tower. Click placed towers for sell/target. C for codex, P to pause."
+		hint_label.text = "Click palette or 1-6 to pick. Click slot to deploy. Click tower to sell. Space=speed, P=pause, C=codex."
 	if selection_label:
 		selection_label.text = "Selected: —"
 

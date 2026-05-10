@@ -144,9 +144,60 @@ func _find_projectiles_container() -> Node:
 func _draw() -> void:
 	if stats == null:
 		return
-	# Placeholder visual: filled circle in faction color with darker rim.
-	draw_circle(Vector2.ZERO, 18.0, stats.color)
-	draw_arc(Vector2.ZERO, 18.0, 0, TAU, 24, stats.color.darkened(0.4), 2.0)
+	# Placeholder visual: faction-colored disc with last-name initials and a
+	# faction flag stripe up top. Replaces with portrait sprite once art lands.
+	draw_circle(Vector2.ZERO, 22.0, stats.color)
+	draw_arc(Vector2.ZERO, 22.0, 0, TAU, 32, stats.color.darkened(0.4), 2.0)
 	# Synergy indicator: golden ring when at least one adjacency buff is active.
 	if active_buffs.size() > 0:
-		draw_arc(Vector2.ZERO, 26.0, 0, TAU, 32, Color(1.0, 0.85, 0.3, 0.85), 2.5)
+		draw_arc(Vector2.ZERO, 30.0, 0, TAU, 32, Color(1.0, 0.85, 0.3, 0.85), 2.5)
+	_draw_flag_stripe(stats.faction)
+	_draw_initials()
+
+func _draw_initials() -> void:
+	if stats == null or stats.display_name == "":
+		return
+	var text: String = _short_initials()
+	var font: Font = ThemeDB.fallback_font
+	if font == null:
+		return
+	var fs: int = 13
+	var size: Vector2 = font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
+	# draw_string anchors at baseline; offset y so text vertically centers near 0.
+	var pos := Vector2(-size.x / 2.0, size.y / 4.0)
+	draw_string(font, pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(0.08, 0.08, 0.08))
+
+func _short_initials() -> String:
+	var parts := stats.display_name.split(" ", false)
+	if parts.is_empty():
+		return stats.display_name.substr(0, 3).to_upper()
+	return parts[-1].substr(0, 3).to_upper()
+
+func _draw_flag_stripe(faction: StringName) -> void:
+	# Small banner above the tower disc: y = -34 to -28 (6px tall, 32px wide)
+	var x: float = -16.0
+	var y: float = -34.0
+	var w: float = 32.0
+	var h: float = 6.0
+	match faction:
+		&"us":
+			# 3 horizontal stripes: red, white, blue (simplified)
+			draw_rect(Rect2(x, y, w, h / 3.0), Color(0.78, 0.10, 0.16))
+			draw_rect(Rect2(x, y + h / 3.0, w, h / 3.0), Color.WHITE)
+			draw_rect(Rect2(x, y + 2.0 * h / 3.0, w, h / 3.0), Color(0.05, 0.13, 0.39))
+		&"uk":
+			# Union flag approximation: blue background, white cross, red centerline
+			draw_rect(Rect2(x, y, w, h), Color(0.05, 0.13, 0.39))
+			draw_rect(Rect2(x, y + h / 2.0 - 1.0, w, 2.0), Color.WHITE)
+			draw_rect(Rect2(x + w / 2.0 - 1.0, y, 2.0, h), Color.WHITE)
+			draw_rect(Rect2(x + w / 2.0 - 0.5, y, 1.0, h), Color(0.78, 0.10, 0.16))
+		&"ussr":
+			# Solid red banner
+			draw_rect(Rect2(x, y, w, h), Color(0.72, 0.04, 0.04))
+		&"resistance":
+			# French tricolor
+			draw_rect(Rect2(x, y, w / 3.0, h), Color(0.05, 0.13, 0.39))
+			draw_rect(Rect2(x + w / 3.0, y, w / 3.0, h), Color.WHITE)
+			draw_rect(Rect2(x + 2.0 * w / 3.0, y, w / 3.0, h), Color(0.78, 0.10, 0.16))
+		_:
+			pass

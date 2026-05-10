@@ -73,5 +73,21 @@ func _reach_end() -> void:
 func _draw() -> void:
 	if stats == null:
 		return
-	draw_circle(Vector2.ZERO, stats.radius, stats.color)
-	draw_arc(Vector2.ZERO, stats.radius, 0, TAU, 16, stats.color.darkened(0.5), 1.5)
+	var r: float = stats.radius
+	if stats.is_air():
+		# Plane silhouette: forward-pointing triangle.
+		var p1 := Vector2(-r * 0.85, -r * 0.55)
+		var p2 := Vector2(r, 0)
+		var p3 := Vector2(-r * 0.85, r * 0.55)
+		draw_colored_polygon(PackedVector2Array([p1, p2, p3]), stats.color)
+		draw_polyline(PackedVector2Array([p1, p2, p3, p1]), stats.color.darkened(0.5), 1.5)
+	elif stats.is_armor():
+		# Tank silhouette: hull rectangle + small turret circle.
+		var hull := Rect2(-r * 1.1, -r * 0.7, r * 2.2, r * 1.4)
+		draw_rect(hull, stats.color)
+		draw_rect(hull, stats.color.darkened(0.5), false, 1.5)
+		draw_circle(Vector2(0, -r * 0.25), r * 0.45, stats.color.darkened(0.25))
+	else:
+		# Infantry: circle (default).
+		draw_circle(Vector2.ZERO, r, stats.color)
+		draw_arc(Vector2.ZERO, r, 0, TAU, 16, stats.color.darkened(0.5), 1.5)
