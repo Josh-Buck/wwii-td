@@ -297,6 +297,12 @@ theme_override_font_sizes/font_size = 16
 
 [node name="HeldContainer" type="VBoxContainer" parent="ShopPanel/VBox"]
 
+[node name="StocksHeader" type="Label" parent="ShopPanel/VBox"]
+text = "War Stocks — risky; price walks every wave"
+theme_override_font_sizes/font_size = 16
+
+[node name="StocksContainer" type="VBoxContainer" parent="ShopPanel/VBox"]
+
 [node name="Spacer" type="Control" parent="ShopPanel/VBox"]
 custom_minimum_size = Vector2(0, 12)
 

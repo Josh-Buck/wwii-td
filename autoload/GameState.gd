@@ -8,12 +8,14 @@ var lives: int = STARTING_LIVES
 var wave_index: int = 0
 var run_active: bool = false
 var held_bonds: Array = []  ## each entry: {bond: WarBond, waves_remaining: int}
+var held_shares: Dictionary = {}  ## stock id -> count
 
 func reset_run() -> void:
 	gold = STARTING_GOLD + MetaProgress.starting_gold_bonus()
 	lives = STARTING_LIVES
 	wave_index = 0
 	held_bonds.clear()
+	held_shares.clear()
 	run_active = true
 	EventBus.gold_changed.emit(gold)
 	EventBus.lives_changed.emit(lives)
@@ -53,6 +55,30 @@ func buy_bond(bond: Resource) -> bool:
 		return false
 	held_bonds.append({"bond": bond, "waves_remaining": bond.maturity_waves})
 	EventBus.bond_purchased.emit(bond)
+	return true
+
+func buy_shares(stock: Resource, count: int) -> bool:
+	if stock == null or count <= 0:
+		return false
+	var price: float = StockMarket.get_price(stock.id)
+	var cost: int = int(ceilf(price * count))
+	if not spend_gold(cost):
+		return false
+	held_shares[stock.id] = held_shares.get(stock.id, 0) + count
+	EventBus.shares_changed.emit(stock, held_shares[stock.id])
+	return true
+
+func sell_shares(stock: Resource, count: int) -> bool:
+	if stock == null or count <= 0:
+		return false
+	var current: int = held_shares.get(stock.id, 0)
+	if current < count:
+		return false
+	var price: float = StockMarket.get_price(stock.id)
+	var proceeds: int = int(price * count)
+	held_shares[stock.id] = current - count
+	add_gold(proceeds)
+	EventBus.shares_changed.emit(stock, held_shares[stock.id])
 	return true
 
 func _on_wave_started_for_bonds(_wave_idx: int) -> void:

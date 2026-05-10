@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Stock" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/stock.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"aerospace"
+display_name = "Aerospace Inds."
+base_price = 100.0
+volatility = 0.15
+drift_early = 0.03
+drift_late = 0.03
+drift_threshold_wave = 0
+description = "Boeing, Douglas, Consolidated. High volatility — government contracts swing wildly with strategic priorities. Strong upward drift across the war."

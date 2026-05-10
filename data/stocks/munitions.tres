@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Stock" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/stock.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"munitions"
+display_name = "Munitions Cartel"
+base_price = 100.0
+volatility = 0.10
+drift_early = 0.02
+drift_late = 0.02
+drift_threshold_wave = 0
+description = "DuPont, Hercules, Olin. Steady demand for ordnance, propellant and chemicals. Moderate volatility, moderate growth."

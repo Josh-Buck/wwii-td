@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Stock" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/stock.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"steel"
+display_name = "U.S. Steel & Allied Mills"
+base_price = 100.0
+volatility = 0.05
+drift_early = 0.01
+drift_late = 0.01
+drift_threshold_wave = 0
+description = "U.S. Steel, Bethlehem, Republic. Bedrock industry — low volatility, slow steady drift. Closer to a bond than a stock."

@@ -36,3 +36,5 @@ signal shop_opened(available_bonds: Array)
 signal shop_closed
 signal bond_purchased(bond: Resource)
 signal bond_matured(bond: Resource, payout: int)
+signal stock_prices_walked  ## fired after StockMarket recomputes each wave
+signal shares_changed(stock: Resource, new_count: int)

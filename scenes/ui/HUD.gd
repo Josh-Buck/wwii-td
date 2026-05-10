@@ -56,6 +56,7 @@ var _sidebar_collapsed: bool = false
 @onready var shop_gold_label: Label = $ShopPanel/VBox/GoldLabel
 @onready var shop_bonds_container: VBoxContainer = $ShopPanel/VBox/BondsContainer
 @onready var shop_held_container: VBoxContainer = $ShopPanel/VBox/HeldContainer
+@onready var shop_stocks_container: VBoxContainer = $ShopPanel/VBox/StocksContainer
 @onready var shop_next_btn: Button = $ShopPanel/VBox/NextWaveButton
 @onready var codex_btn: Button = $TopBar/CodexButton
 @onready var codex_panel: PanelContainer = $CodexPanel
@@ -513,6 +514,7 @@ func _on_shop_opened(bonds: Array) -> void:
 	shop_title.text = "Wave %d complete — War Room" % (GameState.wave_index + 1)
 	_refresh_shop_bonds()
 	_refresh_held_bonds()
+	_refresh_shop_stocks()
 	shop_panel.visible = true
 
 func _on_shop_next_pressed() -> void:
@@ -566,10 +568,45 @@ func _refresh_held_bonds() -> void:
 func _on_gold_changed_for_shop(_g: int) -> void:
 	if shop_panel.visible:
 		_refresh_shop_bonds()
+		_refresh_shop_stocks()
 
 func _on_bond_matured_in_shop(_bond: Resource, _payout: int) -> void:
 	if shop_panel.visible:
 		_refresh_held_bonds()
+
+func _refresh_shop_stocks() -> void:
+	for c in shop_stocks_container.get_children():
+		c.queue_free()
+	for stock in StockMarket.stocks:
+		var row := HBoxContainer.new()
+		var label := Label.new()
+		var price: float = StockMarket.get_price(stock.id)
+		var trend: String = StockMarket.get_trend_symbol(stock.id)
+		var owned: int = GameState.held_shares.get(stock.id, 0)
+		label.text = "%s  %s %dg/share  (held: %d)" % [
+			stock.display_name, trend, int(round(price)), owned
+		]
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var buy_btn := Button.new()
+		buy_btn.text = "Buy 1"
+		buy_btn.disabled = GameState.gold < int(ceil(price))
+		buy_btn.pressed.connect(_on_buy_share.bind(stock))
+		var sell_btn := Button.new()
+		sell_btn.text = "Sell 1"
+		sell_btn.disabled = owned <= 0
+		sell_btn.pressed.connect(_on_sell_share.bind(stock))
+		row.add_child(label)
+		row.add_child(buy_btn)
+		row.add_child(sell_btn)
+		shop_stocks_container.add_child(row)
+
+func _on_buy_share(stock: Resource) -> void:
+	if GameState.buy_shares(stock, 1):
+		_refresh_shop_stocks()
+
+func _on_sell_share(stock: Resource) -> void:
+	if GameState.sell_shares(stock, 1):
+		_refresh_shop_stocks()
 
 func _toggle_codex() -> void:
 	codex_panel.visible = not codex_panel.visible

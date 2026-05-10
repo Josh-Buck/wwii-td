@@ -27,6 +27,7 @@ MetaProgress="*res://autoload/MetaProgress.gd"
 EventBus="*res://autoload/EventBus.gd"
 AudioMan="*res://autoload/AudioMan.gd"
 SaveSystem="*res://autoload/SaveSystem.gd"
+StockMarket="*res://autoload/StockMarket.gd"
 
 [display]
 
