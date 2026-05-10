@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="TowerStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/tower_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"churchill"
+display_name = "Winston Churchill"
+faction = &"uk"
+color = Color(0.16, 0.22, 0.45, 1)
+cost = 150
+damage = 8.0
+fire_rate = 0.8
+range_px = 180.0
+can_hit = 3
+adjacency_buffs = Array[StringName]([&"uk"])
+adjacency_consumes = Array[StringName]([&"uk"])
+tooltip_lore = "British PM during the Battle of Britain. His broadcasts (\"We shall fight on the beaches\") sustained UK morale through the war's darkest hours."
+codex_id = &"churchill"

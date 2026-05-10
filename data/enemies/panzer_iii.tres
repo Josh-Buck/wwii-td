@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="EnemyStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"panzer_iii"
+display_name = "Panzer III"
+color = Color(0.45, 0.5, 0.4, 1)
+radius = 16.0
+max_hp = 80.0
+speed = 50.0
+armor = 0.4
+flags = 5
+lives_lost_on_leak = 2
+kill_reward = 12
+bond_reward = 0
+tooltip_lore = "Workhorse medium tank of the Wehrmacht's early war. Production peaked in 1942 before being supplanted by the Panzer IV; remained in service to 1945."
+codex_id = &"panzer_iii"

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="TowerStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/tower_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"anne_frank"
+display_name = "Anne Frank"
+faction = &"resistance"
+color = Color(0.55, 0.45, 0.65, 1)
+cost = 80
+damage = 4.0
+fire_rate = 1.5
+range_px = 280.0
+can_hit = 15
+adjacency_buffs = Array[StringName]([&"resistance"])
+adjacency_consumes = Array[StringName]([&"resistance"])
+tooltip_lore = "Jewish teenager who hid with her family in an Amsterdam attic for 25 months before betrayal in 1944. Her diary, published posthumously, is one of the most-read accounts of the Holocaust."
+codex_id = &"anne_frank"

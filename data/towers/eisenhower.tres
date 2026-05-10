@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="TowerStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/tower_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"eisenhower"
+display_name = "Dwight D. Eisenhower"
+faction = &"us"
+color = Color(0.42, 0.45, 0.28, 1)
+cost = 250
+damage = 60.0
+fire_rate = 0.2
+range_px = 220.0
+can_hit = 7
+adjacency_buffs = Array[StringName]([&"us"])
+adjacency_consumes = Array[StringName]([&"us"])
+tooltip_lore = "Supreme Commander of Allied Expeditionary Forces. Planned and approved Operation Overlord (D-Day, 6 June 1944), the largest amphibious assault in history."
+codex_id = &"eisenhower"

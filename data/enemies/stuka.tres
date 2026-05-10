@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="EnemyStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"stuka"
+display_name = "Stuka Ju-87"
+color = Color(0.35, 0.4, 0.5, 1)
+radius = 14.0
+max_hp = 50.0
+speed = 110.0
+armor = 0.0
+flags = 2
+lives_lost_on_leak = 1
+kill_reward = 10
+bond_reward = 0
+tooltip_lore = "Junkers Ju-87 dive bomber. Iconic siren-equipped attacker of the Blitzkrieg years; obsolete by 1943 against contested airspace."
+codex_id = &"stuka"
