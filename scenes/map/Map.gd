@@ -69,6 +69,9 @@ func _ready() -> void:
 			slots.append(slot)
 			slot.slot_clicked.connect(_on_slot_clicked)
 
+	EventBus.tower_palette_pick.connect(_select_tower_index)
+	EventBus.map_ready.emit(available_towers)
+
 	# Auto-start first wave after a short lead-in.
 	await get_tree().create_timer(2.0).timeout
 	if GameState.run_active:

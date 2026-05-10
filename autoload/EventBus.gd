@@ -24,6 +24,8 @@ signal tower_hovered(tower: Node)
 signal tower_unhovered(tower: Node)
 signal tower_clicked(tower: Node)  ## opens info panel
 signal tower_buffs_changed(tower: Node)  ## adjacency recompute applied
+signal map_ready(available_towers: Array)  ## map publishes its tower list to HUD
+signal tower_palette_pick(idx: int)  ## HUD tells map to switch selection
 
 # Codex
 signal codex_entry_unlocked(entry_id: StringName)

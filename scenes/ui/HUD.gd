@@ -25,9 +25,11 @@ extends CanvasLayer
 @onready var pause_overlay: Control = $PauseOverlay
 @onready var resume_btn: Button = $PauseOverlay/Center/VBox/ResumeButton
 @onready var speed_btn: Button = $TopBar/SpeedButton
+@onready var palette_container: HBoxContainer = $TowerPalette
 
 const _SPEED_CYCLE: Array[float] = [1.0, 2.0, 4.0]
 var _speed_idx: int = 0
+var _palette_towers: Array = []
 @onready var shop_panel: PanelContainer = $ShopPanel
 @onready var shop_title: Label = $ShopPanel/VBox/Title
 @onready var shop_gold_label: Label = $ShopPanel/VBox/GoldLabel
@@ -79,6 +81,7 @@ func _ready() -> void:
 	_apply_speed()
 	end_perk_btn.pressed.connect(_on_perk_btn_pressed)
 	end_restart_btn.pressed.connect(_on_restart_pressed)
+	EventBus.map_ready.connect(_on_map_ready)
 	shop_panel.visible = false
 	shop_next_btn.pressed.connect(_on_shop_next_pressed)
 	EventBus.shop_opened.connect(_on_shop_opened)
@@ -115,6 +118,39 @@ func _process(_delta: float) -> void:
 func _on_selection_changed(stats: Resource) -> void:
 	if selection_label and stats:
 		selection_label.text = "Selected: %s (%dg)" % [stats.display_name, stats.cost]
+	_refresh_palette_highlight(stats)
+
+func _on_map_ready(towers: Array) -> void:
+	_palette_towers = towers
+	for c in palette_container.get_children():
+		c.queue_free()
+	for i in towers.size():
+		var stats = towers[i]
+		var btn := Button.new()
+		btn.text = "%d: %s\n%dg" % [i + 1, _short_figure_name(stats.display_name), stats.cost]
+		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		btn.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		btn.modulate = stats.color.lerp(Color.WHITE, 0.5)
+		btn.flat = true
+		var idx := i
+		btn.pressed.connect(func(): EventBus.tower_palette_pick.emit(idx))
+		palette_container.add_child(btn)
+
+func _refresh_palette_highlight(active_stats: Resource) -> void:
+	for i in palette_container.get_child_count():
+		var btn := palette_container.get_child(i) as Button
+		if btn == null:
+			continue
+		if i < _palette_towers.size() and _palette_towers[i] == active_stats:
+			btn.flat = false
+		else:
+			btn.flat = true
+
+func _short_figure_name(full: String) -> String:
+	var parts := full.split(" ")
+	if parts.size() <= 1:
+		return full
+	return "%s. %s" % [parts[0].substr(0, 1), parts[-1]]
 
 func _show_tooltip_for_stats(stats: Resource) -> void:
 	if stats == null:
