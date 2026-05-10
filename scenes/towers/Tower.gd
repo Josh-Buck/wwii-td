@@ -14,6 +14,8 @@ var targets_in_range: Array = []
 var active_buffs: Dictionary = {}  ## tag -> source tower (M2)
 var owning_slot: Node = null   ## set by Map on placement; cleared on sell
 
+const _PROJECTILE_SCENE: PackedScene = preload("res://scenes/projectiles/Projectile.tscn")
+
 @onready var range_area: Area2D = $RangeArea
 @onready var range_collision: CollisionShape2D = $RangeArea/CollisionShape2D
 @onready var hover_area: Area2D = $HoverArea
@@ -105,9 +107,25 @@ func _on_fire_tick() -> void:
 	_fire_at(target)
 
 func _fire_at(target: Node) -> void:
-	# M0: instant-hit damage. Projectiles arrive in M1.
-	if target.has_method("take_damage"):
-		target.take_damage(effective_damage())
+	if not is_instance_valid(target):
+		return
+	var projectile := _PROJECTILE_SCENE.instantiate()
+	projectile.setup(target, effective_damage())
+	projectile.global_position = global_position
+	var container := _find_projectiles_container()
+	if container:
+		container.add_child(projectile)
+	else:
+		get_parent().add_child(projectile)
+
+func _find_projectiles_container() -> Node:
+	var n: Node = get_parent()
+	while n:
+		var c: Node = n.get_node_or_null("Projectiles")
+		if c:
+			return c
+		n = n.get_parent()
+	return null
 
 func _draw() -> void:
 	if stats == null:
