@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/map/Map.gd" id="1_map"]
 [ext_resource type="Script" path="res://scenes/map/PlacementSlot.gd" id="2_slot"]
+[ext_resource type="Script" path="res://scenes/map/MapDecor.gd" id="2_decor"]
 [ext_resource type="Script" path="res://scripts/systems/WaveDirector.gd" id="3_wd"]
 [ext_resource type="PackedScene" path="res://scenes/towers/Tower.tscn" id="4_tower"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/Enemy.tscn" id="5_enemy"]
@@ -68,15 +69,36 @@ enemy_scene = ExtResource("5_enemy")
 offset_right = 1280.0
 offset_bottom = 720.0
 mouse_filter = 2
-color = Color(0.78, 0.82, 0.88, 1)
+color = Color(0.74, 0.80, 0.86, 1)
 
-[node name="PathLine" type="Line2D" parent="."]
+[node name="Decor" type="Node2D" parent="."]
+script = ExtResource("2_decor")
+style = &"ardennes"
+seed = 1944
+decor_count = 80
+path_points = PackedVector2Array(-40, 100, 240, 100, 240, 280, 80, 280, 80, 480, 400, 480, 400, 340, 640, 340, 640, 580, 880, 580, 880, 240, 1320, 240)
+
+[node name="PathOutline" type="Line2D" parent="."]
 points = PackedVector2Array(-40, 100, 240, 100, 240, 280, 80, 280, 80, 480, 400, 480, 400, 340, 640, 340, 640, 580, 880, 580, 880, 240, 1320, 240)
-width = 22.0
-default_color = Color(0.36, 0.30, 0.22, 1)
+width = 28.0
+default_color = Color(0.20, 0.18, 0.12, 1)
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
+
+[node name="PathLine" type="Line2D" parent="."]
+points = PackedVector2Array(-40, 100, 240, 100, 240, 280, 80, 280, 80, 480, 400, 480, 400, 340, 640, 340, 640, 580, 880, 580, 880, 240, 1320, 240)
+width = 20.0
+default_color = Color(0.55, 0.48, 0.36, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="PathCenterline" type="Line2D" parent="."]
+points = PackedVector2Array(-40, 100, 240, 100, 240, 280, 80, 280, 80, 480, 400, 480, 400, 340, 640, 340, 640, 580, 880, 580, 880, 240, 1320, 240)
+width = 2.0
+default_color = Color(0.92, 0.94, 0.98, 0.65)
+joint_mode = 2
 
 [node name="Path" type="Path2D" parent="."]
 curve = SubResource("curve")
