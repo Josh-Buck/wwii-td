@@ -871,12 +871,16 @@ func _refresh_shop_stocks() -> void:
 		var label := Label.new()
 		label.text = "%s  %s %dg/share" % [stock.display_name, trend, int(round(price))]
 		label.add_theme_font_size_override("font_size", 13)
-		var hold_lbl := Label.new()
-		hold_lbl.text = "Held: %d  ·  Value: %dg" % [owned, value]
-		hold_lbl.add_theme_font_size_override("font_size", 11)
-		hold_lbl.modulate = Color(0.85, 0.85, 0.85, 1)
+		var risk_lbl := Label.new()
+		risk_lbl.text = "%s   Trend: %s   %s" % [
+			_volatility_label(stock.volatility),
+			_drift_label(stock),
+			"Held: %d (%dg)" % [owned, value] if owned > 0 else "Held: 0",
+		]
+		risk_lbl.add_theme_font_size_override("font_size", 11)
+		risk_lbl.modulate = Color(0.85, 0.85, 0.85, 1)
 		row.add_child(label)
-		row.add_child(hold_lbl)
+		row.add_child(risk_lbl)
 		var btn_row := HBoxContainer.new()
 		btn_row.add_theme_constant_override("separation", 4)
 		var buy1 := Button.new()
@@ -901,6 +905,20 @@ func _refresh_shop_stocks() -> void:
 		btn_row.add_child(sellall)
 		row.add_child(btn_row)
 		shop_stocks_container.add_child(row)
+
+func _volatility_label(v: float) -> String:
+	if v >= 0.12:
+		return "Risk: HIGH"
+	elif v >= 0.07:
+		return "Risk: MED"
+	return "Risk: LOW"
+
+func _drift_label(stock: Resource) -> String:
+	var drift: float = stock.drift_early
+	var label: String = "%+d%%" % int(round(drift * 100))
+	if stock.drift_threshold_wave > 0 and stock.drift_late != stock.drift_early:
+		label += " → %+d%% (after wave %d)" % [int(round(stock.drift_late * 100)), stock.drift_threshold_wave]
+	return label
 
 func _on_buy_share(stock: Resource, count: int) -> void:
 	if GameState.buy_shares(stock, count):
