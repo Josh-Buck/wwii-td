@@ -58,9 +58,13 @@ docs/                     DESIGN.md, CONTENT.md, FIGURE_TEMPLATE.md
 ## Milestones
 
 - **M0** ✅ Scaffold: project, autoloads, 1 map, 1 tower (Patton), 1 enemy (Wehrmacht), 3 waves, deployed.
-- **M1** (active): 4 figures (Patton, Eisenhower, Churchill, Anne Frank), 3 enemies (Wehrmacht, Panzer III, Stuka), 8 waves, between-round shop, sell/refund, projectiles, target priority cycling, tooltip lore on hover.
-- **M2:** 8 figures, 5 enemies, first boss (Rommel), adjacency synergies, Bombing Run global ability, codex skeleton, second map.
-- **M3:** 10–12 figures, 8 enemies, 4 bosses (incl. Hitler), full meta-progression, roguelike shop, polished UI, v1.0.
+- **M1** ✅ Core mechanics: 4+ figures, 3+ enemies, multiple waves, between-round shop, sell/refund, projectiles, targeting modes, lore.
+- **M2** ✅ MVP: 8+ figures, 5+ enemies, first boss (Rommel), adjacency synergies, Bombing Run, codex, second map (Ardennes).
+- **M3** ✅ Full v1: 18 towers (14 figures + Maginot Bunker + 3 air units), 16 enemies (incl. 6 named bosses + Hitler finale), Manhattan Project ultimate, full meta-progression (recruit + rank promotion + perks), roguelike field offers with reroll, endless mode with scaling, polished UI.
+
+Beyond original v1 scope: endless mode with difficulty scaling, per-figure rank promotion across runs, stocks market with risk display, Manhattan codex chain unlock, two-map picker.
+
+**Outstanding:** sound effects + music (deferred).
 
 ## Adding a new figure
 
