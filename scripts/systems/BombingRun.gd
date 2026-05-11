@@ -72,6 +72,8 @@ func _process(delta: float) -> void:
 			_apply_damage()
 			strike_complete.emit()
 			queue_redraw()
+	if _targeting:
+		queue_redraw()
 
 func _apply_damage() -> void:
 	var r2: float = RADIUS * RADIUS
@@ -83,6 +85,12 @@ func _apply_damage() -> void:
 				e.take_damage(DAMAGE, true)  # pierces armor
 
 func _draw() -> void:
+	if _targeting and not _telegraph_active:
+		var mouse_pos: Vector2 = get_global_mouse_position()
+		draw_circle(mouse_pos, RADIUS, Color(1.0, 0.85, 0.3, 0.15))
+		draw_arc(mouse_pos, RADIUS, 0, TAU, 64, Color(1.0, 0.85, 0.3, 0.75), 2.0)
+		draw_line(mouse_pos - Vector2(6, 0), mouse_pos + Vector2(6, 0), Color(1.0, 0.85, 0.3, 0.9), 2.0)
+		draw_line(mouse_pos - Vector2(0, 6), mouse_pos + Vector2(0, 6), Color(1.0, 0.85, 0.3, 0.9), 2.0)
 	if _telegraph_active:
 		var t: float = clamp(_telegraph_left / TELEGRAPH_TIME, 0.0, 1.0)
 		var color := Color(1.0, 0.4, 0.3, 0.45 - 0.20 * t)
