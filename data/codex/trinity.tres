@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"trinity"
+title = "Trinity — first nuclear test (16 July 1945)"
+body = "The first detonation of a nuclear weapon. Conducted at 5:29 a.m. local time at the White Sands Proving Ground in the Jornada del Muerto desert of southern New Mexico, about 340 km south of Los Alamos.
+
+The device — codenamed 'the gadget' — was a plutonium implosion design, the same configuration later used at Nagasaki. It produced a yield of about 21 kilotons of TNT equivalent; the fireball reached roughly 12 km in altitude. The flash was seen 270 km away in Albuquerque, and the shockwave broke windows in Silver City.
+
+Physicists at the test pool reportedly held five-dollar bets on the yield; some had wagered the test would ignite the atmosphere. Enrico Fermi dropped torn pieces of paper from his hand to estimate the blast wave and arrived at roughly 10 kilotons — a remarkable improvised measurement. Sixteen days later, on 6 August, a uranium gun-type bomb destroyed Hiroshima; three days after that, a Trinity-design plutonium bomb destroyed Nagasaki."
+sources = "Sources: Atomic Heritage Foundation, U.S. Department of Energy, The Making of the Atomic Bomb (Richard Rhodes)."

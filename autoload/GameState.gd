@@ -12,6 +12,8 @@ var held_bonds: Array = []  ## each entry: {bond: WarBond, waves_remaining: int}
 var held_shares: Dictionary = {}  ## stock id -> count
 var has_free_upgrade: bool = false  ## roguelike shop: consume on next upgrade
 var free_tower_pending: StringName = &""  ## roguelike shop: free placement queued
+var manhattan_used: bool = false  ## true after the player uses the Manhattan Project once
+var manhattan_penalty: bool = false  ## halves WEP earned this run if true
 
 # Per-run statistics (reset on reset_run, displayed on end screen)
 var stat_kills: int = 0
@@ -28,6 +30,8 @@ func reset_run() -> void:
 	held_shares.clear()
 	has_free_upgrade = false
 	free_tower_pending = &""
+	manhattan_used = false
+	manhattan_penalty = false
 	stat_kills = 0
 	stat_gold_from_kills = 0
 	stat_bonds_purchased = 0

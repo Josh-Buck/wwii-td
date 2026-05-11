@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"hiroshima"
+title = "Hiroshima (6 August 1945)"
+body = "At 8:15 a.m. local time, a B-29 Superfortress named Enola Gay dropped a uranium gun-type bomb — codenamed 'Little Boy' — over the city of Hiroshima. The bomb detonated at about 580 m above ground, producing a yield of around 15 kilotons.
+
+Hiroshima was a Japanese military headquarters and supply node, but the population at the time was overwhelmingly civilian. Estimates of those killed immediately or in the first months from blast, fire, and acute radiation sickness range from 70,000 to 140,000 people. Tens of thousands more died over the following years from radiation-related cancers and injuries; the hibakusha — atomic-bomb survivors — and their families continue to live with that legacy.
+
+President Harry S. Truman, in a statement after the bombing, called Hiroshima 'a military base' chosen 'because we wished in this first attack to avoid, in so far as possible, the killing of civilians.' That framing has been the subject of historical debate ever since."
+sources = "Sources: Hiroshima Peace Memorial Museum, United States Holocaust Memorial Museum (Pacific theatre archives), The Making of the Atomic Bomb (Richard Rhodes), John Hersey's 'Hiroshima' (1946)."

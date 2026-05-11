@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"oppenheimer"
+title = "J. Robert Oppenheimer (1904-1967)"
+body = "American theoretical physicist. Scientific director of Project Y at Los Alamos from 1943 to 1945 — the laboratory inside the broader Manhattan Project that designed and built the first atomic bombs.
+
+Oppenheimer assembled and led a community of several thousand scientists and engineers — including Hans Bethe, Enrico Fermi, Richard Feynman, Stanislaw Ulam, and Niels Bohr — under extraordinary wartime conditions. He chose the test site at Alamogordo and named the first test 'Trinity' after a Donne sonnet.
+
+After witnessing the Trinity test on 16 July 1945, he later said the line from the Bhagavad Gita 'Now I am become Death, the destroyer of worlds' came into his mind. He spent the rest of his career arguing publicly for civilian control of nuclear weapons and against the U.S. hydrogen-bomb programme. In 1954, in a politically charged hearing during the second Red Scare, his security clearance was revoked. It was posthumously restored by the U.S. Department of Energy in 2022."
+sources = "Sources: American Prometheus (Kai Bird & Martin J. Sherwin), Atomic Heritage Foundation, U.S. Department of Energy."

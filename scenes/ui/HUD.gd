@@ -35,6 +35,7 @@ extends CanvasLayer
 @onready var pause_quit_btn: Button = $PauseOverlay/Center/VBox/PauseQuitButton
 @onready var speed_btn: Button = $TopBar/SpeedButton
 @onready var bomb_btn: Button = $TopBar/BombButton
+@onready var manhattan_btn: Button = $TopBar/ManhattanButton
 @onready var sidebar: PanelContainer = $TowerSidebar
 @onready var sidebar_list: VBoxContainer = $TowerSidebar/VBox/ScrollContainer/PaletteList
 @onready var sidebar_collapse_btn: Button = $TowerSidebar/VBox/HeaderRow/CollapseButton
@@ -113,6 +114,10 @@ const _CODEX_ENTRY_PATHS: Array[String] = [
 	"res://data/codex/tojo.tres",
 	"res://data/codex/hitler.tres",
 	"res://data/codex/v2_rocket.tres",
+	"res://data/codex/oppenheimer.tres",
+	"res://data/codex/trinity.tres",
+	"res://data/codex/hiroshima.tres",
+	"res://data/codex/nagasaki.tres",
 	"res://data/codex/audie_murphy.tres",
 	"res://data/codex/zhukov.tres",
 	"res://data/codex/rosie.tres",
@@ -160,6 +165,9 @@ func _ready() -> void:
 	speed_btn.pressed.connect(_cycle_speed)
 	_apply_speed()
 	bomb_btn.pressed.connect(_on_bomb_btn_pressed)
+	manhattan_btn.pressed.connect(_on_manhattan_btn_pressed)
+	EventBus.wave_ended.connect(_on_wave_ended_manhattan_chain)
+	_refresh_manhattan_button()
 	end_perk_btn.pressed.connect(_on_perk_btn_pressed)
 	end_recruit_btn.pressed.connect(_open_recruit_screen)
 	end_restart_btn.pressed.connect(_on_restart_pressed)
@@ -249,6 +257,61 @@ func _on_selection_changed(stats: Resource) -> void:
 	if selection_label and stats:
 		selection_label.text = "Selected: %s (%dg)" % [stats.display_name, stats.cost]
 	_refresh_palette_highlight(stats)
+
+const _MANHATTAN_CHAIN: Array[StringName] = [&"oppenheimer", &"trinity", &"hiroshima", &"nagasaki"]
+const _MANHATTAN_WAVE_UNLOCKS: Dictionary = {
+	4: &"oppenheimer",  ## after clearing wave 5 (wave index 4)
+	7: &"trinity",      ## after wave 8
+	10: &"hiroshima",   ## after wave 11
+	12: &"nagasaki",    ## after wave 13
+}
+
+func _on_wave_ended_manhattan_chain(idx: int) -> void:
+	if _MANHATTAN_WAVE_UNLOCKS.has(idx):
+		var entry_id: StringName = _MANHATTAN_WAVE_UNLOCKS[idx]
+		MetaProgress.mark_codex_seen(entry_id)
+	_refresh_manhattan_button()
+
+func _is_manhattan_chain_complete() -> bool:
+	for id in _MANHATTAN_CHAIN:
+		if id not in MetaProgress.codex_seen:
+			return false
+	return true
+
+func _refresh_manhattan_button() -> void:
+	var unlocked: bool = _is_manhattan_chain_complete()
+	manhattan_btn.visible = unlocked
+	if not unlocked:
+		return
+	if GameState.manhattan_used:
+		manhattan_btn.text = "Manhattan Project — used"
+		manhattan_btn.disabled = true
+	else:
+		manhattan_btn.text = "Manhattan Project"
+		manhattan_btn.disabled = false
+
+func _on_manhattan_btn_pressed() -> void:
+	if GameState.manhattan_used:
+		return
+	if not _is_manhattan_chain_complete():
+		return
+	var dialog := ConfirmationDialog.new()
+	dialog.title = "Authorize Manhattan Project?"
+	dialog.dialog_text = "This clears every enemy on the battlefield now. The moral cost: -50%% War Effort earned this run, and a permanent codex entry on civilian casualties. Once per run.\n\nProceed?"
+	add_child(dialog)
+	dialog.confirmed.connect(_apply_manhattan)
+	dialog.canceled.connect(dialog.queue_free)
+	dialog.confirmed.connect(dialog.queue_free)
+	dialog.popup_centered()
+
+func _apply_manhattan() -> void:
+	GameState.manhattan_used = true
+	GameState.manhattan_penalty = true
+	for e in get_tree().get_nodes_in_group("enemies"):
+		if is_instance_valid(e) and e.has_method("take_damage"):
+			e.take_damage(99999.0, true)
+	_show_toast("Manhattan Project authorized — battlefield cleared. Codex updated.")
+	_refresh_manhattan_button()
 
 func _on_bomb_btn_pressed() -> void:
 	var br_nodes := get_tree().get_nodes_in_group("bombing_run")
@@ -735,6 +798,7 @@ func _on_run_started_for_btn() -> void:
 	_wave_in_progress = false
 	_waves_completed = 0
 	_refresh_start_wave_btn()
+	_refresh_manhattan_button()
 
 func _on_run_ended_for_btn(_v: bool) -> void:
 	_wave_in_progress = false

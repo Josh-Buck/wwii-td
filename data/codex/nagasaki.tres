@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"nagasaki"
+title = "Nagasaki (9 August 1945)"
+body = "Three days after Hiroshima, at 11:02 a.m. local time, a B-29 named Bockscar dropped a plutonium implosion bomb — codenamed 'Fat Man' — over Nagasaki. The intended target was Kokura; cloud cover diverted the mission. Detonation at about 500 m altitude produced a yield of roughly 21 kilotons.
+
+The valley terrain partially confined the blast, but immediate deaths are estimated at 40,000 to 80,000, with a comparable number dying in the following months. Among those killed were Allied prisoners of war held at a camp on the city's outskirts, conscripted Korean labourers, and a substantial Japanese Catholic community concentrated near the hypocenter at Urakami Cathedral.
+
+On 15 August Emperor Hirohito's recorded surrender broadcast was aired; formal surrender was signed aboard the USS Missouri on 2 September 1945. The debate over whether the atomic bombings were necessary to end the war — whether a Soviet declaration of war (8 August), continued conventional bombing, or a demonstration blast might have produced the same result — has continued among historians for eight decades."
+sources = "Sources: Nagasaki Atomic Bomb Museum, United States Strategic Bombing Survey (1946), The Decision to Use the Atomic Bomb (Gar Alperovitz), Racing the Enemy (Tsuyoshi Hasegawa)."
