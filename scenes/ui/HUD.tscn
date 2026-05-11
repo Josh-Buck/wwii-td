@@ -165,10 +165,11 @@ vertical_alignment = 1
 theme_override_font_sizes/font_size = 22
 
 [node name="StartWavePanel" type="PanelContainer" parent="."]
-offset_left = 480.0
-offset_top = 60.0
-offset_right = 800.0
-offset_bottom = 120.0
+mouse_filter = 2
+offset_left = 880.0
+offset_top = 624.0
+offset_right = 1052.0
+offset_bottom = 676.0
 
 [node name="VBox" type="VBoxContainer" parent="StartWavePanel"]
 theme_override_constants/separation = 4
@@ -423,9 +424,9 @@ custom_minimum_size = Vector2(0, 44)
 visible = false
 text = "▸ War Room"
 offset_left = 12.0
-offset_top = 60.0
+offset_top = 624.0
 offset_right = 160.0
-offset_bottom = 92.0
+offset_bottom = 656.0
 tooltip_text = "Re-open the shop"
 
 [node name="CodexPanel" type="PanelContainer" parent="."]

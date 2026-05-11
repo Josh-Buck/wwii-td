@@ -513,18 +513,24 @@ func _show_defender_info(stats: Resource, placed_tower: Node = null) -> void:
 	def_info_panel.visible = true
 
 func _position_defender_panel(placed_tower: Node) -> void:
-	# Anchor the panel to whichever half of the screen the tower is NOT on,
-	# so it never covers the unit you're inspecting.
-	var panel_width: float = 320.0
-	var left: float
-	if placed_tower and is_instance_valid(placed_tower) and placed_tower.global_position.x > 640.0:
-		left = 32.0  # tower is right side → panel on left
-	else:
-		left = 1052.0 - panel_width  # tower is left side → panel on right
+	# Pop the panel right next to the clicked tower so the association is
+	# obvious. Place on whichever side has more room; clamp to screen edges.
+	var panel_width: float = 340.0
+	var panel_height: float = 580.0
+	var left: float = 1052.0 - panel_width
+	var top: float = 60.0
+	if placed_tower and is_instance_valid(placed_tower):
+		var p: Vector2 = placed_tower.global_position
+		# Side: opposite half from the tower so the panel doesn't cover it.
+		if p.x > 640.0:
+			left = max(32.0, p.x - 50.0 - panel_width)
+		else:
+			left = min(1052.0 - panel_width, p.x + 50.0)
+		top = clamp(p.y - 80.0, 60.0, 720.0 - panel_height - 20.0)
 	def_info_panel.offset_left = left
-	def_info_panel.offset_top = 60.0
+	def_info_panel.offset_top = top
 	def_info_panel.offset_right = left + panel_width
-	def_info_panel.offset_bottom = 660.0
+	def_info_panel.offset_bottom = top + panel_height
 
 func _hide_defender_info() -> void:
 	if _info_active_tower and is_instance_valid(_info_active_tower):
@@ -859,10 +865,14 @@ func _on_enemy_unhovered(_enemy: Node) -> void:
 	tooltip.visible = false
 
 func _on_tower_clicked(tower: Node) -> void:
+	print("[HUD] _on_tower_clicked received for: ", tower.stats.id if (tower and tower.stats) else "<nil>")
 	_selected_tower = tower
 	if is_instance_valid(tower) and tower.stats:
 		_show_defender_info(tower.stats, tower)
 		_show_toast("Selected %s — upgrade panel open" % tower.stats.display_name)
+		print("[HUD] def_info_panel.visible=", def_info_panel.visible,
+			" pos=", def_info_panel.offset_left, ",", def_info_panel.offset_top,
+			" size=", def_info_panel.offset_right - def_info_panel.offset_left, "x", def_info_panel.offset_bottom - def_info_panel.offset_top)
 
 func _refresh_info_panel() -> void:
 	if _selected_tower == null or not is_instance_valid(_selected_tower):

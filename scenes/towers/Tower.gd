@@ -103,6 +103,7 @@ func _on_hover_exited() -> void:
 
 func _on_hover_input(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		print("[Tower] click registered: ", stats.id if stats else "<no stats>")
 		EventBus.tower_clicked.emit(self)
 
 func cycle_targeting_mode() -> StringName:
