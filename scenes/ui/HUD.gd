@@ -123,7 +123,9 @@ var _shop_bonds: Array = []
 var _codex_entries: Array = []
 var _shop_offers: Array = []
 var _shop_reroll_used: bool = false
+var _shop_offer_claimed: bool = false
 var _shop_rng := RandomNumberGenerator.new()
+const _OFFER_APPEARANCE_CHANCE: float = 0.4  ## ~40% of shops have field offers
 
 func _ready() -> void:
 	end_screen.visible = false
@@ -757,6 +759,7 @@ func _on_tower_clicked(tower: Node) -> void:
 	_selected_tower = tower
 	if is_instance_valid(tower) and tower.stats:
 		_show_defender_info(tower.stats, tower)
+		_show_toast("Selected %s — upgrade panel open" % tower.stats.display_name)
 
 func _refresh_info_panel() -> void:
 	if _selected_tower == null or not is_instance_valid(_selected_tower):
@@ -818,8 +821,13 @@ func _apply_speed() -> void:
 func _on_shop_opened(bonds: Array) -> void:
 	_shop_bonds = bonds
 	shop_title.text = "Wave %d complete — War Room" % (GameState.wave_index + 1)
-	_shop_offers = ShopRoller.roll_offers(GameState.wave_index, _shop_rng)
+	# Field offers only appear in ~40% of shops; player picks at most one.
+	if _shop_rng.randf() < _OFFER_APPEARANCE_CHANCE:
+		_shop_offers = ShopRoller.roll_offers(GameState.wave_index, _shop_rng)
+	else:
+		_shop_offers = []
 	_shop_reroll_used = false
+	_shop_offer_claimed = false
 	_refresh_shop_offers()
 	_refresh_shop_bonds()
 	_refresh_held_bonds()
@@ -829,6 +837,15 @@ func _on_shop_opened(bonds: Array) -> void:
 func _refresh_shop_offers() -> void:
 	for c in shop_offers_container.get_children():
 		c.queue_free()
+	if _shop_offers.is_empty():
+		var empty := Label.new()
+		empty.text = "No field offers this round."
+		empty.modulate = Color(0.65, 0.65, 0.65, 1)
+		empty.add_theme_font_size_override("font_size", 12)
+		shop_offers_container.add_child(empty)
+		shop_reroll_btn.visible = false
+		return
+	shop_reroll_btn.visible = true
 	for i in _shop_offers.size():
 		var offer: Dictionary = _shop_offers[i]
 		var card := PanelContainer.new()
@@ -848,7 +865,7 @@ func _refresh_shop_offers() -> void:
 		vbox.add_child(desc)
 		var btn := Button.new()
 		btn.text = _offer_button_text(offer)
-		btn.disabled = not _can_afford_offer(offer)
+		btn.disabled = _shop_offer_claimed or (not _can_afford_offer(offer))
 		btn.pressed.connect(_on_offer_claim.bind(i))
 		vbox.add_child(btn)
 		shop_offers_container.add_child(card)
@@ -869,17 +886,21 @@ func _can_afford_offer(offer: Dictionary) -> bool:
 	return true
 
 func _on_offer_claim(idx: int) -> void:
+	if _shop_offer_claimed:
+		return
 	if idx < 0 or idx >= _shop_offers.size():
 		return
 	var offer: Dictionary = _shop_offers[idx]
 	if ShopRoller.activate(offer):
-		_shop_offers.remove_at(idx)
+		_shop_offer_claimed = true
 		_refresh_shop_offers()
-		var note: String = offer.get("label", "Offer claimed")
-		_show_toast(note)
+		_show_toast("Claimed: %s" % offer.get("label", "offer"))
 
 func _refresh_reroll_btn() -> void:
-	if _shop_reroll_used:
+	if _shop_offer_claimed:
+		shop_reroll_btn.text = "Reroll locked (offer claimed)"
+		shop_reroll_btn.disabled = true
+	elif _shop_reroll_used:
 		shop_reroll_btn.text = "Reroll used"
 		shop_reroll_btn.disabled = true
 	else:

@@ -6,7 +6,7 @@
 radius = 160.0
 
 [sub_resource type="CircleShape2D" id="hoverShape"]
-radius = 30.0
+radius = 36.0
 
 [node name="Tower" type="Node2D"]
 script = ExtResource("1")
@@ -22,6 +22,7 @@ shape = SubResource("rangeShape")
 [node name="HoverArea" type="Area2D" parent="."]
 collision_layer = 0
 collision_mask = 0
+input_pickable = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HoverArea"]
 shape = SubResource("hoverShape")
