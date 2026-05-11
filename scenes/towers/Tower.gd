@@ -451,15 +451,28 @@ func _draw() -> void:
 	if stats == null:
 		return
 	# Air units: cast a shadow ellipse below to read as 'flying'.
+	# Ground units: small sandbag-style base plate for visual weight.
 	if stats.is_air_unit:
 		draw_set_transform(Vector2(4, TOWER_RADIUS + 6), 0, Vector2(1.0, 0.35))
 		draw_circle(Vector2.ZERO, TOWER_RADIUS * 0.9, Color(0, 0, 0, 0.35))
 		draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+	else:
+		# Base plate: stacked dark ellipse + ring suggesting sandbags / earthwork.
+		draw_set_transform(Vector2(0, TOWER_RADIUS + 4), 0, Vector2(1.0, 0.45))
+		draw_circle(Vector2.ZERO, TOWER_RADIUS + 4, Color(0.18, 0.16, 0.12, 0.55))
+		draw_arc(Vector2.ZERO, TOWER_RADIUS + 4, 0, TAU, 24, Color(0.36, 0.30, 0.20, 0.85), 1.5)
+		draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 	# Range preview (drawn under everything else when hovered or selected).
 	if hovered or selected:
 		var r := effective_range()
-		draw_circle(Vector2.ZERO, r, Color(1, 1, 1, 0.05))
-		draw_arc(Vector2.ZERO, r, 0, TAU, 64, Color(1, 1, 1, 0.55), 2.0)
+		draw_circle(Vector2.ZERO, r, Color(0.85, 0.78, 0.4, 0.08))
+		draw_arc(Vector2.ZERO, r, 0, TAU, 64, Color(0.95, 0.85, 0.50, 0.7), 2.0)
+		# Dashed inner ring for readability.
+		var dash_count: int = 32
+		for i in dash_count:
+			var a0: float = TAU * float(i) / dash_count
+			var a1: float = a0 + TAU / dash_count * 0.5
+			draw_arc(Vector2.ZERO, r - 4, a0, a1, 4, Color(0.95, 0.85, 0.50, 0.45), 1.0)
 	# Selection halo: bright cyan ring + outer ring so the picked tower is obvious.
 	if selected:
 		draw_arc(Vector2.ZERO, TOWER_RADIUS + 4.0, 0, TAU, 32, Color(0.4, 0.9, 1.0, 0.9), 3.0)

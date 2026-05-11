@@ -108,8 +108,14 @@ func take_damage(dmg: float, pierce_armor: bool = false) -> void:
 	if health_bar:
 		health_bar.value = hp
 	_spawn_damage_number(int(effective))
+	_flash_white()
 	if hp <= 0.0:
 		_die()
+
+func _flash_white() -> void:
+	modulate = Color(2.0, 2.0, 2.0, 1.0)
+	var tween := create_tween()
+	tween.tween_property(self, "modulate", Color.WHITE, 0.12)
 
 func _spawn_damage_number(dmg: int) -> void:
 	if dmg <= 0:
