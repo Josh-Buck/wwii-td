@@ -47,6 +47,11 @@ func _ready() -> void:
 			load("res://data/towers/fdr.tres"),
 			load("res://data/towers/bletchley.tres"),
 			load("res://data/towers/airborne_101.tres"),
+			load("res://data/towers/audie_murphy.tres"),
+			load("res://data/towers/zhukov.tres"),
+			load("res://data/towers/rosie.tres"),
+			load("res://data/towers/lemay.tres"),
+			load("res://data/towers/tuskegee.tres"),
 		]
 	if enemy_set.is_empty():
 		enemy_set = {
@@ -59,6 +64,10 @@ func _ready() -> void:
 			&"mengele": load("res://data/enemies/mengele.tres"),
 			&"himmler": load("res://data/enemies/himmler.tres"),
 			&"tojo": load("res://data/enemies/tojo.tres"),
+			&"tiger_i": load("res://data/enemies/tiger_i.tres"),
+			&"waffen_ss": load("res://data/enemies/waffen_ss.tres"),
+			&"banzai": load("res://data/enemies/banzai.tres"),
+			&"bersaglieri": load("res://data/enemies/bersaglieri.tres"),
 		}
 	if available_bonds.is_empty():
 		available_bonds = [

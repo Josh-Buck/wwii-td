@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3]
+[gd_scene load_steps=36 format=3]
 
 [ext_resource type="Script" path="res://scenes/map/Map.gd" id="1_map"]
 [ext_resource type="Script" path="res://scenes/map/PlacementSlot.gd" id="2_slot"]
@@ -24,6 +24,15 @@
 [ext_resource type="Resource" path="res://data/enemies/mengele.tres" id="22_meng"]
 [ext_resource type="Resource" path="res://data/enemies/himmler.tres" id="23_himm"]
 [ext_resource type="Resource" path="res://data/enemies/tojo.tres" id="24_tojo"]
+[ext_resource type="Resource" path="res://data/towers/audie_murphy.tres" id="25_audie"]
+[ext_resource type="Resource" path="res://data/towers/zhukov.tres" id="26_zhukov"]
+[ext_resource type="Resource" path="res://data/towers/rosie.tres" id="27_rosie"]
+[ext_resource type="Resource" path="res://data/towers/lemay.tres" id="28_lemay"]
+[ext_resource type="Resource" path="res://data/towers/tuskegee.tres" id="29_tuskg"]
+[ext_resource type="Resource" path="res://data/enemies/tiger_i.tres" id="30_tiger"]
+[ext_resource type="Resource" path="res://data/enemies/waffen_ss.tres" id="31_ss"]
+[ext_resource type="Resource" path="res://data/enemies/banzai.tres" id="32_banzai"]
+[ext_resource type="Resource" path="res://data/enemies/bersaglieri.tres" id="33_bers"]
 
 [sub_resource type="Curve2D" id="curve"]
 _data = {
@@ -36,7 +45,7 @@ radius = 28.0
 
 [node name="M0Field" type="Node2D"]
 script = ExtResource("1_map")
-available_towers = [ExtResource("7_patton"), ExtResource("9_eisen"), ExtResource("10_church"), ExtResource("11_frank"), ExtResource("14_monty"), ExtResource("15_pavli"), ExtResource("17_fdr"), ExtResource("18_bletchley"), ExtResource("19_airborne")]
+available_towers = [ExtResource("7_patton"), ExtResource("9_eisen"), ExtResource("10_church"), ExtResource("11_frank"), ExtResource("14_monty"), ExtResource("15_pavli"), ExtResource("17_fdr"), ExtResource("18_bletchley"), ExtResource("19_airborne"), ExtResource("25_audie"), ExtResource("26_zhukov"), ExtResource("27_rosie"), ExtResource("28_lemay"), ExtResource("29_tuskg")]
 enemy_set = {
 &"wehrmacht_infantry": ExtResource("8_wm"),
 &"panzer_iii": ExtResource("12_panzer"),
@@ -46,7 +55,11 @@ enemy_set = {
 &"heydrich": ExtResource("21_heyd"),
 &"mengele": ExtResource("22_meng"),
 &"himmler": ExtResource("23_himm"),
-&"tojo": ExtResource("24_tojo")
+&"tojo": ExtResource("24_tojo"),
+&"tiger_i": ExtResource("30_tiger"),
+&"waffen_ss": ExtResource("31_ss"),
+&"banzai": ExtResource("32_banzai"),
+&"bersaglieri": ExtResource("33_bers")
 }
 tower_scene = ExtResource("4_tower")
 enemy_scene = ExtResource("5_enemy")

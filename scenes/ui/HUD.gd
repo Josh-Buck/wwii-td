@@ -88,6 +88,15 @@ const _CODEX_ENTRY_PATHS: Array[String] = [
 	"res://data/codex/mengele.tres",
 	"res://data/codex/himmler.tres",
 	"res://data/codex/tojo.tres",
+	"res://data/codex/audie_murphy.tres",
+	"res://data/codex/zhukov.tres",
+	"res://data/codex/rosie.tres",
+	"res://data/codex/lemay.tres",
+	"res://data/codex/tuskegee.tres",
+	"res://data/codex/tiger_i.tres",
+	"res://data/codex/waffen_ss.tres",
+	"res://data/codex/banzai.tres",
+	"res://data/codex/bersaglieri.tres",
 ]
 
 var _selected_tower: Node = null
