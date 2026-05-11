@@ -22,7 +22,10 @@ var selected_tower_stats: TowerStats = null
 const _GHOST_SCENE: PackedScene = preload("res://scenes/towers/PlacementGhost.tscn")
 const _PATH_CLEARANCE: float = 36.0  ## minimum px from path centreline
 const _TOWER_CLEARANCE: float = 56.0 ## minimum px between towers
-const _MAP_MARGIN: float = 32.0      ## keep towers off the screen edge
+const _MAP_LEFT: float = 32.0
+const _MAP_TOP: float = 56.0         ## below TopBar
+const _MAP_RIGHT: float = 1052.0     ## left of the TowerSidebar (starts at 1064)
+const _MAP_BOTTOM: float = 680.0     ## above HintLabel
 
 var _placement_ghost: Node = null
 var _placement_active: bool = false
@@ -182,9 +185,9 @@ func _place_tower_at(pos: Vector2, stats: Resource) -> void:
 		_placement_ghost.set_valid(_is_valid_placement(_placement_ghost.global_position))
 
 func _is_valid_placement(pos: Vector2) -> bool:
-	if pos.x < _MAP_MARGIN or pos.x > 1280.0 - _MAP_MARGIN:
+	if pos.x < _MAP_LEFT or pos.x > _MAP_RIGHT:
 		return false
-	if pos.y < _MAP_MARGIN or pos.y > 720.0 - _MAP_MARGIN:
+	if pos.y < _MAP_TOP or pos.y > _MAP_BOTTOM:
 		return false
 	if _distance_to_path(pos) < _PATH_CLEARANCE:
 		return false
