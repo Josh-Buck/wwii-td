@@ -243,6 +243,17 @@ columns = 2
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 4
 
+[node name="ActionRow" type="HBoxContainer" parent="DefenderInfoPanel/VBox"]
+theme_override_constants/separation = 8
+
+[node name="TargetButton" type="Button" parent="DefenderInfoPanel/VBox/ActionRow"]
+size_flags_horizontal = 3
+text = "Target: First"
+
+[node name="SellButton" type="Button" parent="DefenderInfoPanel/VBox/ActionRow"]
+size_flags_horizontal = 3
+text = "Sell"
+
 [node name="Tooltip" type="PanelContainer" parent="."]
 visible = false
 mouse_filter = 2

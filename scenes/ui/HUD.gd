@@ -62,6 +62,8 @@ var _waves_completed: int = 0
 @onready var def_lore: Label = $DefenderInfoPanel/VBox/LoreLabel
 @onready var def_upgrades_header: Label = $DefenderInfoPanel/VBox/UpgradesHeader
 @onready var def_upgrades_grid: GridContainer = $DefenderInfoPanel/VBox/UpgradesGrid
+@onready var def_target_btn: Button = $DefenderInfoPanel/VBox/ActionRow/TargetButton
+@onready var def_sell_btn: Button = $DefenderInfoPanel/VBox/ActionRow/SellButton
 
 var _info_active_tower: Node = null  ## tower currently shown in info panel (if placed)
 var _info_active_stats: Resource = null  ## stats currently shown (palette card or placed tower)
@@ -150,6 +152,8 @@ func _ready() -> void:
 	sidebar_collapse_btn.pressed.connect(_toggle_sidebar)
 	sidebar_tab.pressed.connect(_toggle_sidebar)
 	def_close_btn.pressed.connect(_hide_defender_info)
+	def_target_btn.pressed.connect(_on_def_target_pressed)
+	def_sell_btn.pressed.connect(_on_def_sell_pressed)
 	wave_preview_panel.visible = false
 	EventBus.tower_placed.connect(_refresh_wave_preview_from_signal)
 	EventBus.tower_sold.connect(_refresh_wave_preview_after_sell)
@@ -327,6 +331,7 @@ func _show_defender_info(stats: Resource, placed_tower: Node = null) -> void:
 	def_weakness.text = "Weaknesses: %s" % _weaknesses_for(stats)
 	def_lore.text = stats.tooltip_lore
 	_refresh_upgrades_grid()
+	_refresh_action_row()
 	def_info_panel.visible = true
 
 func _hide_defender_info() -> void:
@@ -388,6 +393,30 @@ func _on_upgrade_btn_pressed(branch: StringName, tier_idx: int) -> void:
 		return
 	if _info_active_tower.purchase_upgrade(branch, tier_idx):
 		_refresh_upgrades_grid()
+		_refresh_action_row()
+
+func _refresh_action_row() -> void:
+	# Sell + target controls only apply to placed towers; hide for palette previews.
+	var has_placed: bool = _info_active_tower != null and is_instance_valid(_info_active_tower)
+	def_target_btn.visible = has_placed
+	def_sell_btn.visible = has_placed
+	if not has_placed:
+		return
+	def_target_btn.text = "Target: %s" % String(_info_active_tower.targeting_mode).capitalize()
+	var base_cost: int = _info_active_stats.cost if _info_active_stats else 0
+	var refund: int = int((base_cost + _info_active_tower.total_invested) * 0.75)
+	def_sell_btn.text = "Sell (+%dg)" % refund
+
+func _on_def_target_pressed() -> void:
+	if _info_active_tower and is_instance_valid(_info_active_tower):
+		_info_active_tower.cycle_targeting_mode()
+		_refresh_action_row()
+		_show_defender_info(_info_active_stats, _info_active_tower)
+
+func _on_def_sell_pressed() -> void:
+	if _info_active_tower and is_instance_valid(_info_active_tower):
+		_info_active_tower.sell()
+	_hide_defender_info()
 
 func _faction_label(f: StringName) -> String:
 	match f:
