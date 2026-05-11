@@ -191,7 +191,7 @@ func _ready() -> void:
 	lives_label.text = "Lives: %d" % GameState.lives
 	wave_label.text = "Wave 1"
 	if hint_label:
-		hint_label.text = "Click palette or 1-6 to pick. Click slot to deploy. Click tower to sell. Space=speed, P=pause, C=codex."
+		hint_label.text = "Sidebar: left-click = pick, right-click = info.  Click placed tower = upgrades / sell / target.  Space=speed, P=pause, C=codex."
 	if selection_label:
 		selection_label.text = "Selected: —"
 
@@ -249,6 +249,10 @@ func _build_sidebar_card(idx: int, stats: Resource) -> Button:
 	btn.pressed.connect(_on_palette_btn_pressed.bind(idx))
 	# Sidebar click only selects for placement; the detailed info panel is
 	# reserved for placed towers (where the upgrade grid is interactive).
+	# Built-in hover tooltip (fixed-position, ~0.5s delay) carries description.
+	btn.tooltip_text = _palette_tooltip_for(stats)
+	# Right-click → open the description panel without entering placement mode.
+	btn.gui_input.connect(_on_palette_card_gui_input.bind(stats))
 
 	var hbox := HBoxContainer.new()
 	hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -286,6 +290,36 @@ func _build_sidebar_card(idx: int, stats: Resource) -> Button:
 	vbox.add_child(cost_lbl)
 
 	return btn
+
+func _palette_tooltip_for(stats: Resource) -> String:
+	if stats == null:
+		return ""
+	var dps: float = stats.damage * stats.fire_rate
+	var lines: Array[String] = []
+	lines.append("%s — %dg" % [stats.display_name, stats.cost])
+	if stats.damage > 0:
+		lines.append("Damage %d  ·  Rate %.1f/s  ·  Range %d  ·  DPS %d" % [
+			int(stats.damage), stats.fire_rate, int(stats.range_px), int(dps)
+		])
+	if stats.aura_radius > 0:
+		lines.append("Aura r%d  ·  +%d%% fire rate to allies" % [
+			int(stats.aura_radius), int(stats.aura_fire_rate_bonus * 100)
+		])
+	if stats.gold_per_sec > 0:
+		lines.append("Eco: +%dg/sec while a wave is active" % int(stats.gold_per_sec))
+	if stats.provides_wave_preview:
+		lines.append("Reveals next wave's enemy composition")
+	if stats.tooltip_lore != "":
+		lines.append("")
+		lines.append(stats.tooltip_lore)
+	lines.append("")
+	lines.append("Left-click to select for placement.  Right-click for full info.")
+	return "\n".join(lines)
+
+func _on_palette_card_gui_input(event: InputEvent, stats: Resource) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+		_show_defender_info(stats, null)
+		get_viewport().set_input_as_handled()
 
 func _show_defender_info(stats: Resource, placed_tower: Node = null) -> void:
 	if stats == null:
@@ -805,34 +839,54 @@ func _refresh_shop_stocks() -> void:
 	for c in shop_stocks_container.get_children():
 		c.queue_free()
 	for stock in StockMarket.stocks:
-		var row := HBoxContainer.new()
-		var label := Label.new()
+		var row := VBoxContainer.new()
+		row.add_theme_constant_override("separation", 2)
 		var price: float = StockMarket.get_price(stock.id)
 		var trend: String = StockMarket.get_trend_symbol(stock.id)
 		var owned: int = GameState.held_shares.get(stock.id, 0)
-		label.text = "%s  %s %dg/share  (held: %d)" % [
-			stock.display_name, trend, int(round(price)), owned
-		]
-		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		var buy_btn := Button.new()
-		buy_btn.text = "Buy 1"
-		buy_btn.disabled = GameState.gold < int(ceil(price))
-		buy_btn.pressed.connect(_on_buy_share.bind(stock))
-		var sell_btn := Button.new()
-		sell_btn.text = "Sell 1"
-		sell_btn.disabled = owned <= 0
-		sell_btn.pressed.connect(_on_sell_share.bind(stock))
+		var value: int = int(price * owned)
+		var label := Label.new()
+		label.text = "%s  %s %dg/share" % [stock.display_name, trend, int(round(price))]
+		label.add_theme_font_size_override("font_size", 13)
+		var hold_lbl := Label.new()
+		hold_lbl.text = "Held: %d  ·  Value: %dg" % [owned, value]
+		hold_lbl.add_theme_font_size_override("font_size", 11)
+		hold_lbl.modulate = Color(0.85, 0.85, 0.85, 1)
 		row.add_child(label)
-		row.add_child(buy_btn)
-		row.add_child(sell_btn)
+		row.add_child(hold_lbl)
+		var btn_row := HBoxContainer.new()
+		btn_row.add_theme_constant_override("separation", 4)
+		var buy1 := Button.new()
+		buy1.text = "Buy 1"
+		buy1.disabled = GameState.gold < int(ceil(price))
+		buy1.pressed.connect(_on_buy_share.bind(stock, 1))
+		var buy5 := Button.new()
+		buy5.text = "Buy 5"
+		buy5.disabled = GameState.gold < int(ceil(price * 5))
+		buy5.pressed.connect(_on_buy_share.bind(stock, 5))
+		var sell1 := Button.new()
+		sell1.text = "Sell 1"
+		sell1.disabled = owned <= 0
+		sell1.pressed.connect(_on_sell_share.bind(stock, 1))
+		var sellall := Button.new()
+		sellall.text = "Sell all"
+		sellall.disabled = owned <= 0
+		sellall.pressed.connect(_on_sell_share.bind(stock, owned))
+		btn_row.add_child(buy1)
+		btn_row.add_child(buy5)
+		btn_row.add_child(sell1)
+		btn_row.add_child(sellall)
+		row.add_child(btn_row)
 		shop_stocks_container.add_child(row)
 
-func _on_buy_share(stock: Resource) -> void:
-	if GameState.buy_shares(stock, 1):
+func _on_buy_share(stock: Resource, count: int) -> void:
+	if GameState.buy_shares(stock, count):
 		_refresh_shop_stocks()
 
-func _on_sell_share(stock: Resource) -> void:
-	if GameState.sell_shares(stock, 1):
+func _on_sell_share(stock: Resource, count: int) -> void:
+	if count <= 0:
+		return
+	if GameState.sell_shares(stock, count):
 		_refresh_shop_stocks()
 
 func _toggle_codex() -> void:

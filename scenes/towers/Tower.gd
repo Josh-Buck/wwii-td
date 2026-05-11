@@ -385,6 +385,10 @@ func _draw() -> void:
 		var r := effective_range()
 		draw_circle(Vector2.ZERO, r, Color(1, 1, 1, 0.05))
 		draw_arc(Vector2.ZERO, r, 0, TAU, 64, Color(1, 1, 1, 0.55), 2.0)
+	# Selection halo: bright cyan ring + outer ring so the picked tower is obvious.
+	if selected:
+		draw_arc(Vector2.ZERO, TOWER_RADIUS + 4.0, 0, TAU, 32, Color(0.4, 0.9, 1.0, 0.9), 3.0)
+		draw_arc(Vector2.ZERO, TOWER_RADIUS + 10.0, 0, TAU, 32, Color(0.4, 0.9, 1.0, 0.45), 2.0)
 	if stats.portrait != null:
 		_draw_portrait()
 	else:
