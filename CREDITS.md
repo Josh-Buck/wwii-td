@@ -50,3 +50,65 @@ All figure portraits are public-domain photographs sourced from Wikimedia Common
   - File: [Bundesarchiv Bild 101I-478-2174-18A, Italien, Junkers Ju 87 auf Feldflugplatz](https://commons.wikimedia.org/wiki/File:Bundesarchiv_Bild_101I-478-2174-18A,_Italien,_Junkers_Ju_87_auf_Feldflugplatz.jpg)
   - License: **CC-BY-SA 3.0 de** — credit required: "Bundesarchiv, Bild 101I-478-2174-18A / Rieder, Fred / CC-BY-SA 3.0"
   - Description: Ju 87 Stuka on an Italian field airstrip, 1944; side view showing inverted gull wings.
+
+## Additional figure portraits (M2 roster)
+
+- **Audie Murphy** — `art/figures/audie_murphy.jpg`
+  - File: [Audie_Murphy_-_Courage_publicity.JPG](https://commons.wikimedia.org/wiki/File:Audie_Murphy_-_Courage_publicity.JPG)
+  - License: Public domain (US, no copyright notice, published 1931-1977)
+
+- **Georgy Zhukov** — `art/figures/zhukov.jpg`
+  - File: [Georgy_Zhukov_1.jpg](https://commons.wikimedia.org/wiki/File:Georgy_Zhukov_1.jpg)
+  - License: **CC-BY 4.0** — credit: Russian Ministry of Defence (mil.ru)
+
+- **Rosie the Riveter — "We Can Do It!"** — `art/figures/rosie.jpg`
+  - File: [We_Can_Do_It!.jpg](https://commons.wikimedia.org/wiki/File:We_Can_Do_It!.jpg)
+  - License: Public domain (US — published without copyright notice, J. Howard Miller for Westinghouse War Production Coordinating Committee, 1943)
+
+- **Curtis LeMay** — `art/figures/lemay.jpg`
+  - File: [Curtis_LeMay_(USAF).jpg](https://commons.wikimedia.org/wiki/File:Curtis_LeMay_(USAF).jpg)
+  - License: **PD-USGov-Military-Air Force**
+
+- **Tuskegee Airman (Edward C. Gleed)** — `art/figures/tuskegee.jpg`
+  - File: [Tuskegee_Airman_Edward_Gleed_with_his_P-51.jpg](https://commons.wikimedia.org/wiki/File:Tuskegee_Airman_Edward_Gleed_with_his_P-51.jpg)
+  - License: Public domain (Toni Frissell Collection, Library of Congress — no known restrictions; Ramitelli, Italy, March 1945)
+
+## Boss portraits (v1+ Axis figures)
+
+- **Adolf Eichmann** — `art/enemies/eichmann.jpg`
+  - File: [Adolf_Eichmann_at_Trial1961.jpg](https://commons.wikimedia.org/wiki/File:Adolf_Eichmann_at_Trial1961.jpg)
+  - License: **PD-Israel** (Israeli GPO, copyright expired 50 years after creation). Eichmann at his 1961 Jerusalem trial.
+
+- **Reinhard Heydrich** — `art/enemies/heydrich.jpg`
+  - File: [Bundesarchiv Bild 146-1969-054-16, Reinhard Heydrich](https://commons.wikimedia.org/wiki/File:Bundesarchiv_Bild_146-1969-054-16,_Reinhard_Heydrich.jpg)
+  - License: **CC-BY-SA 3.0 de** — credit: "Bundesarchiv, Bild 146-1969-054-16 / CC-BY-SA 3.0"
+
+- **Josef Mengele** — `art/enemies/mengele.jpg`
+  - File: [WP_Josef_Mengele_1956.jpg](https://commons.wikimedia.org/wiki/File:WP_Josef_Mengele_1956.jpg)
+  - License: **PD-Argentina** (Law 11.723 Art. 34, 20-year photo term expired by 1976). 1956 Buenos Aires ID document photo.
+
+- **Heinrich Himmler** — `art/enemies/himmler.jpg`
+  - File: [Bundesarchiv Bild 183-S72707, Heinrich Himmler](https://commons.wikimedia.org/wiki/File:Bundesarchiv_Bild_183-S72707,_Heinrich_Himmler.jpg)
+  - License: **CC-BY-SA 3.0 de** — credit: "Bundesarchiv, Bild 183-S72707 / Friedrich Franz Bauer / CC-BY-SA 3.0"
+
+- **Hideki Tojo** — `art/enemies/tojo.jpg`
+  - File: [Hideki_Tōjō_portrait.jpg](https://commons.wikimedia.org/wiki/File:Hideki_T%C5%8Dj%C5%8D_portrait.jpg)
+  - License: **PD-Japan-oldphoto** + PD-US-1996. Pre-1957 Japanese state portrait.
+
+## Additional enemy unit photos
+
+- **Tiger I** — `art/enemies/tiger_i.jpg`
+  - File: [Bundesarchiv Bild 183-J05741, Panzer VI "Tiger I"](https://commons.wikimedia.org/wiki/File:Bundesarchiv_Bild_183-J05741,_Panzer_VI_%22Tiger_I%22.jpg)
+  - License: **CC-BY-SA 3.0 de** — credit: "Bundesarchiv, Bild 183-J05741 / Schwahn / CC-BY-SA 3.0"
+
+- **Waffen-SS** — `art/enemies/waffen_ss.jpg`
+  - File: [Bundesarchiv Bild 101I-024-3535-30, Ostfront, Waffen-SS-Angehörige bei Rast](https://commons.wikimedia.org/wiki/File:Bundesarchiv_Bild_101I-024-3535-30,_Ostfront,_Waffen-SS-Angeh%C3%B6rige_bei_Rast.jpg)
+  - License: **CC-BY-SA 3.0 de** — credit: "Bundesarchiv, Bild 101I-024-3535-30 / Vorpahl / CC-BY-SA 3.0"
+
+- **Imperial Japanese infantry (Banzai stand-in)** — `art/enemies/banzai.jpg`
+  - File: [Japanese_soldier_of_the_Imperial_Japanese_Army.jpg](https://commons.wikimedia.org/wiki/File:Japanese_soldier_of_the_Imperial_Japanese_Army.jpg)
+  - License: **PD-Japan-oldphoto** / PD-US (copyright expired in Japan by 1970)
+
+- **Italian Bersaglieri** — `art/enemies/bersaglieri.jpg`
+  - File: [Bersaglieri_gunners_at_El_Alamein.jpg](https://commons.wikimedia.org/wiki/File:Bersaglieri_gunners_at_El_Alamein.jpg)
+  - License: **CC-BY 4.0**. Bersaglieri gunners at El Alamein, 1942.
