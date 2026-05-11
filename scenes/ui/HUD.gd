@@ -139,6 +139,7 @@ func _ready() -> void:
 	EventBus.wave_started.connect(_refresh_wave_preview_after_wave)
 	EventBus.wave_ended.connect(_refresh_wave_preview_after_wave)
 	EventBus.wave_started.connect(_check_boss_telegraph)
+	EventBus.boss_escaped.connect(_on_boss_escaped)
 	boss_telegraph.visible = false
 	# Start Wave button drives wave advance (replaces auto-start timer).
 	start_wave_btn.pressed.connect(_on_start_wave_btn_pressed)
@@ -443,6 +444,17 @@ func _refresh_wave_preview_after_sell(_t: Node, _refund: int) -> void:
 
 func _refresh_wave_preview_after_wave(_idx: int) -> void:
 	_refresh_wave_preview()
+
+func _on_boss_escaped(_boss: Node, boss_id: StringName) -> void:
+	# Mengele-style narrative beat — boss got away. Show in the boss telegraph
+	# slot in a different colour so the player notices.
+	boss_telegraph_label.text = "%s ESCAPED — never captured" % _humanize_id(boss_id)
+	boss_telegraph.modulate = Color(0.9, 0.4, 0.4, 1)
+	boss_telegraph.visible = true
+	await get_tree().create_timer(5.0).timeout
+	if is_instance_valid(boss_telegraph):
+		boss_telegraph.visible = false
+		boss_telegraph.modulate = Color(1, 0.7, 0.3, 1)  # restore default tint
 
 func _check_boss_telegraph(_idx: int) -> void:
 	var wd_nodes := get_tree().get_nodes_in_group("wave_director")

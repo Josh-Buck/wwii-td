@@ -291,6 +291,7 @@ func _pick_top_n_targets(n: int) -> Array:
 func _fire_at(target: Node) -> void:
 	if not is_instance_valid(target):
 		return
+	_spawn_muzzle_flash()
 	var projectile := _PROJECTILE_SCENE.instantiate()
 	var opts: Dictionary = {
 		"aoe": effective_aoe_radius(),
@@ -361,6 +362,16 @@ func _find_projectiles_container() -> Node:
 			return c
 		n = n.get_parent()
 	return null
+
+func _spawn_muzzle_flash() -> void:
+	var scene: PackedScene = preload("res://scenes/effects/FireFlash.tscn")
+	var fx: Node2D = scene.instantiate()
+	if stats:
+		fx.setup(stats.color.lightened(0.3))
+	fx.global_position = global_position
+	var parent: Node = get_tree().current_scene
+	if parent:
+		parent.add_child(fx)
 
 const TOWER_RADIUS: float = 30.0
 
