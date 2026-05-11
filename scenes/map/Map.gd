@@ -145,9 +145,12 @@ func _input(event: InputEvent) -> void:
 			if clicked_tower:
 				_exit_placement_mode()
 				return  # don't consume; Tower's HoverArea handles the click
-			if _is_valid_placement(pos) and selected_tower_stats and GameState.gold >= selected_tower_stats.cost:
-				_place_tower_at(pos, selected_tower_stats)
-				get_viewport().set_input_as_handled()
+			if _is_valid_placement(pos) and selected_tower_stats:
+				var has_gold: bool = GameState.gold >= selected_tower_stats.cost
+				var is_free: bool = GameState.free_tower_pending == selected_tower_stats.id
+				if has_gold or is_free:
+					_place_tower_at(pos, selected_tower_stats)
+					get_viewport().set_input_as_handled()
 
 func _filter_unlocked(towers: Array) -> Array:
 	var out: Array = []
@@ -183,14 +186,17 @@ func _exit_placement_mode() -> void:
 	_placement_ghost = null
 
 func _place_tower_at(pos: Vector2, stats: Resource) -> void:
-	if not GameState.spend_gold(stats.cost):
+	# Free placement from the roguelike shop ("Volunteer" offer) bypasses cost.
+	var free: bool = GameState.free_tower_pending == stats.id
+	if free:
+		GameState.free_tower_pending = &""
+	elif not GameState.spend_gold(stats.cost):
 		return
 	var tower = tower_scene.instantiate()
 	tower.stats = stats
 	tower.global_position = pos
 	towers_container.add_child(tower)
 	EventBus.tower_placed.emit(tower)
-	# Refresh ghost validity at the new spot (tower-too-close check now applies).
 	if _placement_ghost and is_instance_valid(_placement_ghost):
 		_placement_ghost.set_valid(_is_valid_placement(_placement_ghost.global_position))
 

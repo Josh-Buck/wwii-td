@@ -220,9 +220,12 @@ func purchase_upgrade(branch: StringName, tier_idx: int) -> bool:
 	if step.is_empty():
 		return false
 	var cost: int = step.get("cost", 0)
-	if not GameState.spend_gold(cost):
+	if GameState.has_free_upgrade:
+		GameState.has_free_upgrade = false
+	elif not GameState.spend_gold(cost):
 		return false
-	total_invested += cost
+	else:
+		total_invested += cost
 	if branch == &"branch_a":
 		upgrade_a_tier += 1
 	else:

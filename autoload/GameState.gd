@@ -10,6 +10,8 @@ var run_active: bool = false
 var wave_in_progress: bool = false  ## true between wave_started and wave_ended
 var held_bonds: Array = []  ## each entry: {bond: WarBond, waves_remaining: int}
 var held_shares: Dictionary = {}  ## stock id -> count
+var has_free_upgrade: bool = false  ## roguelike shop: consume on next upgrade
+var free_tower_pending: StringName = &""  ## roguelike shop: free placement queued
 
 # Per-run statistics (reset on reset_run, displayed on end screen)
 var stat_kills: int = 0
@@ -24,6 +26,8 @@ func reset_run() -> void:
 	wave_index = 0
 	held_bonds.clear()
 	held_shares.clear()
+	has_free_upgrade = false
+	free_tower_pending = &""
 	stat_kills = 0
 	stat_gold_from_kills = 0
 	stat_bonds_purchased = 0
@@ -86,6 +90,9 @@ func buy_bond(bond: Resource) -> bool:
 	held_bonds.append({"bond": bond, "waves_remaining": bond.maturity_waves})
 	EventBus.bond_purchased.emit(bond)
 	return true
+
+func buy_bond_resource(bond: Resource) -> bool:
+	return buy_bond(bond)
 
 func buy_shares(stock: Resource, count: int) -> bool:
 	if stock == null or count <= 0:

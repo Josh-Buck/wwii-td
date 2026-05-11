@@ -369,6 +369,17 @@ horizontal_scroll_mode = 0
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
+[node name="OffersHeader" type="Label" parent="ShopPanel/VBox/Scroll/ScrollContent"]
+text = "Field Offers — random, one-time"
+theme_override_font_sizes/font_size = 16
+
+[node name="OffersContainer" type="VBoxContainer" parent="ShopPanel/VBox/Scroll/ScrollContent"]
+theme_override_constants/separation = 4
+
+[node name="RerollButton" type="Button" parent="ShopPanel/VBox/Scroll/ScrollContent"]
+text = "Reroll (25g, once per visit)"
+custom_minimum_size = Vector2(0, 32)
+
 [node name="BondsHeader" type="Label" parent="ShopPanel/VBox/Scroll/ScrollContent"]
 text = "War Bonds — guaranteed payout when they mature"
 theme_override_font_sizes/font_size = 16

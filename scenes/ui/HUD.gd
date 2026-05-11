@@ -76,6 +76,8 @@ var _sidebar_collapsed: bool = false
 @onready var shop_panel: PanelContainer = $ShopPanel
 @onready var shop_title: Label = $ShopPanel/VBox/Title
 @onready var shop_gold_label: Label = $ShopPanel/VBox/GoldLabel
+@onready var shop_offers_container: VBoxContainer = $ShopPanel/VBox/Scroll/ScrollContent/OffersContainer
+@onready var shop_reroll_btn: Button = $ShopPanel/VBox/Scroll/ScrollContent/RerollButton
 @onready var shop_bonds_container: VBoxContainer = $ShopPanel/VBox/Scroll/ScrollContent/BondsContainer
 @onready var shop_held_container: VBoxContainer = $ShopPanel/VBox/Scroll/ScrollContent/HeldContainer
 @onready var shop_stocks_container: VBoxContainer = $ShopPanel/VBox/Scroll/ScrollContent/StocksContainer
@@ -119,6 +121,9 @@ const _CODEX_ENTRY_PATHS: Array[String] = [
 var _selected_tower: Node = null
 var _shop_bonds: Array = []
 var _codex_entries: Array = []
+var _shop_offers: Array = []
+var _shop_reroll_used: bool = false
+var _shop_rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
 	end_screen.visible = false
@@ -176,6 +181,8 @@ func _ready() -> void:
 	_refresh_start_wave_btn()
 	shop_panel.visible = false
 	shop_next_btn.pressed.connect(_on_shop_next_pressed)
+	_shop_rng.randomize()
+	shop_reroll_btn.pressed.connect(_on_shop_reroll)
 	EventBus.shop_opened.connect(_on_shop_opened)
 	EventBus.gold_changed.connect(_on_gold_changed_for_shop)
 	EventBus.bond_matured.connect(_on_bond_matured_in_shop)
@@ -303,6 +310,20 @@ func _build_sidebar_card(idx: int, stats: Resource) -> Button:
 
 	return btn
 
+func _count_same_kind_index(target: Node) -> int:
+	# Returns 1-based ordinal index of `target` among placed towers of its id,
+	# ordered by spawn (scene tree) order.
+	if target == null or target.stats == null:
+		return 1
+	var idx: int = 1
+	var target_id: StringName = target.stats.id
+	for tw in get_tree().get_nodes_in_group("towers"):
+		if tw == target:
+			return idx
+		if is_instance_valid(tw) and tw.stats and tw.stats.id == target_id:
+			idx += 1
+	return idx
+
 func _palette_tooltip_for(stats: Resource) -> String:
 	if stats == null:
 		return ""
@@ -345,7 +366,11 @@ func _show_defender_info(stats: Resource, placed_tower: Node = null) -> void:
 	if _info_active_tower:
 		_info_active_tower.selected = true
 		_info_active_tower.queue_redraw()
-	def_name.text = "%s — %dg" % [stats.display_name, stats.cost]
+	if _info_active_tower and is_instance_valid(_info_active_tower):
+		var same_kind: int = _count_same_kind_index(_info_active_tower)
+		def_name.text = "%s #%d  (this unit)" % [stats.display_name, same_kind]
+	else:
+		def_name.text = "%s — %dg" % [stats.display_name, stats.cost]
 	def_faction.text = "Faction: %s" % _faction_label(stats.faction)
 	# If a placed tower is shown, display its EFFECTIVE stats (with upgrades);
 	# otherwise show the base stats from the resource.
@@ -793,10 +818,82 @@ func _apply_speed() -> void:
 func _on_shop_opened(bonds: Array) -> void:
 	_shop_bonds = bonds
 	shop_title.text = "Wave %d complete — War Room" % (GameState.wave_index + 1)
+	_shop_offers = ShopRoller.roll_offers(GameState.wave_index, _shop_rng)
+	_shop_reroll_used = false
+	_refresh_shop_offers()
 	_refresh_shop_bonds()
 	_refresh_held_bonds()
 	_refresh_shop_stocks()
 	shop_panel.visible = true
+
+func _refresh_shop_offers() -> void:
+	for c in shop_offers_container.get_children():
+		c.queue_free()
+	for i in _shop_offers.size():
+		var offer: Dictionary = _shop_offers[i]
+		var card := PanelContainer.new()
+		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var vbox := VBoxContainer.new()
+		vbox.add_theme_constant_override("separation", 2)
+		card.add_child(vbox)
+		var title := Label.new()
+		title.text = offer.get("label", "")
+		title.add_theme_font_size_override("font_size", 14)
+		vbox.add_child(title)
+		var desc := Label.new()
+		desc.text = offer.get("desc", "")
+		desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		desc.add_theme_font_size_override("font_size", 11)
+		desc.modulate = Color(0.85, 0.85, 0.85, 1)
+		vbox.add_child(desc)
+		var btn := Button.new()
+		btn.text = _offer_button_text(offer)
+		btn.disabled = not _can_afford_offer(offer)
+		btn.pressed.connect(_on_offer_claim.bind(i))
+		vbox.add_child(btn)
+		shop_offers_container.add_child(card)
+	_refresh_reroll_btn()
+
+func _offer_button_text(offer: Dictionary) -> String:
+	match offer.get("type", ""):
+		"bond_deal":
+			var d: Dictionary = offer.get("payload", {})
+			return "Claim — %dg" % int(d.get("cost", 0))
+		_:
+			return "Claim"
+
+func _can_afford_offer(offer: Dictionary) -> bool:
+	if offer.get("type", "") == "bond_deal":
+		var d: Dictionary = offer.get("payload", {})
+		return GameState.gold >= int(d.get("cost", 0))
+	return true
+
+func _on_offer_claim(idx: int) -> void:
+	if idx < 0 or idx >= _shop_offers.size():
+		return
+	var offer: Dictionary = _shop_offers[idx]
+	if ShopRoller.activate(offer):
+		_shop_offers.remove_at(idx)
+		_refresh_shop_offers()
+		var note: String = offer.get("label", "Offer claimed")
+		_show_toast(note)
+
+func _refresh_reroll_btn() -> void:
+	if _shop_reroll_used:
+		shop_reroll_btn.text = "Reroll used"
+		shop_reroll_btn.disabled = true
+	else:
+		shop_reroll_btn.text = "Reroll (%dg)" % ShopRoller.REROLL_COST
+		shop_reroll_btn.disabled = GameState.gold < ShopRoller.REROLL_COST
+
+func _on_shop_reroll() -> void:
+	if _shop_reroll_used:
+		return
+	if not GameState.spend_gold(ShopRoller.REROLL_COST):
+		return
+	_shop_reroll_used = true
+	_shop_offers = ShopRoller.roll_offers(GameState.wave_index, _shop_rng)
+	_refresh_shop_offers()
 
 func _on_shop_next_pressed() -> void:
 	shop_panel.visible = false
