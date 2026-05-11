@@ -56,6 +56,9 @@ func _ready() -> void:
 			load("res://data/towers/rosie.tres"),
 			load("res://data/towers/lemay.tres"),
 			load("res://data/towers/tuskegee.tres"),
+			load("res://data/towers/spitfire.tres"),
+			load("res://data/towers/mustang.tres"),
+			load("res://data/towers/b17.tres"),
 		]
 	available_towers = _filter_unlocked(available_towers)
 	if enemy_set.is_empty():
@@ -206,10 +209,16 @@ func _is_valid_placement(pos: Vector2) -> bool:
 		return false
 	if pos.y < _MAP_TOP or pos.y > _MAP_BOTTOM:
 		return false
-	if _distance_to_path(pos) < _PATH_CLEARANCE:
+	# Air units patrol overhead — they ignore path clearance and only clash
+	# with other air units.
+	var is_air: bool = selected_tower_stats != null and selected_tower_stats.is_air_unit
+	if not is_air and _distance_to_path(pos) < _PATH_CLEARANCE:
 		return false
 	for tw in get_tree().get_nodes_in_group("towers"):
-		if not is_instance_valid(tw):
+		if not is_instance_valid(tw) or tw.stats == null:
+			continue
+		# Ground vs air use separate spatial layers.
+		if tw.stats.is_air_unit != is_air:
 			continue
 		if pos.distance_to(tw.global_position) < _TOWER_CLEARANCE:
 			return false

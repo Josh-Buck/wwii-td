@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"b17"
+title = "Boeing B-17 Flying Fortress (1935-1945)"
+body = "Four-engine American heavy bomber, the centrepiece of the Eighth Air Force's daylight strategic bombing campaign over Europe. First flown in 1935 as a Boeing private venture; by 1944 the type was being built at over 350 airframes a month.
+
+The B-17 carried a typical 4,800 kg bomb load and was armed with up to thirteen .50-calibre machine guns — the heavy defensive armament that gave it the 'Flying Fortress' name. Crews flew in tight box formations to overlap those guns, but the campaign was costly: between 1942 and 1945 the Eighth Air Force lost about 4,750 heavy bombers in combat over Europe, and roughly 26,000 airmen killed.
+
+Notable raids: the Regensburg-Schweinfurt missions of August and October 1943 (large losses, debate about strategic bombing doctrine), and the round-the-clock campaign that, alongside RAF Bomber Command, helped grind down the Luftwaffe and German industry through 1944-45."
+sources = "Sources: National Museum of the United States Air Force, USAAF Statistical Digest WWII, The Mighty Eighth (Roger A. Freeman)."

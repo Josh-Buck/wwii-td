@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="TowerStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/tower_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"spitfire"
+display_name = "RAF Spitfire"
+faction = &"uk"
+color = Color(0.36, 0.50, 0.62, 1)
+cost = 220
+damage = 18.0
+fire_rate = 2.2
+range_px = 200.0
+can_hit = 3
+default_targeting = &"close"
+adjacency_buffs = Array[StringName]([&"uk"])
+adjacency_consumes = Array[StringName]([&"uk"])
+tooltip_lore = "Supermarine Spitfire. Single-engine fighter that, with the Hurricane, won the Battle of Britain (July-October 1940). Fast, agile, hits air and ground."
+codex_id = &"spitfire"
+is_air_unit = true

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"spitfire"
+title = "Supermarine Spitfire (1936-1948)"
+body = "Single-seat, single-engine British fighter designed by R. J. Mitchell, first flown in March 1936. The Spitfire, alongside the more numerous Hawker Hurricane, was the RAF's primary fighter during the Battle of Britain (July-October 1940), when Fighter Command turned back the Luftwaffe's bid for air superiority over southern England.
+
+The Mark I had a top speed of about 580 km/h and four .303 in machine guns; later marks carried 20 mm cannon and pushed past 730 km/h. Roughly 20,300 Spitfires were built across 24 main marks, more than any other British aircraft of the war. They served in every European theatre and the Pacific.
+
+The aircraft became, almost immediately, a symbol of resistance. Winston Churchill called the August 1940 air battles \"the Battle of Britain\" in advance, and the Spitfire was central to the narrative."
+sources = "Sources: Imperial War Museum, RAF Museum Hendon, Spitfire: The History (Eric B. Morgan & Edward Shacklady)."

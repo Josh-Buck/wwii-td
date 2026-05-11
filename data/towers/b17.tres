@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="TowerStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/tower_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"b17"
+display_name = "B-17 Flying Fortress"
+faction = &"us"
+color = Color(0.40, 0.42, 0.50, 1)
+cost = 450
+damage = 70.0
+fire_rate = 0.4
+range_px = 320.0
+aoe_radius = 80.0
+can_hit = 7
+default_targeting = &"first"
+adjacency_buffs = Array[StringName]([&"us"])
+adjacency_consumes = Array[StringName]([&"us"])
+tooltip_lore = "Boeing B-17 Flying Fortress. Four-engine heavy bomber; the centrepiece of the Eighth Air Force's daylight strategic bombing campaign over Europe. Slow, huge AoE, long range."
+codex_id = &"b17"
+is_air_unit = true

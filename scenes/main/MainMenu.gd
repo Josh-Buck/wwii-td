@@ -23,11 +23,14 @@ const _RECRUIT_ROSTER: Array[String] = [
 	"res://data/towers/rosie.tres",
 	"res://data/towers/airborne_101.tres",
 	"res://data/towers/tuskegee.tres",
+	"res://data/towers/spitfire.tres",
 	"res://data/towers/fdr.tres",
 	"res://data/towers/bletchley.tres",
 	"res://data/towers/zhukov.tres",
 	"res://data/towers/lemay.tres",
+	"res://data/towers/mustang.tres",
 	"res://data/towers/pavlichenko.tres",
+	"res://data/towers/b17.tres",
 ]
 
 func _ready() -> void:

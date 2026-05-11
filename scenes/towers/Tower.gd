@@ -38,6 +38,9 @@ func _ready() -> void:
 	# Fire timer is forced PAUSABLE so towers still stop shooting on pause.
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group("towers")
+	# Air units sit visually above ground towers so clicks pick them first.
+	if stats.is_air_unit:
+		z_index = 5
 	if stats.default_targeting != &"":
 		targeting_mode = stats.default_targeting
 	if stats.provides_wave_preview:
@@ -413,6 +416,11 @@ const TOWER_RADIUS: float = 30.0
 func _draw() -> void:
 	if stats == null:
 		return
+	# Air units: cast a shadow ellipse below to read as 'flying'.
+	if stats.is_air_unit:
+		draw_set_transform(Vector2(4, TOWER_RADIUS + 6), 0, Vector2(1.0, 0.35))
+		draw_circle(Vector2.ZERO, TOWER_RADIUS * 0.9, Color(0, 0, 0, 0.35))
+		draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 	# Range preview (drawn under everything else when hovered or selected).
 	if hovered or selected:
 		var r := effective_range()

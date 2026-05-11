@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"mustang"
+title = "North American P-51 Mustang (1940-late 1950s)"
+body = "U.S. long-range, single-seat fighter. Originally designed in 1940 to a British specification, the P-51 transformed when re-engined with the British Rolls-Royce Merlin in late 1942. The Merlin-powered P-51B and later marks combined high-altitude performance with a fuel range that, with drop tanks, exceeded 1,800 km.
+
+That range mattered. From late 1943 through 1944, the Mustang accompanied B-17 and B-24 bomber formations all the way to Berlin and back — the first Allied fighter that could. Bomber losses on long missions, which had been catastrophic at Schweinfurt and Regensburg in 1943, fell dramatically once Mustang escort was routine.
+
+Mustangs also flew in the Pacific, supporting B-29 raids on the Japanese home islands from Iwo Jima from March 1945."
+sources = "Sources: National Museum of the United States Air Force, USAAF Statistical Digest WWII, Mustang Designer (Ray Wagner)."

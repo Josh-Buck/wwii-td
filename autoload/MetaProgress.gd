@@ -17,11 +17,14 @@ const RECRUIT_COSTS: Dictionary = {
 	&"rosie": 6,
 	&"airborne_101": 8,
 	&"tuskegee": 8,
+	&"spitfire": 9,
 	&"fdr": 10,
 	&"bletchley": 10,
 	&"zhukov": 12,
 	&"lemay": 14,
+	&"mustang": 16,
 	&"pavlichenko": 18,
+	&"b17": 22,
 }
 
 # Per-rank promotion cost; each rank gives +8% damage, +5% fire rate.

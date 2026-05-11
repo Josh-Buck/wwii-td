@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="TowerStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/tower_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"mustang"
+display_name = "P-51 Mustang"
+faction = &"us"
+color = Color(0.62, 0.60, 0.40, 1)
+cost = 280
+damage = 30.0
+fire_rate = 1.5
+range_px = 260.0
+can_hit = 3
+default_targeting = &"strong"
+adjacency_buffs = Array[StringName]([&"us"])
+adjacency_consumes = Array[StringName]([&"us"])
+tooltip_lore = "North American P-51 Mustang. Long-range escort fighter — the plane that finally let B-17 raids reach Berlin and come back. Long range, hard-hitting."
+codex_id = &"mustang"
+is_air_unit = true
