@@ -74,7 +74,9 @@ var _palette_towers: Array = []
 var _palette_btns: Array = []
 var _sidebar_collapsed: bool = false
 @onready var shop_panel: PanelContainer = $ShopPanel
-@onready var shop_title: Label = $ShopPanel/VBox/Title
+@onready var shop_title: Label = $ShopPanel/VBox/HeaderRow/Title
+@onready var shop_minimize_btn: Button = $ShopPanel/VBox/HeaderRow/MinimizeButton
+@onready var shop_tab: Button = $ShopTab
 @onready var shop_gold_label: Label = $ShopPanel/VBox/GoldLabel
 @onready var shop_offers_container: VBoxContainer = $ShopPanel/VBox/Scroll/ScrollContent/OffersContainer
 @onready var shop_reroll_btn: Button = $ShopPanel/VBox/Scroll/ScrollContent/RerollButton
@@ -89,6 +91,7 @@ var _sidebar_collapsed: bool = false
 @onready var codex_close_btn: Button = $CodexPanel/VBox/CloseButton
 
 const _CODEX_ENTRY_PATHS: Array[String] = [
+	"res://data/codex/maginot_bunker.tres",
 	"res://data/codex/patton.tres",
 	"res://data/codex/eisenhower.tres",
 	"res://data/codex/churchill.tres",
@@ -182,7 +185,10 @@ func _ready() -> void:
 	EventBus.shop_closed.connect(_on_shop_closed_for_btn)
 	_refresh_start_wave_btn()
 	shop_panel.visible = false
+	shop_tab.visible = false
 	shop_next_btn.pressed.connect(_on_shop_next_pressed)
+	shop_minimize_btn.pressed.connect(_minimize_shop)
+	shop_tab.pressed.connect(_restore_shop)
 	_shop_rng.randomize()
 	shop_reroll_btn.pressed.connect(_on_shop_reroll)
 	EventBus.shop_opened.connect(_on_shop_opened)
@@ -705,9 +711,7 @@ func _on_shop_opened_for_btn(_b: Array) -> void:
 	start_wave_panel.visible = false
 
 func _on_shop_closed_for_btn() -> void:
-	# Map auto-emits start_wave_requested via shop's Next Wave button now? No —
-	# shop's Next Wave just closes the panel. We re-show the start button so the
-	# player can place towers between shop close and the next wave.
+	shop_tab.visible = false
 	_refresh_start_wave_btn()
 
 func _refresh_start_wave_btn() -> void:
@@ -918,10 +922,17 @@ func _on_shop_reroll() -> void:
 
 func _on_shop_next_pressed() -> void:
 	shop_panel.visible = false
+	shop_tab.visible = false
 	EventBus.shop_closed.emit()
-	# Immediately start the next wave (shop's Next Wave is the wave-trigger
-	# during the shop phase). For Wave 2+ this matches the user's expectation.
 	EventBus.start_wave_requested.emit()
+
+func _minimize_shop() -> void:
+	shop_panel.visible = false
+	shop_tab.visible = true
+
+func _restore_shop() -> void:
+	shop_panel.visible = true
+	shop_tab.visible = false
 
 func _refresh_shop_bonds() -> void:
 	for c in shop_bonds_container.get_children():

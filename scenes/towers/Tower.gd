@@ -51,6 +51,14 @@ func _ready() -> void:
 		_eco_timer.timeout.connect(_on_eco_tick)
 		add_child(_eco_timer)
 		_eco_timer.start()
+	if stats.slow_aura_factor > 0.0 and stats.aura_radius > 0.0:
+		var slow_timer := Timer.new()
+		slow_timer.process_mode = Node.PROCESS_MODE_PAUSABLE
+		slow_timer.wait_time = 0.25
+		slow_timer.one_shot = false
+		slow_timer.timeout.connect(_on_slow_aura_tick)
+		add_child(slow_timer)
+		slow_timer.start()
 	# Always assign a fresh shape per tower so range tweaks don't leak
 	# across instances via a shared scene-level sub_resource.
 	if range_collision:
@@ -107,6 +115,17 @@ func sell() -> void:
 		remove_from_group("wave_preview_providers")
 	EventBus.tower_sold.emit(self, refund)
 	queue_free()
+
+func _on_slow_aura_tick() -> void:
+	if stats == null or stats.slow_aura_factor <= 0.0:
+		return
+	var r2: float = stats.aura_radius * stats.aura_radius
+	for e in get_tree().get_nodes_in_group("enemies"):
+		if not is_instance_valid(e):
+			continue
+		if e.global_position.distance_squared_to(global_position) <= r2:
+			if e.has_method("apply_slow"):
+				e.apply_slow(stats.slow_aura_factor, 0.4)
 
 func _on_eco_tick() -> void:
 	if stats == null:

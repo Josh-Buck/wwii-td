@@ -29,6 +29,7 @@ class_name TowerStats extends Resource
 @export_group("Specials")
 @export var gold_per_sec: float = 0.0  ## passive eco generation while alive
 @export var provides_wave_preview: bool = false  ## enables the next-wave HUD panel
+@export_range(0.0, 1.0) var slow_aura_factor: float = 0.0  ## enemies in aura_radius move at this fraction of speed (0 = no slow)
 
 @export_group("Lore")
 @export_multiline var tooltip_lore: String = ""

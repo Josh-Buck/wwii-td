@@ -3,7 +3,7 @@ extends Node
 # Persistent across runs. Saved to user:// (IndexedDB on web).
 
 var war_effort_points: int = 0
-var unlocked_starting_figures: Array[StringName] = [&"patton", &"eisenhower", &"churchill", &"anne_frank"]
+var unlocked_starting_figures: Array[StringName] = [&"patton", &"eisenhower", &"churchill", &"anne_frank", &"maginot_bunker"]
 var figure_ranks: Dictionary = {}  ## StringName -> int (0..MAX_RANK)
 var unlocked_perks: Array[StringName] = []
 var codex_seen: Array[StringName] = []
@@ -131,7 +131,7 @@ func to_dict() -> Dictionary:
 func from_dict(d: Dictionary) -> void:
 	war_effort_points = d.get("war_effort_points", 0)
 	unlocked_starting_figures.clear()
-	for fig_id in [&"patton", &"eisenhower", &"churchill", &"anne_frank"]:
+	for fig_id in [&"patton", &"eisenhower", &"churchill", &"anne_frank", &"maginot_bunker"]:
 		unlocked_starting_figures.append(fig_id)
 	var loaded_figs: Array = d.get("unlocked_starting_figures", [])
 	for fig in loaded_figs:

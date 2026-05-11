@@ -41,6 +41,7 @@ func _ready() -> void:
 		enemy_scene = preload("res://scenes/enemies/Enemy.tscn")
 	if available_towers.is_empty():
 		available_towers = [
+			load("res://data/towers/maginot_bunker.tres"),
 			load("res://data/towers/patton.tres"),
 			load("res://data/towers/eisenhower.tres"),
 			load("res://data/towers/churchill.tres"),
@@ -258,7 +259,9 @@ func _on_all_waves_completed() -> void:
 
 func _on_run_ended(victory: bool) -> void:
 	var waves_cleared := GameState.wave_index + (1 if victory else 0)
-	var earned := waves_cleared
+	# 2 WEP per wave + 10 victory bonus + 1 per kill / 25 so a real run earns
+	# enough to recruit a figure (5-18 WEP) without grinding 4 runs each time.
+	var earned := waves_cleared * 2 + (10 if victory else 0) + (GameState.stat_kills / 25)
 	var total := wave_director.wave_count() if wave_director else 9
 	MetaProgress.award_war_effort(earned)
 	if hud and hud.has_method("show_end_screen"):

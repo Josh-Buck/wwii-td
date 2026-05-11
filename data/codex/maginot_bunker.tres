@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"maginot_bunker"
+title = "Maginot Line — fortified bunkers (1929-1940)"
+body = "France's chain of concrete fortifications, underground rail networks, and gun emplacements along the German border, named for War Minister André Maginot. Built between 1929 and 1940 at staggering cost — roughly 3 billion francs — it absorbed about half the French defense budget in the inter-war period.
+
+The Line never fell to direct assault. Its weakness was geography, not engineering: it ended at the Ardennes, which French command considered impassable to armour. The 1940 German offensive went around it, through the Ardennes and the Low Countries, and reached the Channel in six weeks. The bunkers themselves continued to hold their sectors and several only surrendered after the June 22 armistice ordered them to.
+
+In game terms it represents the doctrine of fortified defence — slow what passes you, even if you cannot stop it."
+sources = "Sources: Imperial War Museum, Service Historique de la Défense, To Lose a Battle (Alistair Horne)."
