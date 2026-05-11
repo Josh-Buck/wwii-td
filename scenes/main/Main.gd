@@ -1,6 +1,7 @@
 extends Node
 
 const M0_MAP := "res://scenes/map/maps/m0_field.tscn"
+const ARDENNES_MAP := "res://scenes/map/maps/ardennes.tscn"
 const MAIN_MENU := "res://scenes/main/MainMenu.tscn"
 
 @onready var map_container: Node = $MapContainer
@@ -15,9 +16,9 @@ func _show_main_menu() -> void:
 	map_container.add_child(menu)
 	menu.start_run_requested.connect(_on_start_run)
 
-func _on_start_run() -> void:
+func _on_start_run(map_path: String = M0_MAP) -> void:
 	GameState.reset_run()
-	_load_map(M0_MAP)
+	_load_map(map_path)
 
 func _load_map(path: String) -> void:
 	_clear_container()

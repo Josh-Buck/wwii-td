@@ -1,11 +1,19 @@
 extends Control
 
-signal start_run_requested
+signal start_run_requested(map_path: String)
+
+const _MAP_NORMANDY := "res://scenes/map/maps/m0_field.tscn"
+const _MAP_ARDENNES := "res://scenes/map/maps/ardennes.tscn"
 
 @onready var wep_label: Label = $Center/Panel/VBox/WepLabel
+@onready var map_label: Label = $Center/Panel/VBox/MapLabel
+@onready var map_normandy_btn: Button = $Center/Panel/VBox/MapRow/NormandyButton
+@onready var map_ardennes_btn: Button = $Center/Panel/VBox/MapRow/ArdennesButton
 @onready var start_btn: Button = $Center/Panel/VBox/StartButton
 @onready var recruit_btn: Button = $Center/Panel/VBox/RecruitButton
 @onready var codex_btn: Button = $Center/Panel/VBox/CodexButton
+
+var _selected_map: String = _MAP_NORMANDY
 @onready var recruit_overlay: Control = $RecruitOverlay
 @onready var recruit_wep: Label = $RecruitOverlay/Panel/VBox/WepLabel
 @onready var recruit_list: VBoxContainer = $RecruitOverlay/Panel/VBox/Scroll/RosterList
@@ -39,13 +47,28 @@ func _ready() -> void:
 	recruit_btn.pressed.connect(_open_recruit)
 	codex_btn.pressed.connect(_on_codex_pressed)
 	recruit_close.pressed.connect(_close_recruit)
+	map_normandy_btn.pressed.connect(_select_map.bind(_MAP_NORMANDY))
+	map_ardennes_btn.pressed.connect(_select_map.bind(_MAP_ARDENNES))
+	_refresh_map_buttons()
 	_refresh_top()
+
+func _select_map(path: String) -> void:
+	_selected_map = path
+	_refresh_map_buttons()
+
+func _refresh_map_buttons() -> void:
+	map_normandy_btn.disabled = _selected_map == _MAP_NORMANDY
+	map_ardennes_btn.disabled = _selected_map == _MAP_ARDENNES
+	if _selected_map == _MAP_NORMANDY:
+		map_label.text = "Map: Normandy Field"
+	else:
+		map_label.text = "Map: Ardennes (winding forest path)"
 
 func _refresh_top() -> void:
 	wep_label.text = "War Effort: %d" % MetaProgress.war_effort_points
 
 func _on_start_pressed() -> void:
-	start_run_requested.emit()
+	start_run_requested.emit(_selected_map)
 
 func _on_codex_pressed() -> void:
 	# Codex lives inside the HUD during a run. Tell the player how to access it.
