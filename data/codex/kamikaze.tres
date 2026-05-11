@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"kamikaze"
+title = "Tokkōtai — Kamikaze units (1944-1945)"
+body = "Tokubetsu Kōgekitai ('special attack units') — Japanese aerial suicide squadrons that emerged in October 1944 after the catastrophic Japanese defeat at the Battle of Leyte Gulf. Pilots flew aircraft (typically older models such as the Mitsubishi A6M Zero) loaded with explosives directly into Allied warships, primarily during the Philippine, Iwo Jima, and Okinawa campaigns.
+
+Roughly 3,800 Japanese pilots died in kamikaze attacks. They sank or damaged hundreds of Allied vessels, with about 47 ships sunk; the USS Bunker Hill, USS Franklin and USS Bismarck Sea were among the most heavily damaged. Allied counter-tactics combined picket-line destroyers, radar-vectored fighter patrols, and dense anti-aircraft barrages.
+
+Most kamikaze pilots were young, often university students given accelerated training. Postwar Japanese historiography wrestles with the distinction between the official 'voluntary' framing of the programme and the actual social, institutional, and command pressures placed on the pilots. Their last letters and diaries — published from the 1990s onward — show a much more complex picture than the propaganda image."
+sources = "Sources: Imperial War Museum, USS Bunker Hill action reports (NARA), Kamikaze Diaries (Emiko Ohnuki-Tierney), Pacific Crucible (Ian W. Toll)."

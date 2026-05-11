@@ -75,6 +75,7 @@ func _ready() -> void:
 			&"tojo": load("res://data/enemies/tojo.tres"),
 			&"hitler": load("res://data/enemies/hitler.tres"),
 			&"v2_rocket": load("res://data/enemies/v2_rocket.tres"),
+			&"kamikaze": load("res://data/enemies/kamikaze.tres"),
 			&"tiger_i": load("res://data/enemies/tiger_i.tres"),
 			&"waffen_ss": load("res://data/enemies/waffen_ss.tres"),
 			&"banzai": load("res://data/enemies/banzai.tres"),

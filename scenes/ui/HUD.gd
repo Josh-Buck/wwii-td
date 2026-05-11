@@ -114,6 +114,7 @@ const _CODEX_ENTRY_PATHS: Array[String] = [
 	"res://data/codex/tojo.tres",
 	"res://data/codex/hitler.tres",
 	"res://data/codex/v2_rocket.tres",
+	"res://data/codex/kamikaze.tres",
 	"res://data/codex/oppenheimer.tres",
 	"res://data/codex/trinity.tres",
 	"res://data/codex/hiroshima.tres",
