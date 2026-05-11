@@ -105,8 +105,22 @@ func take_damage(dmg: float, pierce_armor: bool = false) -> void:
 	hp -= effective
 	if health_bar:
 		health_bar.value = hp
+	_spawn_damage_number(int(effective))
 	if hp <= 0.0:
 		_die()
+
+func _spawn_damage_number(dmg: int) -> void:
+	if dmg <= 0:
+		return
+	var scene: PackedScene = preload("res://scenes/effects/DamageNumber.tscn")
+	var node: Node2D = scene.instantiate()
+	node.setup(dmg)
+	# Place above the enemy in world space. Add to scene root so it doesn't
+	# move with the enemy (looks more natural).
+	node.global_position = global_position + Vector2(0, -stats.radius - 4.0)
+	var parent: Node = get_tree().current_scene
+	if parent:
+		parent.add_child(node)
 
 func _die() -> void:
 	dead = true

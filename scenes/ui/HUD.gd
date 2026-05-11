@@ -33,6 +33,8 @@ extends CanvasLayer
 @onready var wave_preview_label: Label = $WavePreviewPanel/Label
 @onready var start_wave_panel: PanelContainer = $StartWavePanel
 @onready var start_wave_btn: Button = $StartWavePanel/VBox/StartWaveButton
+@onready var boss_telegraph: PanelContainer = $BossTelegraph
+@onready var boss_telegraph_label: Label = $BossTelegraph/Label
 
 var _wave_in_progress: bool = false
 var _waves_completed: int = 0
@@ -135,6 +137,8 @@ func _ready() -> void:
 	EventBus.tower_sold.connect(_refresh_wave_preview_after_sell)
 	EventBus.wave_started.connect(_refresh_wave_preview_after_wave)
 	EventBus.wave_ended.connect(_refresh_wave_preview_after_wave)
+	EventBus.wave_started.connect(_check_boss_telegraph)
+	boss_telegraph.visible = false
 	# Start Wave button drives wave advance (replaces auto-start timer).
 	start_wave_btn.pressed.connect(_on_start_wave_btn_pressed)
 	EventBus.wave_started.connect(_on_wave_started_for_btn)
@@ -256,12 +260,27 @@ func _show_defender_info(stats: Resource, placed_tower: Node = null) -> void:
 		_info_active_tower.queue_redraw()
 	def_name.text = "%s — %dg" % [stats.display_name, stats.cost]
 	def_faction.text = "Faction: %s" % _faction_label(stats.faction)
-	var dps: float = stats.damage * stats.fire_rate
+	# If a placed tower is shown, display its EFFECTIVE stats (with upgrades);
+	# otherwise show the base stats from the resource.
+	var d_value: float = stats.damage
+	var r_value: float = stats.fire_rate
+	var range_value: float = stats.range_px
+	var aoe_value: float = stats.aoe_radius
+	if _info_active_tower and is_instance_valid(_info_active_tower):
+		if _info_active_tower.has_method("effective_damage"):
+			d_value = _info_active_tower.effective_damage()
+		if _info_active_tower.has_method("effective_fire_rate"):
+			r_value = _info_active_tower.effective_fire_rate()
+		if _info_active_tower.has_method("effective_range"):
+			range_value = _info_active_tower.effective_range()
+		if _info_active_tower.has_method("effective_aoe_radius"):
+			aoe_value = _info_active_tower.effective_aoe_radius()
+	var dps: float = d_value * r_value
 	var aoe_str: String = ""
-	if stats.aoe_radius > 0:
-		aoe_str = "  AoE r%d" % int(stats.aoe_radius)
+	if aoe_value > 0:
+		aoe_str = "  AoE r%d" % int(aoe_value)
 	def_stats.text = "Damage %d  ·  Rate %.1f/s  ·  Range %d  ·  DPS %d%s" % [
-		int(stats.damage), stats.fire_rate, int(stats.range_px), int(dps), aoe_str
+		int(d_value), r_value, int(range_value), int(dps), aoe_str
 	]
 	def_hits.text = "Hits: %s   Default target: %s" % [
 		_hits_text(stats.can_hit),
@@ -423,6 +442,29 @@ func _refresh_wave_preview_after_sell(_t: Node, _refund: int) -> void:
 
 func _refresh_wave_preview_after_wave(_idx: int) -> void:
 	_refresh_wave_preview()
+
+func _check_boss_telegraph(_idx: int) -> void:
+	var wd_nodes := get_tree().get_nodes_in_group("wave_director")
+	if wd_nodes.is_empty():
+		return
+	var wd: Node = wd_nodes[0]
+	if not wd.has_method("get_boss_id_for_current_wave"):
+		return
+	var boss_id: StringName = wd.get_boss_id_for_current_wave()
+	if boss_id == &"":
+		return
+	# Show telegraph with the boss's display name.
+	var label_text: String = "⚠ BOSS WAVE: %s" % _humanize_id(boss_id)
+	boss_telegraph_label.text = label_text
+	boss_telegraph.visible = true
+	# Auto-hide after 4 seconds.
+	await get_tree().create_timer(4.0).timeout
+	if is_instance_valid(boss_telegraph):
+		boss_telegraph.visible = false
+
+func _humanize_id(id: StringName) -> String:
+	var s: String = String(id).replace("_", " ")
+	return s.capitalize()
 
 func _refresh_wave_preview() -> void:
 	var providers := get_tree().get_nodes_in_group("wave_preview_providers")

@@ -34,6 +34,24 @@ func _ready() -> void:
 	EventBus.enemy_killed.connect(_on_enemy_killed_for_count)
 	EventBus.enemy_reached_end.connect(_on_enemy_leaked)
 
+func get_boss_id_for_current_wave() -> StringName:
+	if _current_wave_index < 0 or _current_wave_index >= _waves.size():
+		return &""
+	var spawns: Array = _waves[_current_wave_index].get("spawns", [])
+	for s in spawns:
+		var enemy_id: StringName = StringName(s.get("enemy", ""))
+		if enemy_registry.has(enemy_id):
+			var stats: Resource = enemy_registry[enemy_id]
+			if stats and stats.is_boss:
+				return enemy_id
+	return &""
+
+func get_next_wave_spawns() -> Array:
+	var idx: int = _current_wave_index + 1
+	if idx >= _waves.size():
+		return []
+	return _waves[idx].get("spawns", [])
+
 func get_next_wave_summary() -> String:
 	var next_idx: int = _current_wave_index + 1
 	if next_idx >= _waves.size():
