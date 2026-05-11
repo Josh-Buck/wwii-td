@@ -112,3 +112,26 @@ All figure portraits are public-domain photographs sourced from Wikimedia Common
 - **Italian Bersaglieri** — `art/enemies/bersaglieri.jpg`
   - File: [Bersaglieri_gunners_at_El_Alamein.jpg](https://commons.wikimedia.org/wiki/File:Bersaglieri_gunners_at_El_Alamein.jpg)
   - License: **CC-BY 4.0**. Bersaglieri gunners at El Alamein, 1942.
+
+## Additional figure portraits (Bletchley / Bastogne / FDR)
+
+- **Franklin D. Roosevelt** — `art/figures/fdr.jpg`
+  - File: [FDR_in_1933.jpg](https://commons.wikimedia.org/wiki/File:FDR_in_1933.jpg)
+  - License: Public domain (US, published 1931-1963 without copyright renewal)
+  - Description: Official portrait, 27 December 1933, by Elias Goldensky.
+
+- **Alan Turing (Bletchley Park)** — `art/figures/bletchley.jpg`
+  - File: [Alan_Turing_Aged_16.jpg](https://commons.wikimedia.org/wiki/File:Alan_Turing_Aged_16.jpg)
+  - License: Public domain (author died 1954; life+70 expired; pre-1931 publication)
+  - Description: Turing at age 16, c. 1928; stand-in portrait for the Bletchley Park codebreakers.
+
+- **101st Airborne (Bastogne)** — `art/figures/airborne_101.jpg`
+  - File: [Paratroopers_Of_The_101st_Airborne_Moving_Up_To_Bastogne.jpg](https://commons.wikimedia.org/wiki/File:Paratroopers_Of_The_101st_Airborne_Moving_Up_To_Bastogne.jpg)
+  - License: PD-USGov (US Army Center of Military History; federal work product)
+  - Description: 101st Airborne paratroopers moving up to Bastogne during the Battle of the Bulge, December 1944.
+
+## Boss portraits (M2 — Rommel)
+
+- **Erwin Rommel** — `art/enemies/rommel.jpg`
+  - File: [Bundesarchiv Bild 183-J16362, Erwin Rommel](https://commons.wikimedia.org/wiki/File:Bundesarchiv_Bild_183-J16362,_Erwin_Rommel.jpg)
+  - License: **CC-BY-SA 3.0 de** — credit required: "Bundesarchiv, Bild 183-J16362 / Winkelmann / CC-BY-SA 3.0"

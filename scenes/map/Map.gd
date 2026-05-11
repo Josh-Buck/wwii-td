@@ -56,6 +56,7 @@ func _ready() -> void:
 			load("res://data/towers/lemay.tres"),
 			load("res://data/towers/tuskegee.tres"),
 		]
+	available_towers = _filter_unlocked(available_towers)
 	if enemy_set.is_empty():
 		enemy_set = {
 			&"wehrmacht_infantry": load("res://data/enemies/wehrmacht_infantry.tres"),
@@ -147,6 +148,15 @@ func _input(event: InputEvent) -> void:
 			if _is_valid_placement(pos) and selected_tower_stats and GameState.gold >= selected_tower_stats.cost:
 				_place_tower_at(pos, selected_tower_stats)
 				get_viewport().set_input_as_handled()
+
+func _filter_unlocked(towers: Array) -> Array:
+	var out: Array = []
+	for t in towers:
+		if t == null:
+			continue
+		if MetaProgress.is_unlocked(t.id):
+			out.append(t)
+	return out
 
 func _select_tower_index(idx: int) -> void:
 	if idx < 0 or idx >= available_towers.size():

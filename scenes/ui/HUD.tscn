@@ -456,5 +456,56 @@ modulate = Color(0.85, 0.85, 0.85, 1)
 [node name="PerkButton" type="Button" parent="EndScreen/Panel/VBox"]
 text = "Buy: +100 starting gold (10 WEP)"
 
+[node name="RecruitButton" type="Button" parent="EndScreen/Panel/VBox"]
+text = "Recruit Center"
+
 [node name="RestartButton" type="Button" parent="EndScreen/Panel/VBox"]
 text = "Restart"
+
+[node name="RecruitScreen" type="Control" parent="."]
+visible = false
+offset_right = 1280.0
+offset_bottom = 720.0
+mouse_filter = 0
+
+[node name="Background" type="ColorRect" parent="RecruitScreen"]
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0, 0, 0, 0.78)
+
+[node name="Panel" type="PanelContainer" parent="RecruitScreen"]
+offset_left = 180.0
+offset_top = 60.0
+offset_right = 1100.0
+offset_bottom = 660.0
+
+[node name="VBox" type="VBoxContainer" parent="RecruitScreen/Panel"]
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="RecruitScreen/Panel/VBox"]
+text = "Recruit Center"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 28
+
+[node name="WepLabel" type="Label" parent="RecruitScreen/Panel/VBox"]
+text = "War Effort: 0"
+horizontal_alignment = 1
+modulate = Color(1, 0.9, 0.5, 1)
+
+[node name="HintLabel" type="Label" parent="RecruitScreen/Panel/VBox"]
+text = "Recruit new figures or promote ones you've already unlocked. Each rank: +8% damage, +5% fire rate."
+horizontal_alignment = 1
+modulate = Color(0.8, 0.8, 0.8, 1)
+
+[node name="HSep" type="HSeparator" parent="RecruitScreen/Panel/VBox"]
+
+[node name="Scroll" type="ScrollContainer" parent="RecruitScreen/Panel/VBox"]
+custom_minimum_size = Vector2(0, 440)
+size_flags_vertical = 3
+
+[node name="RosterList" type="VBoxContainer" parent="RecruitScreen/Panel/VBox/Scroll"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="CloseButton" type="Button" parent="RecruitScreen/Panel/VBox"]
+text = "Back"

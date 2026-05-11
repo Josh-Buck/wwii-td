@@ -142,6 +142,7 @@ func effective_damage() -> float:
 	var dmg := stats.damage
 	for step in _active_upgrade_steps():
 		dmg *= step.get("damage_mult", 1.0)
+	dmg *= MetaProgress.damage_bonus_for(stats.id)
 	return dmg
 
 func effective_fire_rate() -> float:
@@ -150,6 +151,7 @@ func effective_fire_rate() -> float:
 	var rate := stats.fire_rate
 	for step in _active_upgrade_steps():
 		rate *= step.get("fire_rate_mult", 1.0)
+	rate *= MetaProgress.fire_rate_bonus_for(stats.id)
 	var multiplier := 1.0 + AdjacencySystem.RATE_BONUS_PER_BUFF * active_buffs.size()
 	for source in aura_buffs.values():
 		multiplier += source.get("fire_rate_bonus", 0.0)

@@ -1,9 +1,11 @@
-[gd_resource type="Resource" script_class="TowerStats" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="TowerStats" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/tower_stats.gd" id="1"]
+[ext_resource type="Texture2D" path="res://art/figures/airborne_101.jpg" id="2"]
 
 [resource]
 script = ExtResource("1")
+portrait = ExtResource("2")
 id = &"airborne_101"
 display_name = "101st Airborne (Bastogne)"
 faction = &"us"

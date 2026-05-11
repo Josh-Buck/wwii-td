@@ -11,7 +11,12 @@ extends CanvasLayer
 @onready var end_total_label: Label = $EndScreen/Panel/VBox/TotalLabel
 @onready var end_stats_label: Label = $EndScreen/Panel/VBox/StatsLabel
 @onready var end_perk_btn: Button = $EndScreen/Panel/VBox/PerkButton
+@onready var end_recruit_btn: Button = $EndScreen/Panel/VBox/RecruitButton
 @onready var end_restart_btn: Button = $EndScreen/Panel/VBox/RestartButton
+@onready var recruit_screen: Control = $RecruitScreen
+@onready var recruit_wep_label: Label = $RecruitScreen/Panel/VBox/WepLabel
+@onready var recruit_roster_list: VBoxContainer = $RecruitScreen/Panel/VBox/Scroll/RosterList
+@onready var recruit_close_btn: Button = $RecruitScreen/Panel/VBox/CloseButton
 @onready var hint_label: Label = $HintLabel
 @onready var selection_label: Label = $SelectionLabel
 @onready var tooltip: PanelContainer = $Tooltip
@@ -137,7 +142,10 @@ func _ready() -> void:
 	speed_btn.pressed.connect(_cycle_speed)
 	_apply_speed()
 	end_perk_btn.pressed.connect(_on_perk_btn_pressed)
+	end_recruit_btn.pressed.connect(_open_recruit_screen)
 	end_restart_btn.pressed.connect(_on_restart_pressed)
+	recruit_close_btn.pressed.connect(_close_recruit_screen)
+	recruit_screen.visible = false
 	EventBus.map_ready.connect(_on_map_ready)
 	sidebar_collapse_btn.pressed.connect(_toggle_sidebar)
 	sidebar_tab.pressed.connect(_toggle_sidebar)
@@ -886,6 +894,118 @@ func _on_perk_btn_pressed() -> void:
 	if MetaProgress.unlock_perk(MetaProgress.PERK_STARTING_GOLD_BONUS):
 		end_total_label.text = "Total War Effort: %d" % MetaProgress.war_effort_points
 		_refresh_perk_button()
+
+const _RECRUIT_ROSTER: Array[String] = [
+	"res://data/towers/montgomery.tres",
+	"res://data/towers/audie_murphy.tres",
+	"res://data/towers/rosie.tres",
+	"res://data/towers/airborne_101.tres",
+	"res://data/towers/tuskegee.tres",
+	"res://data/towers/fdr.tres",
+	"res://data/towers/bletchley.tres",
+	"res://data/towers/zhukov.tres",
+	"res://data/towers/lemay.tres",
+	"res://data/towers/pavlichenko.tres",
+]
+const _STARTING_ROSTER: Array[String] = [
+	"res://data/towers/patton.tres",
+	"res://data/towers/eisenhower.tres",
+	"res://data/towers/churchill.tres",
+	"res://data/towers/anne_frank.tres",
+]
+
+func _open_recruit_screen() -> void:
+	recruit_screen.visible = true
+	_refresh_recruit_screen()
+
+func _close_recruit_screen() -> void:
+	recruit_screen.visible = false
+
+func _refresh_recruit_screen() -> void:
+	recruit_wep_label.text = "War Effort: %d" % MetaProgress.war_effort_points
+	for c in recruit_roster_list.get_children():
+		c.queue_free()
+	# Starting roster first (always unlocked, can be promoted)
+	for path in _STARTING_ROSTER:
+		var stats: Resource = load(path)
+		if stats:
+			recruit_roster_list.add_child(_build_recruit_row(stats))
+	# Then the rest of the roster (locked + recruited)
+	for path in _RECRUIT_ROSTER:
+		var stats: Resource = load(path)
+		if stats:
+			recruit_roster_list.add_child(_build_recruit_row(stats))
+
+func _build_recruit_row(stats: Resource) -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var hbox := HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 10)
+	hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	panel.add_child(hbox)
+	# Portrait
+	if stats.portrait != null:
+		var tex := TextureRect.new()
+		tex.texture = stats.portrait
+		tex.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		tex.custom_minimum_size = Vector2(56, 56)
+		hbox.add_child(tex)
+	# Name + status
+	var vbox := VBoxContainer.new()
+	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vbox.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	hbox.add_child(vbox)
+	var name_lbl := Label.new()
+	name_lbl.text = stats.display_name
+	name_lbl.add_theme_font_size_override("font_size", 15)
+	vbox.add_child(name_lbl)
+	var unlocked := MetaProgress.is_unlocked(stats.id)
+	var rank := MetaProgress.rank_of(stats.id)
+	var status_lbl := Label.new()
+	if unlocked:
+		var rank_str: String = "Rank %d / %d" % [rank, MetaProgress.MAX_RANK]
+		if rank > 0:
+			rank_str += "  ·  +%d%% dmg  ·  +%d%% rate" % [
+				int(MetaProgress.DAMAGE_PER_RANK * rank * 100),
+				int(MetaProgress.FIRE_RATE_PER_RANK * rank * 100),
+			]
+		status_lbl.text = rank_str
+		status_lbl.modulate = Color(0.8, 1.0, 0.8, 1.0)
+	else:
+		status_lbl.text = "Locked"
+		status_lbl.modulate = Color(1.0, 0.6, 0.6, 1.0)
+	status_lbl.add_theme_font_size_override("font_size", 12)
+	vbox.add_child(status_lbl)
+	# Action button (recruit or promote)
+	var btn := Button.new()
+	btn.custom_minimum_size = Vector2(220, 48)
+	btn.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	if not unlocked:
+		var cost: int = int(MetaProgress.RECRUIT_COSTS.get(stats.id, 0))
+		btn.text = "Recruit  (%d WEP)" % cost
+		btn.disabled = MetaProgress.war_effort_points < cost
+		btn.pressed.connect(_on_recruit_pressed.bind(stats.id))
+	elif rank >= MetaProgress.MAX_RANK:
+		btn.text = "Max Rank"
+		btn.disabled = true
+	else:
+		var cost: int = MetaProgress.next_promote_cost(stats.id)
+		btn.text = "Promote to Rank %d  (%d WEP)" % [rank + 1, cost]
+		btn.disabled = MetaProgress.war_effort_points < cost
+		btn.pressed.connect(_on_promote_pressed.bind(stats.id))
+	hbox.add_child(btn)
+	return panel
+
+func _on_recruit_pressed(figure_id: StringName) -> void:
+	if MetaProgress.recruit_figure(figure_id):
+		_refresh_recruit_screen()
+		end_total_label.text = "Total War Effort: %d" % MetaProgress.war_effort_points
+
+func _on_promote_pressed(figure_id: StringName) -> void:
+	if MetaProgress.promote_figure(figure_id):
+		_refresh_recruit_screen()
+		end_total_label.text = "Total War Effort: %d" % MetaProgress.war_effort_points
 
 func _on_restart_pressed() -> void:
 	end_screen.visible = false
