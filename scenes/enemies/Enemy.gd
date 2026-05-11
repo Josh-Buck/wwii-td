@@ -5,6 +5,8 @@ class_name Enemy extends PathFollow2D
 var hp: float = 0.0
 var max_hp: float = 0.0
 var dead: bool = false
+var hp_mult: float = 1.0      ## endless-mode HP scaler (set by WaveDirector on spawn)
+var reward_mult: float = 1.0  ## endless-mode reward scaler
 var _slow_factor: float = 1.0
 var _slow_until: float = 0.0
 var _slow_active_prev: bool = false
@@ -21,7 +23,7 @@ func _ready() -> void:
 		push_error("Enemy spawned without EnemyStats")
 		return
 	add_to_group("enemies")
-	max_hp = stats.max_hp
+	max_hp = stats.max_hp * hp_mult
 	hp = max_hp
 	if hitbox_collision and hitbox_collision.shape == null:
 		var shape := CircleShape2D.new()
@@ -125,7 +127,7 @@ func _spawn_damage_number(dmg: int) -> void:
 func _die() -> void:
 	dead = true
 	_spawn_death_poof()
-	EventBus.enemy_killed.emit(self, stats.kill_reward)
+	EventBus.enemy_killed.emit(self, int(round(stats.kill_reward * reward_mult)))
 	queue_free()
 
 func _spawn_death_poof() -> void:

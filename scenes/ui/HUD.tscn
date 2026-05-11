@@ -339,7 +339,7 @@ text = "Resume"
 text = "Restart Run"
 
 [node name="PauseQuitButton" type="Button" parent="PauseOverlay/Center/VBox"]
-text = "Quit to Title (refresh)"
+text = "Quit to Main Menu"
 
 [node name="ShopPanel" type="PanelContainer" parent="."]
 visible = false

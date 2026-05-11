@@ -1,11 +1,12 @@
 class_name WaveDirector extends Node
 
-# Loads wave schedules from JSON during dev. Bake to .tres before web export
-# (PCK is read-only; mtime hot-reload only works in editor / desktop).
+# Loads wave schedules from JSON during dev. After the scripted list runs out
+# we switch to endless mode: each subsequent wave is generated procedurally
+# with a difficulty multiplier applied to enemy HP and rewards.
 
 signal wave_started(wave_index: int)
 signal wave_ended(wave_index: int)
-signal all_waves_completed
+signal all_waves_completed  ## retained for back-compat; never fired in endless mode
 
 @export var waves_json_path: String = "res://data/waves/m0.json"
 @export var enemy_scene: PackedScene
@@ -18,8 +19,21 @@ var _wave_active: bool = false
 var _spawning_active: bool = false
 var _enemies_killed_this_wave: int = 0
 var _enemies_total_this_wave: int = 0
+var _difficulty_mult: float = 1.0  ## HP + reward scaler applied to spawned enemies
+
+const _ENDLESS_HP_PER_WAVE: float = 0.12
+const _ENDLESS_REWARD_PER_WAVE: float = 0.06
+const _ENDLESS_BASE_POOL: Array[StringName] = [
+	&"wehrmacht_infantry", &"panzer_iii", &"stuka",
+	&"waffen_ss", &"tiger_i", &"banzai", &"bersaglieri",
+]
+const _ENDLESS_BOSS_POOL: Array[StringName] = [
+	&"rommel", &"eichmann", &"heydrich", &"himmler", &"tojo",
+]
+const _ENDLESS_BOSS_INTERVAL: int = 5
 
 @onready var _path: Path2D = _resolve_path()
+var _rng := RandomNumberGenerator.new()
 
 func _resolve_path() -> Path2D:
 	var p := get_parent()
@@ -32,14 +46,13 @@ func _resolve_path() -> Path2D:
 
 func _ready() -> void:
 	add_to_group("wave_director")
+	_rng.randomize()
 	_load_waves()
 	EventBus.enemy_killed.connect(_on_enemy_killed_for_count)
 	EventBus.enemy_reached_end.connect(_on_enemy_leaked)
 
 func get_boss_id_for_current_wave() -> StringName:
-	if _current_wave_index < 0 or _current_wave_index >= _waves.size():
-		return &""
-	var spawns: Array = _waves[_current_wave_index].get("spawns", [])
+	var spawns: Array = _wave_spawns_at(_current_wave_index)
 	for s in spawns:
 		var enemy_id: StringName = StringName(s.get("enemy", ""))
 		if enemy_registry.has(enemy_id):
@@ -49,16 +62,12 @@ func get_boss_id_for_current_wave() -> StringName:
 	return &""
 
 func get_next_wave_spawns() -> Array:
-	var idx: int = _current_wave_index + 1
-	if idx >= _waves.size():
-		return []
-	return _waves[idx].get("spawns", [])
+	return _wave_spawns_at(_current_wave_index + 1)
 
 func get_next_wave_summary() -> String:
-	var next_idx: int = _current_wave_index + 1
-	if next_idx >= _waves.size():
-		return "(final wave cleared)"
-	var spawns: Array = _waves[next_idx].get("spawns", [])
+	var spawns: Array = get_next_wave_spawns()
+	if spawns.is_empty():
+		return "(no preview)"
 	var counts: Dictionary = {}
 	for s in spawns:
 		var enemy_id: String = s.get("enemy", "")
@@ -68,6 +77,13 @@ func get_next_wave_summary() -> String:
 	for enemy_id in counts:
 		parts.append("%dx %s" % [counts[enemy_id], _humanize(enemy_id)])
 	return ", ".join(parts)
+
+func _wave_spawns_at(idx: int) -> Array:
+	if idx < 0:
+		return []
+	if idx < _waves.size():
+		return _waves[idx].get("spawns", [])
+	return _generate_endless_spawns(idx)
 
 func _humanize(enemy_id: String) -> String:
 	var label := enemy_id.replace("_", " ")
@@ -85,26 +101,36 @@ func _load_waves() -> void:
 		push_error("WaveDirector: %s root must be an array" % waves_json_path)
 
 func has_more_waves() -> bool:
-	return _current_wave_index + 1 < _waves.size()
+	return true  ## endless: there is always another wave
 
 func wave_count() -> int:
-	return _waves.size()
+	return _waves.size()  ## scripted-only count, used by UI for progress display
+
+func is_endless() -> bool:
+	return _current_wave_index + 1 >= _waves.size()
+
+func current_wave_number() -> int:
+	return _current_wave_index + 1
 
 func start_next_wave() -> void:
-	if not has_more_waves():
-		all_waves_completed.emit()
-		return
 	_current_wave_index += 1
 	_wave_active = true
 	_enemies_alive = 0
 	_enemies_killed_this_wave = 0
-	var wave_def: Dictionary = _waves[_current_wave_index]
+	var spawns: Array = _wave_spawns_at(_current_wave_index)
+	# Difficulty: scripted waves use the JSON-balanced numbers; endless waves
+	# apply a per-wave multiplier on top.
+	if _current_wave_index < _waves.size():
+		_difficulty_mult = 1.0
+	else:
+		var endless_step: int = _current_wave_index - _waves.size() + 1
+		_difficulty_mult = pow(1.0 + _ENDLESS_HP_PER_WAVE, endless_step)
 	_enemies_total_this_wave = 0
-	for s in wave_def.get("spawns", []):
+	for s in spawns:
 		_enemies_total_this_wave += int(s.get("count", 1))
 	wave_started.emit(_current_wave_index)
 	EventBus.wave_started.emit(_current_wave_index)
-	_spawn_wave_async(wave_def.get("spawns", []))
+	_spawn_wave_async(spawns)
 
 func get_enemies_remaining() -> int:
 	return max(0, _enemies_total_this_wave - _enemies_killed_this_wave)
@@ -135,7 +161,6 @@ func _spawn_wave_async(spawns: Array) -> void:
 	_check_wave_end()
 
 func spawn_enemy_external(enemy_id: StringName) -> void:
-	# Allows boss minions / scripted spawns to reuse the same instantiation path.
 	_spawn_enemy(enemy_id)
 
 func _spawn_enemy(enemy_id: StringName) -> void:
@@ -147,11 +172,37 @@ func _spawn_enemy(enemy_id: StringName) -> void:
 		return
 	var enemy = enemy_scene.instantiate()
 	enemy.stats = enemy_registry[enemy_id]
+	enemy.hp_mult = _difficulty_mult
+	enemy.reward_mult = 1.0 + _ENDLESS_REWARD_PER_WAVE * max(0, _current_wave_index - _waves.size() + 1)
 	if _path:
 		_path.add_child(enemy)
 	else:
 		add_child(enemy)
 	_enemies_alive += 1
+
+func _generate_endless_spawns(wave_idx: int) -> Array:
+	var endless_step: int = wave_idx - _waves.size() + 1
+	var spawns: Array = []
+	# Boss every Nth endless wave
+	if endless_step % _ENDLESS_BOSS_INTERVAL == 0:
+		var boss_id: String = String(_ENDLESS_BOSS_POOL[(endless_step / _ENDLESS_BOSS_INTERVAL - 1) % _ENDLESS_BOSS_POOL.size()])
+		spawns.append({"enemy": boss_id, "count": 1, "interval": 1.0, "delay": 1.0})
+	# Mixed wave: grows by ~2 enemies per endless wave; intervals tighten.
+	var total: int = 8 + endless_step * 2
+	var interval: float = max(0.25, 0.65 - endless_step * 0.02)
+	var pool_size: int = min(_ENDLESS_BASE_POOL.size(), 3 + endless_step / 2)
+	var per_kind: int = max(1, total / pool_size)
+	for i in pool_size:
+		var enemy_id: String = String(_ENDLESS_BASE_POOL[i])
+		if not enemy_registry.has(StringName(enemy_id)):
+			continue
+		spawns.append({
+			"enemy": enemy_id,
+			"count": per_kind,
+			"interval": interval,
+			"delay": 0.2 * i,
+		})
+	return spawns
 
 func _on_enemy_killed_for_count(_e: Node, _r: int) -> void:
 	_enemies_killed_this_wave += 1

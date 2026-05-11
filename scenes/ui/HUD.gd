@@ -126,7 +126,7 @@ func _ready() -> void:
 	info_panel.visible = false
 	EventBus.gold_changed.connect(func(g): gold_label.text = "Gold: %d" % g)
 	EventBus.lives_changed.connect(func(l): lives_label.text = "Lives: %d" % l)
-	EventBus.wave_started.connect(func(w): wave_label.text = "Wave %d" % (w + 1))
+	EventBus.wave_started.connect(_on_wave_label_update)
 	EventBus.tower_selection_changed.connect(_on_selection_changed)
 	EventBus.tower_hovered.connect(_on_tower_hovered)
 	EventBus.tower_unhovered.connect(_on_tower_unhovered)
@@ -226,6 +226,18 @@ func _on_selection_changed(stats: Resource) -> void:
 	if selection_label and stats:
 		selection_label.text = "Selected: %s (%dg)" % [stats.display_name, stats.cost]
 	_refresh_palette_highlight(stats)
+
+func _on_wave_label_update(w: int) -> void:
+	var wd_nodes := get_tree().get_nodes_in_group("wave_director")
+	if wd_nodes.is_empty():
+		wave_label.text = "Wave %d" % (w + 1)
+		return
+	var wd: Node = wd_nodes[0]
+	var scripted: int = wd.wave_count()
+	if w < scripted:
+		wave_label.text = "Wave %d / %d" % [w + 1, scripted]
+	else:
+		wave_label.text = "Endless +%d" % (w - scripted + 1)
 
 func _on_map_ready(towers: Array) -> void:
 	_palette_towers = towers
