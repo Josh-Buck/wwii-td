@@ -8,6 +8,7 @@ extends CanvasLayer
 @onready var end_waves_label: Label = $EndScreen/Panel/VBox/WavesLabel
 @onready var end_earned_label: Label = $EndScreen/Panel/VBox/EarnedLabel
 @onready var end_total_label: Label = $EndScreen/Panel/VBox/TotalLabel
+@onready var end_stats_label: Label = $EndScreen/Panel/VBox/StatsLabel
 @onready var end_perk_btn: Button = $EndScreen/Panel/VBox/PerkButton
 @onready var end_restart_btn: Button = $EndScreen/Panel/VBox/RestartButton
 @onready var hint_label: Label = $HintLabel
@@ -845,6 +846,13 @@ func show_end_screen(victory: bool, waves_cleared: int = 0, earned: int = 0, tot
 	end_waves_label.text = "Waves cleared: %d / %d" % [waves_cleared, total_waves]
 	end_earned_label.text = "+%d War Effort earned" % earned
 	end_total_label.text = "Total War Effort: %d" % MetaProgress.war_effort_points
+	end_stats_label.text = "%d kills  ·  %dg from kills  ·  %d towers placed  ·  %d bonds bought  ·  %dg from payouts" % [
+		GameState.stat_kills,
+		GameState.stat_gold_from_kills,
+		GameState.stat_towers_placed,
+		GameState.stat_bonds_purchased,
+		GameState.stat_bond_payouts,
+	]
 	_refresh_perk_button()
 	end_screen.visible = true
 
