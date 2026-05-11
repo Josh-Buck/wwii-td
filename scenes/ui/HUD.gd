@@ -76,9 +76,9 @@ var _sidebar_collapsed: bool = false
 @onready var shop_panel: PanelContainer = $ShopPanel
 @onready var shop_title: Label = $ShopPanel/VBox/Title
 @onready var shop_gold_label: Label = $ShopPanel/VBox/GoldLabel
-@onready var shop_bonds_container: VBoxContainer = $ShopPanel/VBox/BondsContainer
-@onready var shop_held_container: VBoxContainer = $ShopPanel/VBox/HeldContainer
-@onready var shop_stocks_container: VBoxContainer = $ShopPanel/VBox/StocksContainer
+@onready var shop_bonds_container: VBoxContainer = $ShopPanel/VBox/Scroll/ScrollContent/BondsContainer
+@onready var shop_held_container: VBoxContainer = $ShopPanel/VBox/Scroll/ScrollContent/HeldContainer
+@onready var shop_stocks_container: VBoxContainer = $ShopPanel/VBox/Scroll/ScrollContent/StocksContainer
 @onready var shop_next_btn: Button = $ShopPanel/VBox/NextWaveButton
 @onready var codex_btn: Button = $TopBar/CodexButton
 @onready var codex_panel: PanelContainer = $CodexPanel
@@ -378,7 +378,22 @@ func _show_defender_info(stats: Resource, placed_tower: Node = null) -> void:
 	def_lore.text = stats.tooltip_lore
 	_refresh_upgrades_grid()
 	_refresh_action_row()
+	_position_defender_panel(placed_tower)
 	def_info_panel.visible = true
+
+func _position_defender_panel(placed_tower: Node) -> void:
+	# Anchor the panel to whichever half of the screen the tower is NOT on,
+	# so it never covers the unit you're inspecting.
+	var panel_width: float = 320.0
+	var left: float
+	if placed_tower and is_instance_valid(placed_tower) and placed_tower.global_position.x > 640.0:
+		left = 32.0  # tower is right side → panel on left
+	else:
+		left = 1052.0 - panel_width  # tower is left side → panel on right
+	def_info_panel.offset_left = left
+	def_info_panel.offset_top = 60.0
+	def_info_panel.offset_right = left + panel_width
+	def_info_panel.offset_bottom = 660.0
 
 func _hide_defender_info() -> void:
 	if _info_active_tower and is_instance_valid(_info_active_tower):
@@ -715,10 +730,6 @@ func _on_enemy_unhovered(_enemy: Node) -> void:
 
 func _on_tower_clicked(tower: Node) -> void:
 	_selected_tower = tower
-	_refresh_info_panel()
-	info_panel.visible = is_instance_valid(_selected_tower)
-	# Also open the defender info panel pinned to this placed tower so the
-	# upgrade grid is interactive.
 	if is_instance_valid(tower) and tower.stats:
 		_show_defender_info(tower.stats, tower)
 

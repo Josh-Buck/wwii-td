@@ -350,7 +350,7 @@ offset_right = 432.0
 offset_bottom = 700.0
 
 [node name="VBox" type="VBoxContainer" parent="ShopPanel"]
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="Title" type="Label" parent="ShopPanel/VBox"]
 text = "War Room"
@@ -361,29 +361,35 @@ theme_override_font_sizes/font_size = 22
 text = "Gold: 0"
 horizontal_alignment = 1
 
-[node name="BondsHeader" type="Label" parent="ShopPanel/VBox"]
+[node name="Scroll" type="ScrollContainer" parent="ShopPanel/VBox"]
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ScrollContent" type="VBoxContainer" parent="ShopPanel/VBox/Scroll"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="BondsHeader" type="Label" parent="ShopPanel/VBox/Scroll/ScrollContent"]
 text = "War Bonds — guaranteed payout when they mature"
 theme_override_font_sizes/font_size = 16
 
-[node name="BondsContainer" type="VBoxContainer" parent="ShopPanel/VBox"]
+[node name="BondsContainer" type="VBoxContainer" parent="ShopPanel/VBox/Scroll/ScrollContent"]
 
-[node name="HeldHeader" type="Label" parent="ShopPanel/VBox"]
+[node name="HeldHeader" type="Label" parent="ShopPanel/VBox/Scroll/ScrollContent"]
 text = "Held Bonds"
 theme_override_font_sizes/font_size = 16
 
-[node name="HeldContainer" type="VBoxContainer" parent="ShopPanel/VBox"]
+[node name="HeldContainer" type="VBoxContainer" parent="ShopPanel/VBox/Scroll/ScrollContent"]
 
-[node name="StocksHeader" type="Label" parent="ShopPanel/VBox"]
+[node name="StocksHeader" type="Label" parent="ShopPanel/VBox/Scroll/ScrollContent"]
 text = "War Stocks — risky; price walks every wave"
 theme_override_font_sizes/font_size = 16
 
-[node name="StocksContainer" type="VBoxContainer" parent="ShopPanel/VBox"]
-
-[node name="Spacer" type="Control" parent="ShopPanel/VBox"]
-custom_minimum_size = Vector2(0, 12)
+[node name="StocksContainer" type="VBoxContainer" parent="ShopPanel/VBox/Scroll/ScrollContent"]
 
 [node name="NextWaveButton" type="Button" parent="ShopPanel/VBox"]
 text = "Next Wave"
+custom_minimum_size = Vector2(0, 44)
 
 [node name="CodexPanel" type="PanelContainer" parent="."]
 visible = false

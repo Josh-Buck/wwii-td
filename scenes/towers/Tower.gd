@@ -109,18 +109,29 @@ func sell() -> void:
 	queue_free()
 
 func _on_eco_tick() -> void:
-	if stats == null or stats.gold_per_sec <= 0.0:
+	if stats == null:
+		return
+	var rate: float = effective_gold_per_sec()
+	if rate <= 0.0:
 		return
 	# Eco towers only earn during active waves — not while shopping or
 	# while the player has the start-wave button up. Mirrors how war
 	# economies actually work.
 	if not GameState.wave_in_progress:
 		return
-	_gold_accumulator += stats.gold_per_sec
+	_gold_accumulator += rate
 	if _gold_accumulator >= 1.0:
 		var add_gold: int = int(_gold_accumulator)
 		GameState.add_gold(add_gold)
 		_gold_accumulator -= add_gold
+
+func effective_gold_per_sec() -> float:
+	if stats == null:
+		return 0.0
+	var rate: float = stats.gold_per_sec
+	for step in _active_upgrade_steps():
+		rate += step.get("gold_per_sec_add", 0.0)
+	return rate
 
 func _active_upgrade_steps() -> Array:
 	var steps: Array = []
