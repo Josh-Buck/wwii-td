@@ -378,9 +378,18 @@ func _projectile_style() -> StringName:
 	if stats == null:
 		return &"bullet"
 	match stats.id:
-		&"pavlichenko": return &"laser"
-		&"eisenhower": return &"shell"
-		&"airborne_101": return &"shell"
+		&"pavlichenko": return &"laser"   ## sniper instant beam
+		&"patton": return &"shell"        ## tank shell
+		&"eisenhower": return &"shell"    ## artillery
+		&"airborne_101": return &"shell"  ## bazooka
+		&"montgomery": return &"shell"    ## artillery
+		&"zhukov": return &"shell"        ## Soviet artillery
+		&"audie_murphy": return &"bullet" ## rifle
+		&"lemay": return &"drop"          ## bombs
+		&"b17": return &"drop"            ## bomber payload
+		&"spitfire": return &"bullet"     ## .303 machine guns
+		&"mustang": return &"bullet"      ## .50 cal
+		&"tuskegee": return &"bullet"     ## fighter MG
 	return &"bullet"
 
 func _effective_slow_factor() -> float:
