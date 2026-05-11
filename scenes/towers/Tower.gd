@@ -382,6 +382,11 @@ func _draw() -> void:
 	# Synergy indicator: golden ring when at least one adjacency buff is active.
 	if active_buffs.size() > 0 or aura_buffs.size() > 0:
 		draw_arc(Vector2.ZERO, TOWER_RADIUS + 8.0, 0, TAU, 32, Color(1.0, 0.85, 0.3, 0.85), 2.5)
+	# Synergy lines to adjacency buff sources.
+	for source in active_buffs.values():
+		if is_instance_valid(source):
+			var to_source: Vector2 = source.global_position - global_position
+			draw_line(Vector2.ZERO, to_source, Color(1.0, 0.85, 0.3, 0.55), 1.5)
 	# Aura projection: faint persistent ring on towers that emit auras.
 	if stats.aura_radius > 0.0:
 		draw_circle(Vector2.ZERO, stats.aura_radius, Color(1.0, 0.95, 0.5, 0.04))

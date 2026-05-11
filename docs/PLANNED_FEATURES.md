@@ -44,7 +44,8 @@ Features intentionally deferred. **Add to this list whenever we decide "good ide
 ## Done
 
 - M0 scaffold + GitHub Pages deploy
-- M1: 4 towers (Patton, Eisenhower, Churchill, Anne Frank), 3 enemies (Wehrmacht, Panzer III, Stuka), 8 waves
-- M1: hotkey selection (1-4), projectiles, sell/refund, target priority cycling, tooltip lore on hover
-- M1: pause (P), between-wave shop with War Bonds (3 tiers, guaranteed payout)
-- M2 (in progress): adjacency synergies (+20% rate per same-faction neighbor), Eisenhower AoE on impact (70px radius), codex skeleton with C hotkey + unlock-on-hover (9 entries sourced from USHMM / IWM / Yad Vashem / etc.), Montgomery (UK pair) + Pavlichenko (USSR sniper) bringing the roster to 6 towers
+- M1: 4 towers, 3 enemies, 8 waves, hotkey selection, projectiles, sell/refund, target priority, tooltip lore
+- M1: pause, between-wave shop with 3-tier War Bonds
+- M2 systems: adjacency synergies, aura towers (Churchill), Eisenhower AoE, codex (27 entries), 36 themed tower upgrades, upgrade specials (pierce/instakill/multi-target), projectile variety (bullet/shell/laser, color-tinted), slow + knockback effects, War Stocks (4 sectors), free placement, button-driven wave start, click-to-pin range, defender sidebar with collapsible cards + info panel, shop drawer that leaves board visible, synergy lines, wave preview from Bletchley
+- M2 content: 14 figures + 13 enemies (5 v1+ bosses with themed mechanics — Eichmann logistics, Heydrich speed, Mengele escape, Himmler bodyguards, Tojo air support)
+- M2 v1+ bosses on waves 11-15; Tiger I / Waffen-SS / Banzai / Bersaglieri sprinkled across the wave list
