@@ -124,8 +124,18 @@ func _spawn_damage_number(dmg: int) -> void:
 
 func _die() -> void:
 	dead = true
+	_spawn_death_poof()
 	EventBus.enemy_killed.emit(self, stats.kill_reward)
 	queue_free()
+
+func _spawn_death_poof() -> void:
+	var scene: PackedScene = preload("res://scenes/effects/DeathPoof.tscn")
+	var node: Node2D = scene.instantiate()
+	node.setup(stats.color)
+	node.global_position = global_position
+	var parent: Node = get_tree().current_scene
+	if parent:
+		parent.add_child(node)
 
 func _reach_end() -> void:
 	dead = true

@@ -105,12 +105,20 @@ visible = false
 mouse_filter = 2
 offset_left = 16.0
 offset_top = 56.0
-offset_right = 480.0
-offset_bottom = 92.0
+offset_right = 720.0
+offset_bottom = 116.0
 
-[node name="Label" type="Label" parent="WavePreviewPanel"]
+[node name="HBox" type="HBoxContainer" parent="WavePreviewPanel"]
 mouse_filter = 2
-text = "Next wave: ?"
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="WavePreviewPanel/HBox"]
+mouse_filter = 2
+text = "Next:"
+
+[node name="IconRow" type="HBoxContainer" parent="WavePreviewPanel/HBox"]
+mouse_filter = 2
+theme_override_constants/separation = 8
 
 [node name="BossTelegraph" type="PanelContainer" parent="."]
 visible = false

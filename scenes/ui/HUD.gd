@@ -30,7 +30,8 @@ extends CanvasLayer
 @onready var sidebar_collapse_btn: Button = $TowerSidebar/VBox/HeaderRow/CollapseButton
 @onready var sidebar_tab: Button = $TowerSidebarTab
 @onready var wave_preview_panel: PanelContainer = $WavePreviewPanel
-@onready var wave_preview_label: Label = $WavePreviewPanel/Label
+@onready var wave_preview_label: Label = $WavePreviewPanel/HBox/Label
+@onready var wave_preview_icons: HBoxContainer = $WavePreviewPanel/HBox/IconRow
 @onready var start_wave_panel: PanelContainer = $StartWavePanel
 @onready var start_wave_btn: Button = $StartWavePanel/VBox/StartWaveButton
 @onready var boss_telegraph: PanelContainer = $BossTelegraph
@@ -476,9 +477,43 @@ func _refresh_wave_preview() -> void:
 		wave_preview_panel.visible = false
 		return
 	var wd: Node = wd_nodes[0]
-	if wd.has_method("get_next_wave_summary"):
-		wave_preview_label.text = "Next wave: %s" % wd.get_next_wave_summary()
+	if not wd.has_method("get_next_wave_spawns"):
+		return
+	# Clear existing icons.
+	for c in wave_preview_icons.get_children():
+		c.queue_free()
+	# Aggregate by enemy id.
+	var spawns: Array = wd.get_next_wave_spawns()
+	var counts: Dictionary = {}
+	for s in spawns:
+		var id: StringName = StringName(s.get("enemy", ""))
+		if id == &"":
+			continue
+		counts[id] = counts.get(id, 0) + int(s.get("count", 1))
+	if counts.is_empty():
+		wave_preview_label.text = "Next: (final wave cleared)"
 		wave_preview_panel.visible = true
+		return
+	wave_preview_label.text = "Next:"
+	for id in counts:
+		var stats: Resource = wd.enemy_registry.get(id, null) if "enemy_registry" in wd else null
+		var entry := HBoxContainer.new()
+		entry.add_theme_constant_override("separation", 4)
+		entry.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		if stats and stats.portrait != null:
+			var tex := TextureRect.new()
+			tex.texture = stats.portrait
+			tex.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+			tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+			tex.custom_minimum_size = Vector2(28, 28)
+			tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			entry.add_child(tex)
+		var lbl := Label.new()
+		lbl.text = "x%d" % counts[id]
+		lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		entry.add_child(lbl)
+		wave_preview_icons.add_child(entry)
+	wave_preview_panel.visible = true
 
 func _on_start_wave_btn_pressed() -> void:
 	EventBus.start_wave_requested.emit()
