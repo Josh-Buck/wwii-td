@@ -112,6 +112,22 @@ offset_bottom = 92.0
 mouse_filter = 2
 text = "Next wave: ?"
 
+[node name="BossTelegraph" type="PanelContainer" parent="."]
+visible = false
+mouse_filter = 2
+offset_left = 360.0
+offset_top = 140.0
+offset_right = 920.0
+offset_bottom = 200.0
+modulate = Color(1, 0.7, 0.3, 1)
+
+[node name="Label" type="Label" parent="BossTelegraph"]
+mouse_filter = 2
+text = "BOSS WAVE"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 22
+
 [node name="StartWavePanel" type="PanelContainer" parent="."]
 offset_left = 480.0
 offset_top = 60.0
