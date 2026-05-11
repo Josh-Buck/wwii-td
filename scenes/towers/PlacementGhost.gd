@@ -35,3 +35,14 @@ func _draw() -> void:
 	if not is_valid:
 		draw_line(Vector2(-12, -12), Vector2(12, 12), Color(1, 0.2, 0.2), 3.0)
 		draw_line(Vector2(-12, 12), Vector2(12, -12), Color(1, 0.2, 0.2), 3.0)
+	# Cost label above the ghost — colored red if unaffordable.
+	var font: Font = ThemeDB.fallback_font
+	if font:
+		var cost_text: String = "%dg" % stats.cost
+		var can_afford: bool = GameState.gold >= stats.cost
+		var col: Color = Color(1.0, 0.9, 0.4) if can_afford else Color(1.0, 0.35, 0.35)
+		var fs: int = 13
+		var size: Vector2 = font.get_string_size(cost_text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
+		var pos := Vector2(-size.x / 2.0, -RADIUS - 12.0)
+		draw_string(font, pos + Vector2(1, 1), cost_text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(0, 0, 0, 0.7))
+		draw_string(font, pos, cost_text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, col)

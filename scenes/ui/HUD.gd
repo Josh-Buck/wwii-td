@@ -36,6 +36,9 @@ extends CanvasLayer
 @onready var start_wave_btn: Button = $StartWavePanel/VBox/StartWaveButton
 @onready var boss_telegraph: PanelContainer = $BossTelegraph
 @onready var boss_telegraph_label: Label = $BossTelegraph/Label
+@onready var toast: PanelContainer = $Toast
+@onready var toast_label: Label = $Toast/Label
+var _toast_remaining: float = 0.0
 
 var _wave_in_progress: bool = false
 var _waves_completed: int = 0
@@ -141,6 +144,9 @@ func _ready() -> void:
 	EventBus.wave_started.connect(_check_boss_telegraph)
 	EventBus.boss_escaped.connect(_on_boss_escaped)
 	boss_telegraph.visible = false
+	EventBus.codex_entry_unlocked.connect(_on_codex_unlocked_toast)
+	EventBus.bond_matured.connect(_on_bond_matured_toast)
+	toast.visible = false
 	# Start Wave button drives wave advance (replaces auto-start timer).
 	start_wave_btn.pressed.connect(_on_start_wave_btn_pressed)
 	EventBus.wave_started.connect(_on_wave_started_for_btn)
@@ -171,7 +177,7 @@ func _ready() -> void:
 	if selection_label:
 		selection_label.text = "Selected: —"
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if tooltip.visible:
 		var mp := get_viewport().get_mouse_position()
 		# Offset so cursor doesn't overlap; flip to left of cursor near right edge.
@@ -182,6 +188,10 @@ func _process(_delta: float) -> void:
 		if pos.y + tooltip.size.y > vp_size.y:
 			pos.y = mp.y - tooltip.size.y - 16
 		tooltip.position = pos
+	if _toast_remaining > 0.0:
+		_toast_remaining -= delta
+		if _toast_remaining <= 0.0:
+			toast.visible = false
 
 func _on_selection_changed(stats: Resource) -> void:
 	if selection_label and stats:
@@ -817,6 +827,18 @@ func _refresh_codex() -> void:
 func _on_codex_entry_unlocked(_entry_id: StringName) -> void:
 	if codex_panel.visible:
 		_refresh_codex()
+
+func _show_toast(text: String) -> void:
+	toast_label.text = text
+	toast.visible = true
+	_toast_remaining = 3.0
+
+func _on_codex_unlocked_toast(entry_id: StringName) -> void:
+	_show_toast("Codex unlocked: %s" % _humanize_id(entry_id))
+
+func _on_bond_matured_toast(bond: Resource, payout: int) -> void:
+	if bond:
+		_show_toast("%s matured: +%dg" % [bond.display_name, payout])
 
 func show_end_screen(victory: bool, waves_cleared: int = 0, earned: int = 0, total_waves: int = 9) -> void:
 	end_label.text = "VICTORY" if victory else "DEFEAT"
