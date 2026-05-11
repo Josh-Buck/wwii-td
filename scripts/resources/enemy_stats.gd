@@ -18,6 +18,8 @@ class_name EnemyStats extends Resource
 @export var escapes_at_path_end: bool = false  ## true → no life loss on leak (Mengele)
 @export var summon_interval: float = 0.0   ## seconds between reinforcement spawns; 0 = none
 @export var summon_enemy_id: StringName = &""  ## enemy id to summon
+@export var debuff_aura_radius: float = 0.0  ## > 0 → towers within this radius fire 50% slower
+@export_range(0.0, 1.0) var debuff_aura_factor: float = 0.5  ## fire-rate scalar inside the aura
 
 @export_group("Rewards")
 @export var kill_reward: int = 5

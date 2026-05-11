@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"v2_rocket"
+title = "Aggregat 4 / V-2 Rocket (1942-1945)"
+body = "The world's first long-range, guided ballistic missile. Designed by Wernher von Braun's team at Peenemünde, deployed operationally from September 1944 against Allied cities — chiefly London and Antwerp. The V-2 reached apogees of around 80 km, struck without warning, and could not be intercepted in flight by 1944-45 air defences.
+
+Roughly 3,200 V-2s were launched in combat, killing about 9,000 civilians and military personnel. Far more lives, however, were lost in building it: the rockets were assembled by concentration-camp prisoners in the underground Mittelwerk factory, where at least 12,000 prisoners died from starvation, exhaustion, beatings, and disease. The V-2 programme killed more people in its production than in its operational use.
+
+After the war, the rocket programme was inherited piecemeal by the United States (Operation Paperclip — von Braun and his team), the Soviet Union, and the United Kingdom. It is the direct technical ancestor of the postwar ballistic missiles of both blocs and, through von Braun, of the Saturn V that carried Apollo to the Moon."
+sources = "Sources: United States Holocaust Memorial Museum, Imperial War Museum, German Federal Archives, V-2 (Walter Dornberger), The Rocket and the Reich (Michael J. Neufeld)."

@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="EnemyStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"hitler"
+display_name = "Adolf Hitler — final boss"
+color = Color(0.18, 0.18, 0.18, 1)
+radius = 32.0
+max_hp = 4000.0
+speed = 45.0
+armor = 0.55
+flags = 5
+lives_lost_on_leak = 20
+regen_per_sec = 22.0
+is_boss = true
+escapes_at_path_end = false
+summon_interval = 4.0
+summon_enemy_id = &"waffen_ss"
+debuff_aura_radius = 180.0
+debuff_aura_factor = 0.55
+kill_reward = 0
+bond_reward = 0
+tooltip_lore = "Adolf Hitler — Führer of Nazi Germany. Architect of the Holocaust and the Second World War in Europe. Killed himself in his Berlin bunker on 30 April 1945 as the Red Army closed on the Reich Chancellery. Defeating him here represents Allied victory in Europe."
+codex_id = &"hitler"

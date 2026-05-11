@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="EnemyStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"v2_rocket"
+display_name = "V-2 Rocket"
+color = Color(0.65, 0.50, 0.30, 1)
+radius = 14.0
+max_hp = 220.0
+speed = 220.0
+armor = 0.0
+flags = 2
+lives_lost_on_leak = 2
+regen_per_sec = 0.0
+is_boss = false
+kill_reward = 30
+bond_reward = 0
+tooltip_lore = "Aggregat 4 / V-2 Rocket — the world's first long-range ballistic missile, deployed by Nazi Germany September 1944 onward. Built with forced labour at Mittelwerk; about 12,000 prisoners died in production. Fast, fragile in flight, takes 2 lives if it hits."
+codex_id = &"v2_rocket"

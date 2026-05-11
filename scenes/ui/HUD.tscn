@@ -43,6 +43,10 @@ text = "Lives: 20"
 mouse_filter = 2
 custom_minimum_size = Vector2(16, 0)
 
+[node name="BombButton" type="Button" parent="TopBar"]
+text = "Bombing Run (B)"
+tooltip_text = "90 s cooldown. Click an area, 1.5 s telegraph, then big AoE damage."
+
 [node name="SpeedButton" type="Button" parent="TopBar"]
 text = "Speed: 1x"
 

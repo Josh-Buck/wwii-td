@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CodexEntry" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/codex_entry.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"hitler"
+title = "Adolf Hitler (1889-1945)"
+body = "Austrian-born leader of the Nazi Party and Führer of Germany from 1933. Hitler is the central planner and political driver of the European Second World War and of the Holocaust. Under his regime, six million Jews were murdered alongside millions of Roma, Polish and Soviet civilians, Soviet prisoners of war, disabled people, gay people, Jehovah's Witnesses, and political opponents.
+
+His regime committed genocide as state policy, sought continental territorial conquest in the East (Generalplan Ost), waged a war that killed perhaps 70-85 million people, and used industrial murder as its core method. The names of the camps — Auschwitz, Treblinka, Sobibor, Belzec, Chelmno, Majdanek — are not battle sites but extermination sites.
+
+He killed himself in the Führerbunker in Berlin on 30 April 1945 as Soviet forces closed on the Reich Chancellery; the city surrendered two days later. Germany's unconditional surrender was signed on 7-8 May 1945 (VE Day).
+
+This game treats Hitler as silhouette and insignia, never as charismatic figure. Defeating him here represents the Allied victory in Europe — full stop."
+sources = "Sources: United States Holocaust Memorial Museum, Yad Vashem, Imperial War Museum, Nuremberg trial records, The Third Reich at War (Richard J. Evans)."

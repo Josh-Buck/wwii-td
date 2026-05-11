@@ -62,6 +62,14 @@ func _ready() -> void:
 		slow_timer.timeout.connect(_on_slow_aura_tick)
 		add_child(slow_timer)
 		slow_timer.start()
+	# Refresh fire timer periodically so enemy debuff auras (Hitler) update live.
+	var refresh_timer := Timer.new()
+	refresh_timer.process_mode = Node.PROCESS_MODE_PAUSABLE
+	refresh_timer.wait_time = 0.4
+	refresh_timer.one_shot = false
+	refresh_timer.timeout.connect(_refresh_fire_timer)
+	add_child(refresh_timer)
+	refresh_timer.start()
 	# Always assign a fresh shape per tower so range tweaks don't leak
 	# across instances via a shared scene-level sub_resource.
 	if range_collision:
@@ -118,6 +126,10 @@ func sell() -> void:
 		remove_from_group("wave_preview_providers")
 	EventBus.tower_sold.emit(self, refund)
 	queue_free()
+
+func _refresh_fire_timer() -> void:
+	if fire_timer:
+		fire_timer.wait_time = 1.0 / max(0.0001, effective_fire_rate())
 
 func _on_slow_aura_tick() -> void:
 	if stats == null or stats.slow_aura_factor <= 0.0:
@@ -188,7 +200,20 @@ func effective_fire_rate() -> float:
 	var multiplier := 1.0 + AdjacencySystem.RATE_BONUS_PER_BUFF * active_buffs.size()
 	for source in aura_buffs.values():
 		multiplier += source.get("fire_rate_bonus", 0.0)
-	return rate * multiplier
+	# Enemy debuff auras (e.g., Hitler) slow tower fire rate inside their radius.
+	var debuff: float = _enemy_debuff_factor()
+	return rate * multiplier * debuff
+
+func _enemy_debuff_factor() -> float:
+	var factor: float = 1.0
+	for e in get_tree().get_nodes_in_group("enemies"):
+		if not is_instance_valid(e) or e.stats == null:
+			continue
+		if e.stats.debuff_aura_radius <= 0.0:
+			continue
+		if global_position.distance_squared_to(e.global_position) <= e.stats.debuff_aura_radius * e.stats.debuff_aura_radius:
+			factor = min(factor, e.stats.debuff_aura_factor)
+	return factor
 
 func effective_range() -> float:
 	if stats == null:

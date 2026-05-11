@@ -30,6 +30,7 @@ const _MAP_BOTTOM: float = 680.0     ## above HintLabel
 var _placement_ghost: Node = null
 var _placement_active: bool = false
 var _path_baked_points: PackedVector2Array
+var _bombing_run: BombingRun = null
 
 func _ready() -> void:
 	# Fallback bindings: if scene-level exports didn't populate (typed
@@ -72,6 +73,8 @@ func _ready() -> void:
 			&"mengele": load("res://data/enemies/mengele.tres"),
 			&"himmler": load("res://data/enemies/himmler.tres"),
 			&"tojo": load("res://data/enemies/tojo.tres"),
+			&"hitler": load("res://data/enemies/hitler.tres"),
+			&"v2_rocket": load("res://data/enemies/v2_rocket.tres"),
 			&"tiger_i": load("res://data/enemies/tiger_i.tres"),
 			&"waffen_ss": load("res://data/enemies/waffen_ss.tres"),
 			&"banzai": load("res://data/enemies/banzai.tres"),
@@ -104,6 +107,9 @@ func _ready() -> void:
 	# Free placement input requires Map to receive input even when paused.
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
+	_bombing_run = BombingRun.new()
+	add_child(_bombing_run)
+
 	EventBus.tower_palette_pick.connect(_select_tower_index)
 	EventBus.start_wave_requested.connect(_on_start_wave_requested)
 	EventBus.map_ready.emit(available_towers)
@@ -111,7 +117,7 @@ func _ready() -> void:
 	# Wave 1 no longer auto-starts; HUD's Start Wave button drives it.
 
 func _input(event: InputEvent) -> void:
-	# Hotkey selection (1-9 picks from palette)
+	# Hotkey selection (1-9 picks from palette, B toggles bombing run targeting)
 	if event is InputEventKey and event.pressed and not event.echo:
 		var idx := -1
 		match event.keycode:
@@ -124,11 +130,25 @@ func _input(event: InputEvent) -> void:
 			KEY_7: idx = 6
 			KEY_8: idx = 7
 			KEY_9: idx = 8
+			KEY_B:
+				if _bombing_run:
+					_bombing_run.toggle_targeting()
+				return
 			KEY_ESCAPE:
 				_exit_placement_mode()
+				if _bombing_run:
+					_bombing_run.cancel_targeting()
 				return
 		if idx >= 0 and idx < available_towers.size():
 			_select_tower_index(idx)
+			return
+
+	# Bombing run targeting click consumes the next left-click on the map.
+	if _bombing_run and _bombing_run.is_targeting() and event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		var pos := get_global_mouse_position()
+		if pos.x >= _MAP_LEFT and pos.x <= _MAP_RIGHT and pos.y >= _MAP_TOP and pos.y <= _MAP_BOTTOM:
+			_bombing_run.fire_at(pos)
+			get_viewport().set_input_as_handled()
 			return
 
 	# Placement input — only meaningful when in placement mode.

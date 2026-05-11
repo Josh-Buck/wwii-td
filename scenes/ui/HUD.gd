@@ -34,6 +34,7 @@ extends CanvasLayer
 @onready var pause_restart_btn: Button = $PauseOverlay/Center/VBox/PauseRestartButton
 @onready var pause_quit_btn: Button = $PauseOverlay/Center/VBox/PauseQuitButton
 @onready var speed_btn: Button = $TopBar/SpeedButton
+@onready var bomb_btn: Button = $TopBar/BombButton
 @onready var sidebar: PanelContainer = $TowerSidebar
 @onready var sidebar_list: VBoxContainer = $TowerSidebar/VBox/ScrollContainer/PaletteList
 @onready var sidebar_collapse_btn: Button = $TowerSidebar/VBox/HeaderRow/CollapseButton
@@ -110,6 +111,8 @@ const _CODEX_ENTRY_PATHS: Array[String] = [
 	"res://data/codex/mengele.tres",
 	"res://data/codex/himmler.tres",
 	"res://data/codex/tojo.tres",
+	"res://data/codex/hitler.tres",
+	"res://data/codex/v2_rocket.tres",
 	"res://data/codex/audie_murphy.tres",
 	"res://data/codex/zhukov.tres",
 	"res://data/codex/rosie.tres",
@@ -156,6 +159,7 @@ func _ready() -> void:
 	pause_overlay.visible = false
 	speed_btn.pressed.connect(_cycle_speed)
 	_apply_speed()
+	bomb_btn.pressed.connect(_on_bomb_btn_pressed)
 	end_perk_btn.pressed.connect(_on_perk_btn_pressed)
 	end_recruit_btn.pressed.connect(_open_recruit_screen)
 	end_restart_btn.pressed.connect(_on_restart_pressed)
@@ -214,6 +218,7 @@ func _ready() -> void:
 		selection_label.text = "Selected: —"
 
 func _process(delta: float) -> void:
+	_process_bombing_button()
 	if tooltip.visible:
 		var mp := get_viewport().get_mouse_position()
 		# Offset so cursor doesn't overlap; flip to left of cursor near right edge.
@@ -244,6 +249,32 @@ func _on_selection_changed(stats: Resource) -> void:
 	if selection_label and stats:
 		selection_label.text = "Selected: %s (%dg)" % [stats.display_name, stats.cost]
 	_refresh_palette_highlight(stats)
+
+func _on_bomb_btn_pressed() -> void:
+	var br_nodes := get_tree().get_nodes_in_group("bombing_run")
+	if br_nodes.is_empty():
+		return
+	var br: Node = br_nodes[0]
+	if br.has_method("toggle_targeting"):
+		br.toggle_targeting()
+
+func _process_bombing_button() -> void:
+	var br_nodes := get_tree().get_nodes_in_group("bombing_run")
+	if br_nodes.is_empty():
+		bomb_btn.text = "Bombing Run (B)"
+		bomb_btn.disabled = true
+		return
+	var br: Node = br_nodes[0]
+	var cd: float = br.cooldown_remaining()
+	if cd > 0.0:
+		bomb_btn.text = "Bombing Run: %ds" % int(ceil(cd))
+		bomb_btn.disabled = true
+	elif br.is_targeting():
+		bomb_btn.text = "Click target… (Esc)"
+		bomb_btn.disabled = false
+	else:
+		bomb_btn.text = "Bombing Run (B)"
+		bomb_btn.disabled = false
 
 func _on_wave_label_update(w: int) -> void:
 	var wd_nodes := get_tree().get_nodes_in_group("wave_director")

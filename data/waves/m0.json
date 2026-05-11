@@ -113,18 +113,18 @@
       {"enemy": "tiger_i", "count": 3, "interval": 2.5, "delay": 3.0},
       {"enemy": "himmler", "count": 1, "delay": 7.0},
       {"enemy": "waffen_ss", "count": 6, "interval": 0.6, "delay": 10.0},
-      {"enemy": "stuka", "count": 6, "interval": 1.2, "delay": 14.0}
+      {"enemy": "stuka", "count": 6, "interval": 1.2, "delay": 14.0},
+      {"enemy": "v2_rocket", "count": 2, "interval": 6.0, "delay": 18.0}
     ]
   },
   {
     "wave": 15,
     "spawns": [
-      {"enemy": "wehrmacht_infantry", "count": 12, "interval": 0.3},
-      {"enemy": "banzai", "count": 10, "interval": 0.4, "delay": 3.0},
-      {"enemy": "stuka", "count": 8, "interval": 1.0, "delay": 6.0},
-      {"enemy": "tojo", "count": 1, "delay": 10.0},
-      {"enemy": "tiger_i", "count": 2, "interval": 4.0, "delay": 14.0},
-      {"enemy": "panzer_iii", "count": 8, "interval": 0.8, "delay": 18.0}
+      {"enemy": "waffen_ss", "count": 8, "interval": 0.5},
+      {"enemy": "stuka", "count": 6, "interval": 1.0, "delay": 5.0},
+      {"enemy": "tiger_i", "count": 3, "interval": 3.0, "delay": 10.0},
+      {"enemy": "panzer_iii", "count": 10, "interval": 0.6, "delay": 14.0},
+      {"enemy": "hitler", "count": 1, "delay": 22.0}
     ]
   }
 ]
