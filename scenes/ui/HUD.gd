@@ -2,6 +2,7 @@ extends CanvasLayer
 
 @onready var gold_label: Label = $TopBar/GoldLabel
 @onready var wave_label: Label = $TopBar/WaveLabel
+@onready var enemy_count_label: Label = $TopBar/EnemyCountLabel
 @onready var lives_label: Label = $TopBar/LivesLabel
 @onready var end_screen: Control = $EndScreen
 @onready var end_label: Label = $EndScreen/Panel/VBox/Label
@@ -25,6 +26,8 @@ extends CanvasLayer
 @onready var pause_btn: Button = $TopBar/PauseButton
 @onready var pause_overlay: Control = $PauseOverlay
 @onready var resume_btn: Button = $PauseOverlay/Center/VBox/ResumeButton
+@onready var pause_restart_btn: Button = $PauseOverlay/Center/VBox/PauseRestartButton
+@onready var pause_quit_btn: Button = $PauseOverlay/Center/VBox/PauseQuitButton
 @onready var speed_btn: Button = $TopBar/SpeedButton
 @onready var sidebar: PanelContainer = $TowerSidebar
 @onready var sidebar_list: VBoxContainer = $TowerSidebar/VBox/ScrollContainer/PaletteList
@@ -128,6 +131,8 @@ func _ready() -> void:
 	info_close_btn.pressed.connect(_on_close_btn_pressed)
 	pause_btn.pressed.connect(toggle_pause)
 	resume_btn.pressed.connect(toggle_pause)
+	pause_restart_btn.pressed.connect(_on_pause_restart_pressed)
+	pause_quit_btn.pressed.connect(_on_pause_quit_pressed)
 	pause_overlay.visible = false
 	speed_btn.pressed.connect(_cycle_speed)
 	_apply_speed()
@@ -193,6 +198,17 @@ func _process(delta: float) -> void:
 		_toast_remaining -= delta
 		if _toast_remaining <= 0.0:
 			toast.visible = false
+	# Live enemy count during a wave.
+	if _wave_in_progress:
+		var wd_nodes := get_tree().get_nodes_in_group("wave_director")
+		if not wd_nodes.is_empty():
+			var wd: Node = wd_nodes[0]
+			if wd.has_method("get_enemies_remaining") and wd.has_method("get_wave_total"):
+				var rem: int = wd.get_enemies_remaining()
+				var tot: int = wd.get_wave_total()
+				enemy_count_label.text = "  ·  %d / %d enemies" % [tot - rem, tot]
+	else:
+		enemy_count_label.text = ""
 
 func _on_selection_changed(stats: Resource) -> void:
 	if selection_label and stats:
@@ -873,6 +889,22 @@ func _on_perk_btn_pressed() -> void:
 
 func _on_restart_pressed() -> void:
 	end_screen.visible = false
+	_speed_idx = 0
+	_apply_speed()
+	get_tree().paused = false
+	get_tree().reload_current_scene()
+
+func _on_pause_restart_pressed() -> void:
+	pause_overlay.visible = false
+	_speed_idx = 0
+	_apply_speed()
+	get_tree().paused = false
+	get_tree().reload_current_scene()
+
+func _on_pause_quit_pressed() -> void:
+	# No main menu yet; this is essentially "reload" which gets you back to a
+	# fresh start state. (Web export can't actually close the tab.)
+	pause_overlay.visible = false
 	_speed_idx = 0
 	_apply_speed()
 	get_tree().paused = false

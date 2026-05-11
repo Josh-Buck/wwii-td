@@ -16,6 +16,8 @@ var _current_wave_index: int = -1
 var _enemies_alive: int = 0
 var _wave_active: bool = false
 var _spawning_active: bool = false
+var _enemies_killed_this_wave: int = 0
+var _enemies_total_this_wave: int = 0
 
 @onready var _path: Path2D = _resolve_path()
 
@@ -95,10 +97,20 @@ func start_next_wave() -> void:
 	_current_wave_index += 1
 	_wave_active = true
 	_enemies_alive = 0
+	_enemies_killed_this_wave = 0
 	var wave_def: Dictionary = _waves[_current_wave_index]
+	_enemies_total_this_wave = 0
+	for s in wave_def.get("spawns", []):
+		_enemies_total_this_wave += int(s.get("count", 1))
 	wave_started.emit(_current_wave_index)
 	EventBus.wave_started.emit(_current_wave_index)
 	_spawn_wave_async(wave_def.get("spawns", []))
+
+func get_enemies_remaining() -> int:
+	return max(0, _enemies_total_this_wave - _enemies_killed_this_wave)
+
+func get_wave_total() -> int:
+	return _enemies_total_this_wave
 
 func _spawn_wave_async(spawns: Array) -> void:
 	_spawning_active = true
@@ -142,9 +154,11 @@ func _spawn_enemy(enemy_id: StringName) -> void:
 	_enemies_alive += 1
 
 func _on_enemy_killed_for_count(_e: Node, _r: int) -> void:
+	_enemies_killed_this_wave += 1
 	_dec_alive()
 
 func _on_enemy_leaked(_e: Node) -> void:
+	_enemies_killed_this_wave += 1
 	_dec_alive()
 
 func _dec_alive() -> void:
