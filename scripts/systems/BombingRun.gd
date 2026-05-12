@@ -61,7 +61,9 @@ func fire_at(pos: Vector2) -> void:
 	queue_redraw()
 
 func _process(delta: float) -> void:
-	if _cooldown_left > 0.0:
+	# Cooldown only ticks during active waves so the player can't farm it
+	# by waiting between rounds. Telegraph still resolves if already fired.
+	if _cooldown_left > 0.0 and GameState.wave_in_progress:
 		_cooldown_left = max(0.0, _cooldown_left - delta)
 		cooldown_changed.emit(_cooldown_left)
 	if _telegraph_active:

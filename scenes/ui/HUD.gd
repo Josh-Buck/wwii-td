@@ -331,7 +331,10 @@ func _process_bombing_button() -> void:
 	var br: Node = br_nodes[0]
 	var cd: float = br.cooldown_remaining()
 	if cd > 0.0:
-		bomb_btn.text = "Bombing Run: %ds" % int(ceil(cd))
+		if GameState.wave_in_progress:
+			bomb_btn.text = "Bombing Run: %ds" % int(ceil(cd))
+		else:
+			bomb_btn.text = "Bombing Run: %ds (during wave)" % int(ceil(cd))
 		bomb_btn.disabled = true
 	elif br.is_targeting():
 		bomb_btn.text = "Click target… (Esc)"
