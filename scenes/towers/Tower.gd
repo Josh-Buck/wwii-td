@@ -41,6 +41,11 @@ func _ready() -> void:
 	# Air units sit visually above ground towers so clicks pick them first.
 	if stats.is_air_unit:
 		z_index = 5
+	# Drop-in animation: pop from 30% scale up to full, with a tiny overshoot.
+	scale = Vector2(0.3, 0.3)
+	var drop_tween := create_tween()
+	drop_tween.tween_property(self, "scale", Vector2(1.1, 1.1), 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	drop_tween.tween_property(self, "scale", Vector2.ONE, 0.10).set_ease(Tween.EASE_OUT)
 	if stats.default_targeting != &"":
 		targeting_mode = stats.default_targeting
 	if stats.provides_wave_preview:
@@ -376,12 +381,16 @@ func _fire_at(target: Node) -> void:
 	else:
 		get_parent().add_child(projectile)
 
+var _rest_position: Vector2 = Vector2.ZERO
+var _rest_position_set: bool = false
+var _recoil_tween: Tween = null
+
 func _play_recoil(target: Node) -> void:
-	# Small kickback away from the target, plus a brief scale punch. Heavier
-	# projectile styles get more kick. Position offset is local so we don't
-	# affect the tower's actual placement.
 	if not is_instance_valid(target):
 		return
+	if not _rest_position_set:
+		_rest_position = position
+		_rest_position_set = true
 	var dir: Vector2 = (global_position - target.global_position).normalized()
 	var style := _projectile_style()
 	var kick: float = 5.0
@@ -389,13 +398,15 @@ func _play_recoil(target: Node) -> void:
 		&"shell": kick = 9.0
 		&"drop":  kick = 11.0
 		&"laser": kick = 3.0
-	var t := create_tween()
-	t.set_parallel(true)
-	t.tween_property(self, "position", position + dir * kick, 0.06)
-	t.tween_property(self, "scale", Vector2(1.06, 0.94), 0.06)
-	t.chain()
-	t.tween_property(self, "position", position, 0.18).set_ease(Tween.EASE_OUT)
-	t.tween_property(self, "scale", Vector2.ONE, 0.18).set_ease(Tween.EASE_OUT)
+	if _recoil_tween and _recoil_tween.is_valid():
+		_recoil_tween.kill()
+	_recoil_tween = create_tween()
+	_recoil_tween.set_parallel(true)
+	_recoil_tween.tween_property(self, "position", _rest_position + dir * kick, 0.06)
+	_recoil_tween.tween_property(self, "scale", Vector2(1.06, 0.94), 0.06)
+	_recoil_tween.chain()
+	_recoil_tween.tween_property(self, "position", _rest_position, 0.18).set_ease(Tween.EASE_OUT)
+	_recoil_tween.tween_property(self, "scale", Vector2.ONE, 0.18).set_ease(Tween.EASE_OUT)
 
 func _projectile_style() -> StringName:
 	if stats == null:

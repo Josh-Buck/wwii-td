@@ -172,6 +172,7 @@ func _ready() -> void:
 	bomb_btn.pressed.connect(_on_bomb_btn_pressed)
 	boss_intro.visible = false
 	EventBus.boss_spawned.connect(_on_boss_spawned)
+	EventBus.wave_started.connect(_on_wave_started_intro)
 	manhattan_btn.pressed.connect(_on_manhattan_btn_pressed)
 	EventBus.wave_ended.connect(_on_wave_ended_manhattan_chain)
 	_refresh_manhattan_button()
@@ -321,16 +322,31 @@ func _apply_manhattan() -> void:
 	_show_toast("Manhattan Project authorized — battlefield cleared. Codex updated.")
 	_refresh_manhattan_button()
 
-func _on_boss_spawned(_node: Node, boss_id: StringName, display_name: String) -> void:
-	boss_intro_name.text = display_name
-	boss_intro_sub.text = _boss_subtitle(boss_id)
+func _show_intro_card(header: String, header_color: Color, name_text: String, subtitle: String, hold: float = 1.8) -> void:
+	$BossIntro/VBox/Header.text = header
+	$BossIntro/VBox/Header.modulate = header_color
+	boss_intro_name.text = name_text
+	boss_intro_sub.text = subtitle
 	boss_intro.modulate = Color(1, 1, 1, 0)
 	boss_intro.visible = true
 	var t := create_tween()
 	t.tween_property(boss_intro, "modulate", Color.WHITE, 0.35)
-	t.tween_interval(1.8)
-	t.tween_property(boss_intro, "modulate", Color(1, 1, 1, 0), 0.5)
+	t.tween_interval(hold)
+	t.tween_property(boss_intro, "modulate", Color(1, 1, 1, 0), 0.4)
 	t.tween_callback(func(): boss_intro.visible = false)
+
+func _on_wave_started_intro(w: int) -> void:
+	var wd_nodes := get_tree().get_nodes_in_group("wave_director")
+	var sub: String = ""
+	if not wd_nodes.is_empty() and wd_nodes[0].has_method("get_next_wave_summary"):
+		pass  # next-wave summary would describe the NEXT wave, not this one
+	var header := "WAVE %d" % (w + 1)
+	if wd_nodes.size() > 0 and w >= wd_nodes[0].wave_count():
+		header = "ENDLESS +%d" % (w - wd_nodes[0].wave_count() + 1)
+	_show_intro_card(header, Color(0.85, 0.78, 0.4), "", "", 1.2)
+
+func _on_boss_spawned(_node: Node, boss_id: StringName, display_name: String) -> void:
+	_show_intro_card("BOSS", Color(0.9, 0.2, 0.2, 1), display_name, _boss_subtitle(boss_id), 2.0)
 
 func _boss_subtitle(boss_id: StringName) -> String:
 	match boss_id:
