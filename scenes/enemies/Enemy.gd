@@ -45,6 +45,9 @@ func _ready() -> void:
 		_summon_timer.timeout.connect(_on_summon_tick)
 		add_child(_summon_timer)
 		_summon_timer.start()
+	if stats.is_boss:
+		EventBus.boss_spawned.emit(self, stats.id, stats.display_name)
+		EventBus.screen_shake.emit(8.0, 0.45)
 	queue_redraw()
 
 func _on_summon_tick() -> void:
@@ -132,9 +135,23 @@ func _spawn_damage_number(dmg: int) -> void:
 
 func _die() -> void:
 	dead = true
+	var reward: int = int(round(stats.kill_reward * reward_mult))
 	_spawn_death_poof()
-	EventBus.enemy_killed.emit(self, int(round(stats.kill_reward * reward_mult)))
+	if reward > 0:
+		_spawn_gold_floater(reward)
+	if stats.is_boss:
+		EventBus.screen_shake.emit(18.0, 0.7)
+	EventBus.enemy_killed.emit(self, reward)
 	queue_free()
+
+func _spawn_gold_floater(amount: int) -> void:
+	var scene: PackedScene = preload("res://scenes/effects/GoldFloater.tscn")
+	var node: Node2D = scene.instantiate()
+	node.setup(amount)
+	node.global_position = global_position + Vector2(0, -stats.radius - 14.0)
+	var parent: Node = get_tree().current_scene
+	if parent:
+		parent.add_child(node)
 
 func _spawn_death_poof() -> void:
 	var scene: PackedScene = preload("res://scenes/effects/DeathPoof.tscn")

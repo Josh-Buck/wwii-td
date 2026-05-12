@@ -54,6 +54,7 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 func _resolve_hit(impact_pos: Vector2) -> void:
+	_spawn_impact_spark(impact_pos)
 	if aoe_radius <= 0.0:
 		_apply_to(target, impact_pos)
 		return
@@ -65,6 +66,15 @@ func _resolve_hit(impact_pos: Vector2) -> void:
 			continue
 		if impact_pos.distance_to(enemy.global_position) <= aoe_radius:
 			_apply_to(enemy, impact_pos)
+
+func _spawn_impact_spark(at: Vector2) -> void:
+	var scene: PackedScene = preload("res://scenes/effects/ImpactSpark.tscn")
+	var node: Node2D = scene.instantiate()
+	node.setup(color)
+	node.global_position = at
+	var parent: Node = get_tree().current_scene
+	if parent:
+		parent.add_child(node)
 
 func _apply_to(enemy: Node, _impact: Vector2) -> void:
 	if enemy == null or not is_instance_valid(enemy):

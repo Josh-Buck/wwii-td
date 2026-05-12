@@ -31,6 +31,10 @@ var _placement_ghost: Node = null
 var _placement_active: bool = false
 var _path_baked_points: PackedVector2Array
 var _bombing_run: BombingRun = null
+var _camera: Camera2D = null
+var _shake_remaining: float = 0.0
+var _shake_intensity: float = 0.0
+var _shake_rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
 	# Fallback bindings: if scene-level exports didn't populate (typed
@@ -111,6 +115,14 @@ func _ready() -> void:
 	_bombing_run = BombingRun.new()
 	add_child(_bombing_run)
 
+	_camera = Camera2D.new()
+	_camera.process_mode = Node.PROCESS_MODE_ALWAYS
+	_camera.position = Vector2(640, 360)
+	add_child(_camera)
+	_camera.make_current()
+	_shake_rng.randomize()
+	EventBus.screen_shake.connect(_on_shake_requested)
+
 	EventBus.tower_palette_pick.connect(_select_tower_index)
 	EventBus.start_wave_requested.connect(_on_start_wave_requested)
 	EventBus.map_ready.emit(available_towers)
@@ -185,6 +197,27 @@ func _filter_unlocked(towers: Array) -> Array:
 		if MetaProgress.is_unlocked(t.id):
 			out.append(t)
 	return out
+
+func _on_shake_requested(intensity: float, duration: float) -> void:
+	_shake_intensity = max(_shake_intensity, intensity)
+	_shake_remaining = max(_shake_remaining, duration)
+
+func _process(delta: float) -> void:
+	if _camera == null:
+		return
+	if _shake_remaining > 0.0:
+		_shake_remaining = max(0.0, _shake_remaining - delta)
+		var t: float = _shake_remaining / max(0.001, _shake_remaining + delta)  ## decay scalar
+		var falloff: float = _shake_remaining / 0.4 if _shake_remaining < 0.4 else 1.0
+		_camera.offset = Vector2(
+			_shake_rng.randf_range(-1.0, 1.0),
+			_shake_rng.randf_range(-1.0, 1.0),
+		) * _shake_intensity * falloff
+		if _shake_remaining <= 0.0:
+			_camera.offset = Vector2.ZERO
+			_shake_intensity = 0.0
+	else:
+		_camera.offset = Vector2.ZERO
 
 func _select_tower_index(idx: int) -> void:
 	if idx < 0 or idx >= available_towers.size():

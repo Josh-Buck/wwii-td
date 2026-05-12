@@ -72,6 +72,7 @@ func _process(delta: float) -> void:
 		if _telegraph_left <= 0.0:
 			_telegraph_active = false
 			_apply_damage()
+			EventBus.screen_shake.emit(14.0, 0.55)
 			strike_complete.emit()
 			queue_redraw()
 	if _targeting:

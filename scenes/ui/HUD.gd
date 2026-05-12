@@ -35,6 +35,10 @@ extends CanvasLayer
 @onready var pause_quit_btn: Button = $PauseOverlay/Center/VBox/PauseQuitButton
 @onready var speed_btn: Button = $TopBar/SpeedButton
 @onready var bomb_btn: Button = $TopBar/BombButton
+@onready var boss_intro: Control = $BossIntro
+@onready var boss_intro_name: Label = $BossIntro/VBox/NameLabel
+@onready var boss_intro_sub: Label = $BossIntro/VBox/Subtitle
+var _boss_intro_t: float = 0.0
 @onready var manhattan_btn: Button = $TopBar/ManhattanButton
 @onready var sidebar: PanelContainer = $TowerSidebar
 @onready var sidebar_list: VBoxContainer = $TowerSidebar/VBox/ScrollContainer/PaletteList
@@ -166,6 +170,8 @@ func _ready() -> void:
 	speed_btn.pressed.connect(_cycle_speed)
 	_apply_speed()
 	bomb_btn.pressed.connect(_on_bomb_btn_pressed)
+	boss_intro.visible = false
+	EventBus.boss_spawned.connect(_on_boss_spawned)
 	manhattan_btn.pressed.connect(_on_manhattan_btn_pressed)
 	EventBus.wave_ended.connect(_on_wave_ended_manhattan_chain)
 	_refresh_manhattan_button()
@@ -311,8 +317,31 @@ func _apply_manhattan() -> void:
 	for e in get_tree().get_nodes_in_group("enemies"):
 		if is_instance_valid(e) and e.has_method("take_damage"):
 			e.take_damage(99999.0, true)
+	EventBus.screen_shake.emit(28.0, 1.2)
 	_show_toast("Manhattan Project authorized — battlefield cleared. Codex updated.")
 	_refresh_manhattan_button()
+
+func _on_boss_spawned(_node: Node, boss_id: StringName, display_name: String) -> void:
+	boss_intro_name.text = display_name
+	boss_intro_sub.text = _boss_subtitle(boss_id)
+	boss_intro.modulate = Color(1, 1, 1, 0)
+	boss_intro.visible = true
+	var t := create_tween()
+	t.tween_property(boss_intro, "modulate", Color.WHITE, 0.35)
+	t.tween_interval(1.8)
+	t.tween_property(boss_intro, "modulate", Color(1, 1, 1, 0), 0.5)
+	t.tween_callback(func(): boss_intro.visible = false)
+
+func _boss_subtitle(boss_id: StringName) -> String:
+	match boss_id:
+		&"rommel": return "Desert Fox  ·  regenerates on the move"
+		&"eichmann": return "Architect of deportation  ·  Mossad capture 1960"
+		&"heydrich": return "Operation Anthropoid  ·  Czech / Slovak resistance"
+		&"mengele": return "Will escape if not pressured"
+		&"himmler": return "SS apparatus"
+		&"tojo": return "Imperial Japan command  ·  Tokyo Trial codex"
+		&"hitler": return "Führer of Nazi Germany  ·  multi-phase final boss"
+	return ""
 
 func _on_bomb_btn_pressed() -> void:
 	var br_nodes := get_tree().get_nodes_in_group("bombing_run")

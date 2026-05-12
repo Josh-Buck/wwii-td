@@ -356,6 +356,7 @@ func _fire_at(target: Node) -> void:
 	if not is_instance_valid(target):
 		return
 	_spawn_muzzle_flash()
+	_play_recoil(target)
 	var projectile := _PROJECTILE_SCENE.instantiate()
 	var opts: Dictionary = {
 		"aoe": effective_aoe_radius(),
@@ -374,6 +375,27 @@ func _fire_at(target: Node) -> void:
 		container.add_child(projectile)
 	else:
 		get_parent().add_child(projectile)
+
+func _play_recoil(target: Node) -> void:
+	# Small kickback away from the target, plus a brief scale punch. Heavier
+	# projectile styles get more kick. Position offset is local so we don't
+	# affect the tower's actual placement.
+	if not is_instance_valid(target):
+		return
+	var dir: Vector2 = (global_position - target.global_position).normalized()
+	var style := _projectile_style()
+	var kick: float = 5.0
+	match style:
+		&"shell": kick = 9.0
+		&"drop":  kick = 11.0
+		&"laser": kick = 3.0
+	var t := create_tween()
+	t.set_parallel(true)
+	t.tween_property(self, "position", position + dir * kick, 0.06)
+	t.tween_property(self, "scale", Vector2(1.06, 0.94), 0.06)
+	t.chain()
+	t.tween_property(self, "position", position, 0.18).set_ease(Tween.EASE_OUT)
+	t.tween_property(self, "scale", Vector2.ONE, 0.18).set_ease(Tween.EASE_OUT)
 
 func _projectile_style() -> StringName:
 	if stats == null:

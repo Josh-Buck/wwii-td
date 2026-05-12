@@ -420,6 +420,43 @@ theme_override_font_sizes/font_size = 16
 text = "Next Wave"
 custom_minimum_size = Vector2(0, 44)
 
+[node name="BossIntro" type="Control" parent="."]
+visible = false
+mouse_filter = 2
+offset_right = 1280.0
+offset_bottom = 720.0
+
+[node name="Bg" type="ColorRect" parent="BossIntro"]
+offset_top = 280.0
+offset_right = 1280.0
+offset_bottom = 440.0
+color = Color(0, 0, 0, 0.75)
+mouse_filter = 2
+
+[node name="VBox" type="VBoxContainer" parent="BossIntro"]
+offset_left = 0.0
+offset_top = 290.0
+offset_right = 1280.0
+offset_bottom = 430.0
+mouse_filter = 2
+
+[node name="Header" type="Label" parent="BossIntro/VBox"]
+text = "BOSS"
+horizontal_alignment = 1
+modulate = Color(0.9, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 20
+
+[node name="NameLabel" type="Label" parent="BossIntro/VBox"]
+text = "Erwin Rommel"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 44
+
+[node name="Subtitle" type="Label" parent="BossIntro/VBox"]
+text = ""
+horizontal_alignment = 1
+modulate = Color(0.85, 0.85, 0.85, 1)
+theme_override_font_sizes/font_size = 14
+
 [node name="ShopTab" type="Button" parent="."]
 visible = false
 text = "▸ War Room"
