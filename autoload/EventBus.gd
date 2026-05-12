@@ -16,6 +16,7 @@ signal enemy_unhovered(enemy: Node)
 signal boss_escaped(boss: Node, boss_id: StringName)  ## Mengele escape mechanic
 signal screen_shake(intensity: float, duration: float)  ## camera trauma in px / sec
 signal boss_spawned(boss: Node, boss_id: StringName, display_name: String)  ## HUD intro card
+signal combo_changed(streak: int, bonus_gold: int)  ## kill-streak combo state
 
 # Towers
 signal tower_placed(tower: Node)

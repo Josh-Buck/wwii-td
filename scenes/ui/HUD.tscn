@@ -420,6 +420,17 @@ theme_override_font_sizes/font_size = 16
 text = "Next Wave"
 custom_minimum_size = Vector2(0, 44)
 
+[node name="ComboLabel" type="Label" parent="."]
+visible = false
+mouse_filter = 2
+offset_left = 16.0
+offset_top = 56.0
+offset_right = 320.0
+offset_bottom = 92.0
+text = ""
+theme_override_font_sizes/font_size = 18
+modulate = Color(1, 0.85, 0.40, 1)
+
 [node name="BossIntro" type="Control" parent="."]
 visible = false
 mouse_filter = 2

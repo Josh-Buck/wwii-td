@@ -32,6 +32,7 @@ func _ready() -> void:
 	if health_bar:
 		health_bar.max_value = max_hp
 		health_bar.value = hp
+		health_bar.visible = false  ## only show after first damage
 	if hitbox:
 		hitbox.input_pickable = true
 		hitbox.mouse_entered.connect(_on_hover_entered)
@@ -110,6 +111,7 @@ func take_damage(dmg: float, pierce_armor: bool = false) -> void:
 	hp -= effective
 	if health_bar:
 		health_bar.value = hp
+		health_bar.visible = hp < max_hp - 0.5  ## stays hidden until first hit
 	_spawn_damage_number(int(effective))
 	_flash_white()
 	if hp <= 0.0:

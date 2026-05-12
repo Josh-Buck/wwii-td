@@ -35,6 +35,8 @@ extends CanvasLayer
 @onready var pause_quit_btn: Button = $PauseOverlay/Center/VBox/PauseQuitButton
 @onready var speed_btn: Button = $TopBar/SpeedButton
 @onready var bomb_btn: Button = $TopBar/BombButton
+@onready var combo_label: Label = $ComboLabel
+var _combo_hide_t: float = 0.0
 @onready var boss_intro: Control = $BossIntro
 @onready var boss_intro_name: Label = $BossIntro/VBox/NameLabel
 @onready var boss_intro_sub: Label = $BossIntro/VBox/Subtitle
@@ -173,6 +175,8 @@ func _ready() -> void:
 	boss_intro.visible = false
 	EventBus.boss_spawned.connect(_on_boss_spawned)
 	EventBus.wave_started.connect(_on_wave_started_intro)
+	EventBus.combo_changed.connect(_on_combo_changed)
+	combo_label.visible = false
 	manhattan_btn.pressed.connect(_on_manhattan_btn_pressed)
 	EventBus.wave_ended.connect(_on_wave_ended_manhattan_chain)
 	_refresh_manhattan_button()
@@ -235,6 +239,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_process_bombing_button()
+	_process_combo(delta)
 	if tooltip.visible:
 		var mp := get_viewport().get_mouse_position()
 		# Offset so cursor doesn't overlap; flip to left of cursor near right edge.
@@ -344,6 +349,23 @@ func _on_wave_started_intro(w: int) -> void:
 	if wd_nodes.size() > 0 and w >= wd_nodes[0].wave_count():
 		header = "ENDLESS +%d" % (w - wd_nodes[0].wave_count() + 1)
 	_show_intro_card(header, Color(0.85, 0.78, 0.4), "", "", 1.2)
+
+func _on_combo_changed(streak: int, bonus: int) -> void:
+	if streak < 2:
+		combo_label.visible = false
+		return
+	combo_label.text = "Combo x%d  (+%dg bonus)" % [streak, bonus]
+	combo_label.visible = true
+	_combo_hide_t = 1.5
+	combo_label.scale = Vector2(1.2, 1.2)
+	var t := create_tween()
+	t.tween_property(combo_label, "scale", Vector2.ONE, 0.15)
+
+func _process_combo(delta: float) -> void:
+	if _combo_hide_t > 0.0:
+		_combo_hide_t -= delta
+		if _combo_hide_t <= 0.0:
+			combo_label.visible = false
 
 func _on_boss_spawned(_node: Node, boss_id: StringName, display_name: String) -> void:
 	_show_intro_card("BOSS", Color(0.9, 0.2, 0.2, 1), display_name, _boss_subtitle(boss_id), 2.0)

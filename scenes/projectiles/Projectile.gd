@@ -13,6 +13,8 @@ var knockback: float = 0.0          ## px to push enemy backward along path
 var pierce_armor: bool = false      ## ignore enemy armor reduction
 var instakill_below_hp: float = 0.0 ## kill outright if target hp <= this
 var _spawn_pos: Vector2
+var _trail: Array[Vector2] = []  ## recent positions for trail rendering
+const _TRAIL_MAX: int = 6
 
 func setup(target_enemy: Node, dmg: float, opts: Dictionary = {}) -> void:
 	target = target_enemy
@@ -45,6 +47,14 @@ func _process(delta: float) -> void:
 	var to_target: Vector2 = target.global_position - global_position
 	var dist := to_target.length()
 	var step := speed * delta
+	# Sample trail in local space relative to current position.
+	_trail.push_front(Vector2.ZERO)
+	if _trail.size() > _TRAIL_MAX:
+		_trail.resize(_TRAIL_MAX)
+	# Translate older trail entries backward to keep them stationary in world.
+	var back: Vector2 = -to_target / max(0.0001, dist) * step
+	for i in range(1, _trail.size()):
+		_trail[i] += back
 	if step >= dist:
 		_resolve_hit(target.global_position)
 		queue_free()
@@ -92,6 +102,13 @@ func _apply_to(enemy: Node, _impact: Vector2) -> void:
 		enemy.apply_knockback(knockback)
 
 func _draw() -> void:
+	# Smoke trail behind moving projectiles (skip laser since it's instant).
+	if style != &"laser" and _trail.size() > 1:
+		for i in range(1, _trail.size()):
+			var a: float = 1.0 - float(i) / _TRAIL_MAX
+			var c := color
+			c.a = a * 0.55
+			draw_line(_trail[i - 1], _trail[i], c, 3.0 * (1.0 - float(i) / _TRAIL_MAX))
 	match style:
 		&"laser":
 			# Thin instant tracer from spawn to target position.

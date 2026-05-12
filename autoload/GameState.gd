@@ -15,6 +15,12 @@ var free_tower_pending: StringName = &""  ## roguelike shop: free placement queu
 var manhattan_used: bool = false  ## true after the player uses the Manhattan Project once
 var manhattan_penalty: bool = false  ## halves WEP earned this run if true
 
+# Kill-streak combo: chained kills within COMBO_WINDOW grant escalating bonus gold.
+const COMBO_WINDOW: float = 1.5
+const COMBO_BONUS_PER_TIER: int = 1
+var _combo_count: int = 0
+var _combo_last_time: float = 0.0
+
 # Per-run statistics (reset on reset_run, displayed on end screen)
 var stat_kills: int = 0
 var stat_gold_from_kills: int = 0
@@ -134,9 +140,21 @@ func _on_wave_started_for_bonds(_wave_idx: int) -> void:
 		held_bonds.erase(entry)
 
 func _on_enemy_killed(_enemy: Node, reward: int) -> void:
-	add_gold(reward)
+	# Combo: chain kills inside COMBO_WINDOW grant +N bonus gold where N is
+	# the new streak count. Streak resets when the window expires.
+	var now: float = Time.get_ticks_msec() / 1000.0
+	if now - _combo_last_time <= COMBO_WINDOW:
+		_combo_count += 1
+	else:
+		_combo_count = 1
+	_combo_last_time = now
+	var bonus: int = 0
+	if _combo_count >= 2:
+		bonus = (_combo_count - 1) * COMBO_BONUS_PER_TIER
+	add_gold(reward + bonus)
 	stat_kills += 1
-	stat_gold_from_kills += reward
+	stat_gold_from_kills += reward + bonus
+	EventBus.combo_changed.emit(_combo_count, bonus)
 
 func _on_enemy_reached_end(_enemy: Node) -> void:
 	lose_life(1)
