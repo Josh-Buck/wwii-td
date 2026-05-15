@@ -74,6 +74,14 @@ func set_muted(b: bool) -> void:
 	else:
 		start_music()
 
+func set_master_volume_db(db: float) -> void:
+	master_volume_db = db
+
+func set_music_volume_db(db: float) -> void:
+	music_volume_db = db
+	if _music_player:
+		_music_player.volume_db = db
+
 func start_music() -> void:
 	if music_muted or _music_player == null or _music_stream == null:
 		return

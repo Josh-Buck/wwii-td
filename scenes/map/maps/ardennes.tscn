@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scenes/map/Map.gd" id="1_map"]
 [ext_resource type="Script" path="res://scenes/map/PlacementSlot.gd" id="2_slot"]
 [ext_resource type="Script" path="res://scenes/map/MapDecor.gd" id="2_decor"]
+[ext_resource type="Texture2D" path="res://art/terrain/snow.png" id="2_snow"]
 [ext_resource type="Script" path="res://scripts/systems/WaveDirector.gd" id="3_wd"]
 [ext_resource type="PackedScene" path="res://scenes/towers/Tower.tscn" id="4_tower"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/Enemy.tscn" id="5_enemy"]
@@ -70,6 +71,14 @@ offset_right = 1280.0
 offset_bottom = 720.0
 mouse_filter = 2
 color = Color(0.74, 0.80, 0.86, 1)
+
+[node name="SnowTile" type="TextureRect" parent="."]
+mouse_filter = 2
+offset_right = 1280.0
+offset_bottom = 720.0
+texture = ExtResource("2_snow")
+stretch_mode = 1
+modulate = Color(1, 1, 1, 0.85)
 
 [node name="Decor" type="Node2D" parent="."]
 script = ExtResource("2_decor")

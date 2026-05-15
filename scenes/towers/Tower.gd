@@ -11,6 +11,7 @@ const _PRIORITY_CYCLE: Array[StringName] = [
 
 var targeting_mode: StringName = TargetingSystem.FIRST  ## overridden from stats in _ready
 var targets_in_range: Array = []
+var current_target: Node = null  ## last enemy fired at, drawn as a target line when selected
 var active_buffs: Dictionary = {}  ## adjacency tag -> source tower
 var aura_buffs: Dictionary = {}    ## source tower -> {fire_rate_bonus: float}
 var owning_slot: Node = null   ## set by Map on placement; cleared on sell
@@ -138,6 +139,12 @@ func sell() -> void:
 func _refresh_fire_timer() -> void:
 	if fire_timer:
 		fire_timer.wait_time = 1.0 / max(0.0001, effective_fire_rate())
+
+func _process(_delta: float) -> void:
+	# When this tower is selected by the info panel, redraw every frame so
+	# the target line tracks the enemy as it moves.
+	if selected:
+		queue_redraw()
 
 func _on_slow_aura_tick() -> void:
 	if stats == null or stats.slow_aura_factor <= 0.0:
@@ -326,10 +333,13 @@ func _on_fire_tick() -> void:
 		var target = TargetingSystem.pick(targets_in_range, targeting_mode, global_position)
 		if target == null:
 			return
+		current_target = target
 		_fire_at(target)
 		return
 	# Multi-target: fire one projectile at each of the top N targets.
 	var picked := _pick_top_n_targets(n)
+	if not picked.is_empty():
+		current_target = picked[0]
 	for t in picked:
 		_fire_at(t)
 
@@ -522,6 +532,10 @@ func _draw() -> void:
 	if selected:
 		draw_arc(Vector2.ZERO, TOWER_RADIUS + 4.0, 0, TAU, 32, Color(0.4, 0.9, 1.0, 0.9), 3.0)
 		draw_arc(Vector2.ZERO, TOWER_RADIUS + 10.0, 0, TAU, 32, Color(0.4, 0.9, 1.0, 0.45), 2.0)
+		# Target line: faint cyan dashed line to whoever this tower is firing at.
+		if current_target and is_instance_valid(current_target) and not current_target.dead:
+			var v: Vector2 = current_target.global_position - global_position
+			draw_line(Vector2.ZERO, v, Color(0.4, 0.9, 1.0, 0.45), 1.5)
 	if stats.portrait != null:
 		_draw_portrait()
 	else:

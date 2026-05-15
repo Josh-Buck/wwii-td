@@ -20,6 +20,7 @@ var _spawning_active: bool = false
 var _enemies_killed_this_wave: int = 0
 var _enemies_total_this_wave: int = 0
 var _difficulty_mult: float = 1.0  ## HP + reward scaler applied to spawned enemies
+var _wave_start_time_ms: int = 0  ## set when a wave starts; used for clear-time bonus
 
 const _ENDLESS_HP_PER_WAVE: float = 0.10
 const _ENDLESS_REWARD_PER_WAVE: float = 0.07
@@ -128,6 +129,7 @@ func start_next_wave() -> void:
 	_enemies_total_this_wave = 0
 	for s in spawns:
 		_enemies_total_this_wave += int(s.get("count", 1))
+	_wave_start_time_ms = Time.get_ticks_msec()
 	wave_started.emit(_current_wave_index)
 	EventBus.wave_started.emit(_current_wave_index)
 	_spawn_wave_async(spawns)
@@ -219,5 +221,13 @@ func _dec_alive() -> void:
 func _check_wave_end() -> void:
 	if _wave_active and not _spawning_active and _enemies_alive == 0:
 		_wave_active = false
+		# Clear-time bonus: faster clears grant up to +50g and a toast.
+		# Threshold scales with wave size so a 50-enemy wave isn't unfair.
+		var elapsed_s: float = (Time.get_ticks_msec() - _wave_start_time_ms) / 1000.0
+		var expected_s: float = 6.0 + _enemies_total_this_wave * 0.8
+		if elapsed_s < expected_s:
+			var ratio: float = clamp(1.0 - (elapsed_s / expected_s), 0.0, 1.0)
+			var bonus_gold: int = int(20 + 60 * ratio)
+			GameState.add_gold(bonus_gold)
 		wave_ended.emit(_current_wave_index)
 		EventBus.wave_ended.emit(_current_wave_index)

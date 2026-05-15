@@ -33,6 +33,8 @@ extends CanvasLayer
 @onready var diff_badge: Label = $TopBar/DiffBadge
 @onready var pause_overlay: Control = $PauseOverlay
 @onready var resume_btn: Button = $PauseOverlay/Center/VBox/ResumeButton
+@onready var master_vol_slider: HSlider = $PauseOverlay/Center/VBox/MasterVolSlider
+@onready var music_vol_slider: HSlider = $PauseOverlay/Center/VBox/MusicVolSlider
 @onready var pause_restart_btn: Button = $PauseOverlay/Center/VBox/PauseRestartButton
 @onready var pause_quit_btn: Button = $PauseOverlay/Center/VBox/PauseQuitButton
 @onready var speed_btn: Button = $TopBar/SpeedButton
@@ -176,6 +178,10 @@ func _ready() -> void:
 	mute_btn.text = "🔇" if AudioMan.muted else "🔊"
 	diff_badge.text = GameState.DIFFICULTY_LABELS[GameState.difficulty]
 	resume_btn.pressed.connect(toggle_pause)
+	master_vol_slider.value = AudioMan.master_volume_db
+	music_vol_slider.value = AudioMan.music_volume_db
+	master_vol_slider.value_changed.connect(AudioMan.set_master_volume_db)
+	music_vol_slider.value_changed.connect(AudioMan.set_music_volume_db)
 	pause_restart_btn.pressed.connect(_on_pause_restart_pressed)
 	pause_quit_btn.pressed.connect(_on_pause_quit_pressed)
 	pause_overlay.visible = false
