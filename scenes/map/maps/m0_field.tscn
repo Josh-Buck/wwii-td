@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scenes/map/Map.gd" id="1_map"]
 [ext_resource type="Script" path="res://scenes/map/PlacementSlot.gd" id="2_slot"]
 [ext_resource type="Script" path="res://scenes/map/MapDecor.gd" id="2_decor"]
+[ext_resource type="Script" path="res://scenes/map/Weather.gd" id="2_weather"]
 [ext_resource type="Texture2D" path="res://art/terrain/grass.png" id="2_grass"]
 [ext_resource type="Script" path="res://scripts/systems/WaveDirector.gd" id="3_wd"]
 [ext_resource type="PackedScene" path="res://scenes/towers/Tower.tscn" id="4_tower"]
@@ -86,6 +87,11 @@ style = &"normandy"
 seed = 1944
 decor_count = 70
 path_points = PackedVector2Array(-40, 360, 320, 360, 320, 200, 720, 200, 720, 540, 1320, 540)
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("2_weather")
+style = &"normandy"
+count = 50
 
 [node name="PathOutline" type="Line2D" parent="."]
 points = PackedVector2Array(-40, 360, 320, 360, 320, 200, 720, 200, 720, 540, 1320, 540)
