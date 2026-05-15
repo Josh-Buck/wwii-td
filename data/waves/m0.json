@@ -2,20 +2,21 @@
   {
     "wave": 1,
     "spawns": [
-      {"enemy": "wehrmacht_infantry", "count": 8, "interval": 0.9}
+      {"enemy": "wehrmacht_infantry", "count": 10, "interval": 0.6}
     ]
   },
   {
     "wave": 2,
     "spawns": [
-      {"enemy": "wehrmacht_infantry", "count": 14, "interval": 0.7}
+      {"enemy": "wehrmacht_infantry", "count": 16, "interval": 0.45},
+      {"enemy": "bersaglieri", "count": 2, "interval": 0.5, "delay": 5.0}
     ]
   },
   {
     "wave": 3,
     "spawns": [
-      {"enemy": "wehrmacht_infantry", "count": 8, "interval": 0.6},
-      {"enemy": "panzer_iii", "count": 2, "interval": 2.0, "delay": 4.0}
+      {"enemy": "wehrmacht_infantry", "count": 10, "interval": 0.4},
+      {"enemy": "panzer_iii", "count": 3, "interval": 1.5, "delay": 3.0}
     ]
   },
   {

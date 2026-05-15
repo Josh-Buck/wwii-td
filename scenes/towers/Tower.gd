@@ -532,6 +532,38 @@ func _draw() -> void:
 		draw_arc(Vector2.ZERO, stats.aura_radius, 0, TAU, 64, Color(1.0, 0.95, 0.5, 0.30), 1.0)
 	# Faction flag stripe always shows (over portrait or placeholder).
 	_draw_flag_stripe(stats.faction)
+	# Rank insignia for purchased upgrades — pips along the top edge per branch.
+	_draw_rank_insignia()
+
+func _draw_rank_insignia() -> void:
+	if upgrade_a_tier == 0 and upgrade_b_tier == 0:
+		return
+	var y: float = -TOWER_RADIUS - 4.0
+	# Branch A on the left, B on the right.
+	_draw_pip_row(Vector2(-TOWER_RADIUS + 6, y), upgrade_a_tier, Color(0.95, 0.78, 0.32))
+	_draw_pip_row(Vector2(TOWER_RADIUS - 6, y), upgrade_b_tier, Color(0.65, 0.85, 0.95), -1)
+
+func _draw_pip_row(origin: Vector2, tier: int, col: Color, direction: int = 1) -> void:
+	if tier <= 0:
+		return
+	if tier >= 3:
+		# Tier 3 → star instead of pips.
+		_draw_star(origin + Vector2(direction * 4, 0), 5.0, col)
+		return
+	var spacing: float = 5.0
+	for i in tier:
+		var p := origin + Vector2(direction * (i * spacing), 0)
+		draw_circle(p, 2.2, Color(0, 0, 0, 0.6))
+		draw_circle(p, 1.6, col)
+
+func _draw_star(center: Vector2, r: float, col: Color) -> void:
+	var pts := PackedVector2Array()
+	for i in 10:
+		var a: float = -PI / 2.0 + i * PI / 5.0
+		var rr: float = r if i % 2 == 0 else r * 0.45
+		pts.append(center + Vector2(cos(a), sin(a)) * rr)
+	draw_colored_polygon(pts, col)
+	draw_polyline(pts + PackedVector2Array([pts[0]]), Color(0, 0, 0, 0.7), 1.0)
 
 func _draw_portrait() -> void:
 	var tex: Texture2D = stats.portrait
