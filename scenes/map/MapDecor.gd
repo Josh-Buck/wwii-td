@@ -18,6 +18,17 @@ const _MAP_BOTTOM: float = 680.0
 
 var _items: Array = []  ## [{pos: Vector2, kind: StringName, rot: float, scale: float}]
 
+const _TEX: Dictionary = {
+	&"pine":     preload("res://art/decor/tree_pine.png"),
+	&"rock":     preload("res://art/decor/rock.png"),
+	&"hedge":    preload("res://art/decor/hedgerow.png"),
+	&"bush":     preload("res://art/decor/bush.png"),
+	&"sandbag":  preload("res://art/decor/sandbags.png"),
+	&"crater":   preload("res://art/decor/crater.png"),
+	&"barrel":   preload("res://art/decor/oil_barrel.png"),
+	&"treads":   preload("res://art/decor/tank_treads.png"),
+}
+
 func _ready() -> void:
 	z_index = -10
 	z_as_relative = false
@@ -29,9 +40,9 @@ func _generate() -> void:
 	rng.seed = seed
 	var kinds: Array
 	if style == &"ardennes":
-		kinds = [&"pine", &"pine", &"pine", &"snow_tuft", &"snow_tuft", &"rock"]
+		kinds = [&"pine", &"pine", &"pine", &"rock", &"rock", &"bush"]
 	else:
-		kinds = [&"hedge", &"hedge", &"grass", &"grass", &"sandbag", &"crater"]
+		kinds = [&"hedge", &"bush", &"sandbag", &"crater", &"barrel", &"treads"]
 	var attempts: int = 0
 	while _items.size() < decor_count and attempts < decor_count * 20:
 		attempts += 1
@@ -72,14 +83,21 @@ func _draw() -> void:
 		var pos: Vector2 = it.pos
 		var rot: float = it.rot
 		var s: float = it.scale
+		var tex: Texture2D = _TEX.get(it.kind)
+		if tex != null:
+			_draw_sprite(tex, pos, rot, s)
+			continue
+		# Fallback procedural shapes for kinds without a sprite.
 		match it.kind:
-			&"pine":           _draw_pine(pos, s)
 			&"snow_tuft":      _draw_snow_tuft(pos, s)
-			&"rock":           _draw_rock(pos, s)
-			&"hedge":          _draw_hedge(pos, rot, s)
 			&"grass":          _draw_grass(pos, s)
-			&"sandbag":        _draw_sandbag(pos, rot, s)
-			&"crater":         _draw_crater(pos, s)
+
+func _draw_sprite(tex: Texture2D, pos: Vector2, rot: float, s: float) -> void:
+	var size: Vector2 = tex.get_size() * s
+	# Rotate around the sprite's centre.
+	draw_set_transform(pos, rot, Vector2.ONE)
+	draw_texture_rect(tex, Rect2(-size / 2.0, size), false)
+	draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 
 func _draw_pine(pos: Vector2, s: float) -> void:
 	# Snow-capped pine: dark green triangle with white tip

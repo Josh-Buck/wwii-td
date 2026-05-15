@@ -364,7 +364,8 @@ func _pick_top_n_targets(n: int) -> Array:
 func _fire_at(target: Node) -> void:
 	if not is_instance_valid(target):
 		return
-	_spawn_muzzle_flash()
+	var to_target: Vector2 = target.global_position - global_position
+	_spawn_muzzle_flash(to_target.angle())
 	_play_recoil(target)
 	var sfx_tag: StringName = &"fire_bullet"
 	match _projectile_style():
@@ -480,11 +481,11 @@ func _find_projectiles_container() -> Node:
 		n = n.get_parent()
 	return null
 
-func _spawn_muzzle_flash() -> void:
+func _spawn_muzzle_flash(angle: float = 0.0) -> void:
 	var scene: PackedScene = preload("res://scenes/effects/FireFlash.tscn")
 	var fx: Node2D = scene.instantiate()
 	if stats:
-		fx.setup(stats.color.lightened(0.3))
+		fx.setup(stats.color.lightened(0.3), angle)
 	fx.global_position = global_position
 	var parent: Node = get_tree().current_scene
 	if parent:
@@ -502,11 +503,10 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO, TOWER_RADIUS * 0.9, Color(0, 0, 0, 0.35))
 		draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 	else:
-		# Base plate: stacked dark ellipse + ring suggesting sandbags / earthwork.
-		draw_set_transform(Vector2(0, TOWER_RADIUS + 4), 0, Vector2(1.0, 0.45))
-		draw_circle(Vector2.ZERO, TOWER_RADIUS + 4, Color(0.18, 0.16, 0.12, 0.55))
-		draw_arc(Vector2.ZERO, TOWER_RADIUS + 4, 0, TAU, 24, Color(0.36, 0.30, 0.20, 0.85), 1.5)
-		draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+		# Sandbag / octagonal stone base plate from the Kenney CC0 pack.
+		var base: Texture2D = preload("res://art/decor/tower_base.png")
+		var b_size: Vector2 = base.get_size() * (TOWER_RADIUS * 2.4 / max(1.0, base.get_size().x))
+		draw_texture_rect(base, Rect2(-b_size / 2.0 + Vector2(0, 4), b_size), false)
 	# Range preview (drawn under everything else when hovered or selected).
 	if hovered or selected:
 		var r := effective_range()

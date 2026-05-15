@@ -135,3 +135,25 @@ All figure portraits are public-domain photographs sourced from Wikimedia Common
 - **Erwin Rommel** — `art/enemies/rommel.jpg`
   - File: [Bundesarchiv Bild 183-J16362, Erwin Rommel](https://commons.wikimedia.org/wiki/File:Bundesarchiv_Bild_183-J16362,_Erwin_Rommel.jpg)
   - License: **CC-BY-SA 3.0 de** — credit required: "Bundesarchiv, Bild 183-J16362 / Winkelmann / CC-BY-SA 3.0"
+
+## Map decor & terrain tiles (Kenney CC0)
+
+The following 64×64 PNG tiles were sourced from Kenney.nl asset packs, all released under **CC0 1.0 Universal** (public domain — no attribution required, credited here as courtesy). Author: Kenney Vleugels (kenney.nl).
+
+- Pack: **Tower Defense (Top-Down)** — https://kenney.nl/assets/tower-defense-top-down
+  - `art/decor/tower_base.png` (octagonal stone platform, tile180)
+  - `art/decor/tree_pine.png` (tile134)
+  - `art/decor/bush.png` (tile132)
+  - `art/decor/hedgerow.png` (round shrub, tile133)
+  - `art/decor/rock.png` (tile135)
+  - `art/decor/crater.png` (rock chunk repurposed as crater debris, tile137)
+  - `art/decor/sandbags.png` (octagonal stone block repurposed as sandbag pile, tile128)
+  - `art/decor/oil_barrel.png` (cylinder tile, tile249)
+  - `art/decor/tank_treads.png` (dual-circle marker repurposed as tread mark, tile288)
+  - `art/terrain/grass.png` (clean grass, tile024)
+  - `art/terrain/road.png` (dirt tile, tile200)
+
+- Pack: **Tiny Ski** — https://kenney.nl/assets/tiny-ski
+  - `art/terrain/snow.png` (snow base tile_0000, upscaled to 64×64)
+
+License: **CC0 1.0 Universal**. Kenney's standard blurb: "Pack: <name>, Author: Kenney Vleugels (kenney.nl), License: CC0 1.0 Universal".
