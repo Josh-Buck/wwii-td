@@ -6,6 +6,8 @@ const _MAP_NORMANDY := "res://scenes/map/maps/m0_field.tscn"
 const _MAP_ARDENNES := "res://scenes/map/maps/ardennes.tscn"
 
 @onready var wep_label: Label = $Center/Panel/VBox/WepLabel
+@onready var stats_label: Label = $Center/Panel/VBox/StatsLabel
+@onready var ach_label: Label = $Center/Panel/VBox/AchLabel
 @onready var map_label: Label = $Center/Panel/VBox/MapLabel
 @onready var map_normandy_btn: Button = $Center/Panel/VBox/MapRow/NormandyButton
 @onready var map_ardennes_btn: Button = $Center/Panel/VBox/MapRow/ArdennesButton
@@ -66,6 +68,19 @@ func _refresh_map_buttons() -> void:
 
 func _refresh_top() -> void:
 	wep_label.text = "War Effort: %d" % MetaProgress.war_effort_points
+	if MetaProgress.lifetime_runs > 0:
+		stats_label.text = "%d runs  ·  %d victories  ·  highest wave %d  ·  %d kills  ·  best combo x%d" % [
+			MetaProgress.lifetime_runs,
+			MetaProgress.lifetime_victories,
+			MetaProgress.highest_wave,
+			MetaProgress.lifetime_kills,
+			MetaProgress.highest_combo,
+		]
+	else:
+		stats_label.text = "No runs yet — start one below."
+	var earned: int = MetaProgress.achievements_earned.size()
+	var total: int = MetaProgress.ACHIEVEMENTS.size()
+	ach_label.text = "Achievements: %d / %d" % [earned, total]
 
 func _on_start_pressed() -> void:
 	start_run_requested.emit(_selected_map)

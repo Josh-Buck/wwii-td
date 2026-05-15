@@ -7,6 +7,30 @@ var unlocked_starting_figures: Array[StringName] = [&"patton", &"eisenhower", &"
 var figure_ranks: Dictionary = {}  ## StringName -> int (0..MAX_RANK)
 var unlocked_perks: Array[StringName] = []
 var codex_seen: Array[StringName] = []
+var achievements_earned: Array[StringName] = []
+var tutorial_seen: bool = false
+# Lifetime stats (across all runs)
+var lifetime_kills: int = 0
+var lifetime_runs: int = 0
+var lifetime_victories: int = 0
+var lifetime_bosses_killed: int = 0
+var highest_wave: int = 0
+var highest_combo: int = 0
+
+# id -> {label, desc, wep, check}. check is evaluated at signal points.
+const ACHIEVEMENTS: Dictionary = {
+	&"first_blood":      {"label": "First Blood",      "desc": "Kill your first enemy.",                      "wep": 1},
+	&"hundred_down":     {"label": "Hundred Down",     "desc": "Kill 100 enemies in one run.",                "wep": 3},
+	&"boss_fall":        {"label": "Boss Fall",        "desc": "Defeat a named boss.",                        "wep": 5},
+	&"hitler_falls":     {"label": "VE Day",           "desc": "Defeat Hitler at wave 15.",                   "wep": 20},
+	&"combo_10":         {"label": "Streak x10",       "desc": "Reach a kill combo of 10.",                   "wep": 5},
+	&"fully_upgraded":   {"label": "Fully Decorated",  "desc": "Fully upgrade both branches of a tower.",     "wep": 5},
+	&"gold_hoarder":     {"label": "Gold Hoarder",     "desc": "Hold 2000 gold at once.",                     "wep": 4},
+	&"codex_chain":      {"label": "Manhattan Read",   "desc": "Read all four Manhattan codex entries.",      "wep": 5},
+	&"first_recruit":    {"label": "Roll Call",        "desc": "Recruit your first figure.",                  "wep": 2},
+	&"first_promotion":  {"label": "Field Promotion",  "desc": "Promote a figure to Rank 2.",                 "wep": 3},
+	&"endless_5":        {"label": "Beyond the End",   "desc": "Reach Endless +5.",                           "wep": 10},
+}
 
 const MAX_RANK: int = 3
 
@@ -78,6 +102,7 @@ func recruit_figure(figure_id: StringName) -> bool:
 	if not spend_war_effort(cost):
 		return false
 	unlocked_starting_figures.append(figure_id)
+	grant_achievement(&"first_recruit")
 	SaveSystem.save_async()
 	return true
 
@@ -91,6 +116,8 @@ func promote_figure(figure_id: StringName) -> bool:
 	if not spend_war_effort(cost):
 		return false
 	figure_ranks[figure_id] = r + 1
+	if r + 1 >= 2:
+		grant_achievement(&"first_promotion")
 	SaveSystem.save_async()
 	return true
 
@@ -109,7 +136,28 @@ func mark_codex_seen(entry_id: StringName) -> void:
 		return
 	codex_seen.append(entry_id)
 	EventBus.codex_entry_unlocked.emit(entry_id)
+	# Manhattan codex chain achievement.
+	var chain: Array[StringName] = [&"oppenheimer", &"trinity", &"hiroshima", &"nagasaki"]
+	var all_seen: bool = true
+	for c in chain:
+		if c not in codex_seen:
+			all_seen = false
+			break
+	if all_seen:
+		grant_achievement(&"codex_chain")
 	SaveSystem.save_async()
+
+func grant_achievement(id: StringName) -> bool:
+	if id in achievements_earned:
+		return false
+	if not ACHIEVEMENTS.has(id):
+		return false
+	achievements_earned.append(id)
+	var entry: Dictionary = ACHIEVEMENTS[id]
+	war_effort_points += int(entry.get("wep", 0))
+	EventBus.achievement_earned.emit(id, entry.get("label", ""), int(entry.get("wep", 0)))
+	SaveSystem.save_async()
+	return true
 
 func award_war_effort(points: int) -> void:
 	war_effort_points += points
@@ -129,6 +177,14 @@ func to_dict() -> Dictionary:
 		"figure_ranks": figure_ranks,
 		"unlocked_perks": unlocked_perks,
 		"codex_seen": codex_seen,
+		"achievements_earned": achievements_earned,
+		"tutorial_seen": tutorial_seen,
+		"lifetime_kills": lifetime_kills,
+		"lifetime_runs": lifetime_runs,
+		"lifetime_victories": lifetime_victories,
+		"lifetime_bosses_killed": lifetime_bosses_killed,
+		"highest_wave": highest_wave,
+		"highest_combo": highest_combo,
 	}
 
 func from_dict(d: Dictionary) -> void:
@@ -144,3 +200,13 @@ func from_dict(d: Dictionary) -> void:
 	figure_ranks = d.get("figure_ranks", {})
 	unlocked_perks = d.get("unlocked_perks", [])
 	codex_seen = d.get("codex_seen", [])
+	achievements_earned.clear()
+	for a in d.get("achievements_earned", []):
+		achievements_earned.append(StringName(a))
+	tutorial_seen = d.get("tutorial_seen", false)
+	lifetime_kills = d.get("lifetime_kills", 0)
+	lifetime_runs = d.get("lifetime_runs", 0)
+	lifetime_victories = d.get("lifetime_victories", 0)
+	lifetime_bosses_killed = d.get("lifetime_bosses_killed", 0)
+	highest_wave = d.get("highest_wave", 0)
+	highest_combo = d.get("highest_combo", 0)

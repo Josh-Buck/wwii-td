@@ -36,6 +36,11 @@ extends CanvasLayer
 @onready var speed_btn: Button = $TopBar/SpeedButton
 @onready var bomb_btn: Button = $TopBar/BombButton
 @onready var combo_label: Label = $ComboLabel
+@onready var ach_popup: PanelContainer = $AchievementPopup
+@onready var ach_name: Label = $AchievementPopup/VBox/NameLabel
+@onready var ach_wep: Label = $AchievementPopup/VBox/WepLabel
+var _ach_queue: Array = []
+var _ach_visible_t: float = 0.0
 var _combo_hide_t: float = 0.0
 @onready var boss_intro: Control = $BossIntro
 @onready var boss_intro_name: Label = $BossIntro/VBox/NameLabel
@@ -177,6 +182,8 @@ func _ready() -> void:
 	EventBus.wave_started.connect(_on_wave_started_intro)
 	EventBus.combo_changed.connect(_on_combo_changed)
 	combo_label.visible = false
+	ach_popup.visible = false
+	EventBus.achievement_earned.connect(_on_achievement_earned)
 	manhattan_btn.pressed.connect(_on_manhattan_btn_pressed)
 	EventBus.wave_ended.connect(_on_wave_ended_manhattan_chain)
 	_refresh_manhattan_button()
@@ -240,6 +247,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_process_bombing_button()
 	_process_combo(delta)
+	_process_achievement_queue(delta)
 	if tooltip.visible:
 		var mp := get_viewport().get_mouse_position()
 		# Offset so cursor doesn't overlap; flip to left of cursor near right edge.
@@ -349,6 +357,32 @@ func _on_wave_started_intro(w: int) -> void:
 	if wd_nodes.size() > 0 and w >= wd_nodes[0].wave_count():
 		header = "ENDLESS +%d" % (w - wd_nodes[0].wave_count() + 1)
 	_show_intro_card(header, Color(0.85, 0.78, 0.4), "", "", 1.2)
+
+func _on_achievement_earned(id: StringName, label: String, wep: int) -> void:
+	_ach_queue.append({"label": label, "wep": wep})
+	if not ach_popup.visible:
+		_show_next_achievement()
+
+func _show_next_achievement() -> void:
+	if _ach_queue.is_empty():
+		ach_popup.visible = false
+		return
+	var item: Dictionary = _ach_queue.pop_front()
+	ach_name.text = item.get("label", "Achievement")
+	ach_wep.text = "+%d War Effort" % int(item.get("wep", 0))
+	ach_popup.modulate = Color(1, 1, 1, 0)
+	ach_popup.visible = true
+	_ach_visible_t = 3.0
+	var t := create_tween()
+	t.tween_property(ach_popup, "modulate", Color.WHITE, 0.3)
+
+func _process_achievement_queue(delta: float) -> void:
+	if _ach_visible_t > 0.0:
+		_ach_visible_t -= delta
+		if _ach_visible_t <= 0.0:
+			var t := create_tween()
+			t.tween_property(ach_popup, "modulate", Color(1, 1, 1, 0), 0.4)
+			t.tween_callback(_show_next_achievement)
 
 func _on_combo_changed(streak: int, bonus: int) -> void:
 	if streak < 2:

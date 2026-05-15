@@ -283,6 +283,8 @@ func purchase_upgrade(branch: StringName, tier_idx: int) -> bool:
 		upgrade_a_tier += 1
 	else:
 		upgrade_b_tier += 1
+	if upgrade_a_tier >= 3 and upgrade_b_tier >= 3:
+		MetaProgress.grant_achievement(&"fully_upgraded")
 	apply_buffs()
 	# Refresh the placed tower's range collision since range may have changed.
 	if range_collision and range_collision.shape is CircleShape2D:

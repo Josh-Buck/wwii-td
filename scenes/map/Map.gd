@@ -328,6 +328,9 @@ func _on_run_ended(victory: bool) -> void:
 	if GameState.manhattan_penalty:
 		earned = int(earned * 0.5)
 	var total := wave_director.wave_count() if wave_director else 9
+	MetaProgress.lifetime_runs += 1
+	if victory:
+		MetaProgress.lifetime_victories += 1
 	MetaProgress.award_war_effort(earned)
 	if hud and hud.has_method("show_end_screen"):
 		hud.show_end_screen(victory, waves_cleared, earned, total)
