@@ -19,6 +19,8 @@ var selected: bool = false  ## set by HUD when info panel pinned to this tower
 var upgrade_a_tier: int = 0  ## branch A tiers purchased (0..3)
 var upgrade_b_tier: int = 0  ## branch B tiers purchased (0..3)
 var total_invested: int = 0  ## base cost + all upgrade costs (for sell refund)
+var kills: int = 0  ## enemies killed by this tower's projectiles
+var damage_dealt: int = 0  ## total damage dealt by this tower's projectiles
 var _eco_timer: Timer = null
 var _gold_accumulator: float = 0.0
 
@@ -382,6 +384,7 @@ func _fire_at(target: Node) -> void:
 		"instakill_below_hp": _effective_instakill_threshold(),
 	}
 	projectile.setup(target, damage_for_target(target), opts)
+	projectile.owner_tower = self
 	projectile.global_position = global_position
 	var container := _find_projectiles_container()
 	if container:

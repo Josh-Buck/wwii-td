@@ -15,6 +15,7 @@ var instakill_below_hp: float = 0.0 ## kill outright if target hp <= this
 var _spawn_pos: Vector2
 var _trail: Array[Vector2] = []  ## recent positions for trail rendering
 const _TRAIL_MAX: int = 6
+var owner_tower: Node = null  ## set on setup so kills credit back to the firing tower
 
 func setup(target_enemy: Node, dmg: float, opts: Dictionary = {}) -> void:
 	target = target_enemy
@@ -92,10 +93,19 @@ func _apply_to(enemy: Node, _impact: Vector2) -> void:
 	# Instakill below threshold (Pavlichenko's White Death).
 	if instakill_below_hp > 0.0 and enemy.hp <= instakill_below_hp:
 		if enemy.has_method("take_damage"):
+			var was_alive: bool = not enemy.dead
 			enemy.take_damage(99999.0, true)
+			if was_alive and enemy.dead and owner_tower and is_instance_valid(owner_tower):
+				owner_tower.kills += 1
 		return
 	if enemy.has_method("take_damage"):
+		var was_alive: bool = not enemy.dead
+		var pre_hp: float = enemy.hp
 		enemy.take_damage(damage, pierce_armor)
+		if owner_tower and is_instance_valid(owner_tower):
+			owner_tower.damage_dealt += int(max(0.0, pre_hp - max(0.0, enemy.hp)))
+			if was_alive and enemy.dead:
+				owner_tower.kills += 1
 	if slow_factor < 1.0 and slow_duration > 0.0 and enemy.has_method("apply_slow"):
 		enemy.apply_slow(slow_factor, slow_duration)
 	if knockback > 0.0 and enemy.has_method("apply_knockback"):

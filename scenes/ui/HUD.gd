@@ -614,8 +614,11 @@ func _show_defender_info(stats: Resource, placed_tower: Node = null) -> void:
 	var aoe_str: String = ""
 	if aoe_value > 0:
 		aoe_str = "  AoE r%d" % int(aoe_value)
-	def_stats.text = "Damage %d  ·  Rate %.1f/s  ·  Range %d  ·  DPS %d%s" % [
-		int(d_value), r_value, int(range_value), int(dps), aoe_str
+	var kills_str: String = ""
+	if _info_active_tower and is_instance_valid(_info_active_tower):
+		kills_str = "  ·  %d kills  ·  %d dmg dealt" % [_info_active_tower.kills, _info_active_tower.damage_dealt]
+	def_stats.text = "Damage %d  ·  Rate %.1f/s  ·  Range %d  ·  DPS %d%s%s" % [
+		int(d_value), r_value, int(range_value), int(dps), aoe_str, kills_str
 	]
 	def_hits.text = "Hits: %s   Default target: %s" % [
 		_hits_text(stats.can_hit),
