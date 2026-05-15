@@ -20,6 +20,8 @@ class_name EnemyStats extends Resource
 @export var summon_enemy_id: StringName = &""  ## enemy id to summon
 @export var debuff_aura_radius: float = 0.0  ## > 0 → towers within this radius fire 50% slower
 @export_range(0.0, 1.0) var debuff_aura_factor: float = 0.5  ## fire-rate scalar inside the aura
+@export var speed_aura_radius: float = 0.0  ## > 0 → other enemies in radius move N% faster
+@export var speed_aura_mult: float = 1.3   ## speed multiplier applied inside the aura
 
 @export_group("Rewards")
 @export var kill_reward: int = 5

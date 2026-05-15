@@ -81,6 +81,8 @@ func _process(delta: float) -> void:
 		_slow_active_prev = slow_active
 		queue_redraw()
 	var speed_mult: float = _slow_factor if slow_active else 1.0
+	# Speed aura: nearby enemy with speed_aura_radius > 0 buffs this one's speed.
+	speed_mult *= _speed_aura_mult()
 	progress += stats.speed * speed_mult * delta
 	if stats.regen_per_sec > 0.0 and hp < max_hp:
 		hp = minf(max_hp, hp + stats.regen_per_sec * delta)
@@ -118,6 +120,19 @@ func take_damage(dmg: float, pierce_armor: bool = false) -> void:
 	AudioMan.play(&"hit", -12.0)
 	if hp <= 0.0:
 		_die()
+
+func _speed_aura_mult() -> float:
+	# Highest aura wins. Skips self.
+	var m: float = 1.0
+	for e in get_tree().get_nodes_in_group("enemies"):
+		if e == self or not is_instance_valid(e) or e.stats == null:
+			continue
+		if e.stats.speed_aura_radius <= 0.0:
+			continue
+		if global_position.distance_squared_to(e.global_position) <= e.stats.speed_aura_radius * e.stats.speed_aura_radius:
+			if e.stats.speed_aura_mult > m:
+				m = e.stats.speed_aura_mult
+	return m
 
 func _flash_white() -> void:
 	modulate = Color(2.0, 2.0, 2.0, 1.0)
