@@ -69,6 +69,26 @@ text = "Normandy"
 size_flags_horizontal = 3
 text = "Ardennes"
 
+[node name="DiffLabel" type="Label" parent="Center/Panel/VBox"]
+text = "Difficulty: Normal"
+horizontal_alignment = 1
+modulate = Color(0.85, 0.85, 0.95, 1)
+
+[node name="DiffRow" type="HBoxContainer" parent="Center/Panel/VBox"]
+theme_override_constants/separation = 6
+
+[node name="EasyButton" type="Button" parent="Center/Panel/VBox/DiffRow"]
+size_flags_horizontal = 3
+text = "Easy"
+
+[node name="NormalButton" type="Button" parent="Center/Panel/VBox/DiffRow"]
+size_flags_horizontal = 3
+text = "Normal"
+
+[node name="HardButton" type="Button" parent="Center/Panel/VBox/DiffRow"]
+size_flags_horizontal = 3
+text = "Hard"
+
 [node name="StartButton" type="Button" parent="Center/Panel/VBox"]
 custom_minimum_size = Vector2(0, 56)
 text = "Start Run"

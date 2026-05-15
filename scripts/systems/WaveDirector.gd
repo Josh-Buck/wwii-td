@@ -21,8 +21,8 @@ var _enemies_killed_this_wave: int = 0
 var _enemies_total_this_wave: int = 0
 var _difficulty_mult: float = 1.0  ## HP + reward scaler applied to spawned enemies
 
-const _ENDLESS_HP_PER_WAVE: float = 0.12
-const _ENDLESS_REWARD_PER_WAVE: float = 0.06
+const _ENDLESS_HP_PER_WAVE: float = 0.10
+const _ENDLESS_REWARD_PER_WAVE: float = 0.07
 const _ENDLESS_BASE_POOL: Array[StringName] = [
 	&"wehrmacht_infantry", &"panzer_iii", &"stuka",
 	&"waffen_ss", &"tiger_i", &"banzai", &"bersaglieri",
@@ -172,7 +172,7 @@ func _spawn_enemy(enemy_id: StringName) -> void:
 		return
 	var enemy = enemy_scene.instantiate()
 	enemy.stats = enemy_registry[enemy_id]
-	enemy.hp_mult = _difficulty_mult
+	enemy.hp_mult = _difficulty_mult * GameState.DIFFICULTY_HP_MULT[GameState.difficulty]
 	enemy.reward_mult = 1.0 + _ENDLESS_REWARD_PER_WAVE * max(0, _current_wave_index - _waves.size() + 1)
 	if _path:
 		_path.add_child(enemy)

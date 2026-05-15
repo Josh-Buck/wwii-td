@@ -11,6 +11,10 @@ const _MAP_ARDENNES := "res://scenes/map/maps/ardennes.tscn"
 @onready var map_label: Label = $Center/Panel/VBox/MapLabel
 @onready var map_normandy_btn: Button = $Center/Panel/VBox/MapRow/NormandyButton
 @onready var map_ardennes_btn: Button = $Center/Panel/VBox/MapRow/ArdennesButton
+@onready var diff_label: Label = $Center/Panel/VBox/DiffLabel
+@onready var diff_easy_btn: Button = $Center/Panel/VBox/DiffRow/EasyButton
+@onready var diff_normal_btn: Button = $Center/Panel/VBox/DiffRow/NormalButton
+@onready var diff_hard_btn: Button = $Center/Panel/VBox/DiffRow/HardButton
 @onready var start_btn: Button = $Center/Panel/VBox/StartButton
 @onready var recruit_btn: Button = $Center/Panel/VBox/RecruitButton
 @onready var codex_btn: Button = $Center/Panel/VBox/CodexButton
@@ -51,8 +55,28 @@ func _ready() -> void:
 	recruit_close.pressed.connect(_close_recruit)
 	map_normandy_btn.pressed.connect(_select_map.bind(_MAP_NORMANDY))
 	map_ardennes_btn.pressed.connect(_select_map.bind(_MAP_ARDENNES))
+	diff_easy_btn.pressed.connect(_select_difficulty.bind(GameState.Difficulty.EASY))
+	diff_normal_btn.pressed.connect(_select_difficulty.bind(GameState.Difficulty.NORMAL))
+	diff_hard_btn.pressed.connect(_select_difficulty.bind(GameState.Difficulty.HARD))
 	_refresh_map_buttons()
+	_refresh_difficulty_buttons()
 	_refresh_top()
+
+func _select_difficulty(d: int) -> void:
+	GameState.difficulty = d
+	_refresh_difficulty_buttons()
+
+func _refresh_difficulty_buttons() -> void:
+	diff_easy_btn.disabled = GameState.difficulty == GameState.Difficulty.EASY
+	diff_normal_btn.disabled = GameState.difficulty == GameState.Difficulty.NORMAL
+	diff_hard_btn.disabled = GameState.difficulty == GameState.Difficulty.HARD
+	var hp: float = GameState.DIFFICULTY_HP_MULT[GameState.difficulty]
+	var wep: float = GameState.DIFFICULTY_WEP_MULT[GameState.difficulty]
+	var lives_b: int = GameState.DIFFICULTY_LIVES_BONUS[GameState.difficulty]
+	var gold_b: int = GameState.DIFFICULTY_GOLD_BONUS[GameState.difficulty]
+	diff_label.text = "Difficulty: %s — enemy HP x%.2f · WEP x%.2f · lives %+d · gold %+d" % [
+		GameState.DIFFICULTY_LABELS[GameState.difficulty], hp, wep, lives_b, gold_b
+	]
 
 func _select_map(path: String) -> void:
 	_selected_map = path

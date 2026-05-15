@@ -3,6 +3,15 @@ extends Node
 const STARTING_GOLD := 200
 const STARTING_LIVES := 20
 
+enum Difficulty { EASY, NORMAL, HARD }
+const DIFFICULTY_LABELS := ["Easy", "Normal", "Hard"]
+const DIFFICULTY_HP_MULT: Array[float] = [0.75, 1.0, 1.3]
+const DIFFICULTY_GOLD_BONUS: Array[int] = [80, 0, -30]
+const DIFFICULTY_LIVES_BONUS: Array[int] = [5, 0, -5]
+const DIFFICULTY_WEP_MULT: Array[float] = [0.75, 1.0, 1.6]
+
+var difficulty: int = Difficulty.NORMAL
+
 var gold: int = STARTING_GOLD
 var lives: int = STARTING_LIVES
 var wave_index: int = 0
@@ -29,8 +38,8 @@ var stat_bond_payouts: int = 0
 var stat_towers_placed: int = 0
 
 func reset_run() -> void:
-	gold = STARTING_GOLD + MetaProgress.starting_gold_bonus()
-	lives = STARTING_LIVES
+	gold = STARTING_GOLD + MetaProgress.starting_gold_bonus() + DIFFICULTY_GOLD_BONUS[difficulty]
+	lives = max(1, STARTING_LIVES + DIFFICULTY_LIVES_BONUS[difficulty])
 	wave_index = 0
 	held_bonds.clear()
 	held_shares.clear()

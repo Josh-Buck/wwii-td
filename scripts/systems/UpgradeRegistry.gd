@@ -174,8 +174,8 @@ const UPGRADES: Dictionary = {
 				 "desc": "+85% damage. The official tally at Sevastopol.",
 				 "damage_mult": 1.85},
 				{"name": "White Death", "cost": 1000,
-				 "desc": "+100% damage. Instantly kills targets below 150 HP.",
-				 "damage_mult": 2.0, "instakill_below_hp": 150.0},
+				 "desc": "+100% damage. Instantly kills targets below 80 HP.",
+				 "damage_mult": 2.0, "instakill_below_hp": 80.0},
 			],
 		},
 		"branch_b": {

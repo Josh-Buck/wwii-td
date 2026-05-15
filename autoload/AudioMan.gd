@@ -12,11 +12,15 @@ const MIX_RATE: int = 22050
 const POOL_SIZE: int = 12
 
 var muted: bool = false
+var music_muted: bool = false
 var master_volume_db: float = -4.0
+var music_volume_db: float = -16.0
 
 var _streams: Dictionary = {}        ## StringName -> AudioStreamWAV
 var _players: Array[AudioStreamPlayer] = []
 var _next_player: int = 0
+var _music_player: AudioStreamPlayer = null
+var _music_stream: AudioStreamWAV = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -25,7 +29,16 @@ func _ready() -> void:
 		p.process_mode = Node.PROCESS_MODE_ALWAYS
 		add_child(p)
 		_players.append(p)
+	_music_player = AudioStreamPlayer.new()
+	_music_player.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(_music_player)
 	_build_bank()
+	_music_stream = _bake(_march_loop_pcm())
+	_music_stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	_music_stream.loop_end = _music_stream.data.size() / 2  ## sample count
+	_music_player.stream = _music_stream
+	_music_player.volume_db = music_volume_db
+	start_music()
 
 func _build_bank() -> void:
 	_streams[&"click"]        = _bake(_click_pcm())
@@ -55,6 +68,21 @@ func play(tag: StringName, volume_offset_db: float = 0.0) -> void:
 
 func set_muted(b: bool) -> void:
 	muted = b
+	music_muted = b
+	if b:
+		_music_player.stop()
+	else:
+		start_music()
+
+func start_music() -> void:
+	if music_muted or _music_player == null or _music_stream == null:
+		return
+	if not _music_player.playing:
+		_music_player.play()
+
+func stop_music() -> void:
+	if _music_player:
+		_music_player.stop()
 
 # ---------- Synthesis ----------
 
@@ -224,4 +252,51 @@ func _ach_pcm() -> PackedFloat32Array:
 		var f: float = float(notes[phase])
 		var local_t: float = t - phase * 0.12
 		arr[i] = sin(t * TAU * f) * exp(-local_t * 9.0) * 0.5
+	return arr
+
+func _march_loop_pcm() -> PackedFloat32Array:
+	# 8-second wartime march loop at ~60 BPM (1 beat = 1.0 s, 8 beats).
+	# Layers: low bass note per beat (Am-Dm-F-E walk), snare on beats 1 & 3
+	# of each 4-beat measure, and a soft sustained low pad.
+	const BPM: float = 60.0
+	const BEATS: int = 8
+	var beat_sec: float = 60.0 / BPM
+	var total_sec: float = beat_sec * BEATS
+	var arr := _make_buffer(total_sec)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 9001
+	# Bass note progression (Hz): A2 A2 D2 D2 F2 F2 E2 E2 — i i iv iv VI VI V V
+	var bass_notes: Array = [110.0, 110.0, 73.42, 73.42, 87.31, 87.31, 82.41, 82.41]
+	# Pad chord: drone on A2 + E3 fifth, very low volume.
+	var pad_freqs: Array = [110.0, 164.81]
+	for i in arr.size():
+		var t: float = float(i) / MIX_RATE
+		var beat: int = int(t / beat_sec) % BEATS
+		var local_t: float = t - beat * beat_sec
+		# Bass
+		var bf: float = float(bass_notes[beat])
+		var bass_env: float = exp(-local_t * 2.0)
+		var bass: float = sin(t * TAU * bf) * bass_env * 0.45
+		# Sub-octave for body
+		bass += sin(t * TAU * bf * 0.5) * bass_env * 0.15
+		# Pad (always on, slow vibrato)
+		var pad: float = 0.0
+		for f in pad_freqs:
+			pad += sin(t * TAU * float(f) * (1.0 + 0.003 * sin(t * 3.0))) * 0.06
+		# Snare on beats 0 and 2 of each measure (so 0,2,4,6 within the 8 beats)
+		var snare: float = 0.0
+		if beat % 2 == 0 and local_t < 0.10:
+			var sn_t: float = local_t
+			snare = rng.randf_range(-1.0, 1.0) * exp(-sn_t * 50.0) * 0.35
+		# Hi-hat tick on every offbeat half-beat
+		var hat: float = 0.0
+		var hat_phase: float = fmod(t, beat_sec * 0.5)
+		if hat_phase < 0.04:
+			hat = rng.randf_range(-1.0, 1.0) * exp(-hat_phase * 120.0) * 0.07
+		# Tail-off fade near loop end to avoid click on wrap
+		var loop_fade: float = 1.0
+		var tail: float = total_sec - t
+		if tail < 0.05:
+			loop_fade = tail / 0.05
+		arr[i] = (bass + pad + snare + hat) * loop_fade * 0.95
 	return arr

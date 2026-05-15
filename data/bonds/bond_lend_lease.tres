@@ -7,6 +7,6 @@ script = ExtResource("1")
 id = &"lend_lease"
 display_name = "Lend-Lease"
 cost = 500
-payout = 900
+payout = 740
 maturity_waves = 5
 description = "Long-term commitment. Pay 500g; receive 900g when the 5th wave from now starts."

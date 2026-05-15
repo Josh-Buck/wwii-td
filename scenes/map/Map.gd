@@ -325,6 +325,7 @@ func _on_run_ended(victory: bool) -> void:
 	# 2 WEP per wave + 10 victory bonus + 1 per kill / 25 so a real run earns
 	# enough to recruit a figure (5-18 WEP) without grinding 4 runs each time.
 	var earned := waves_cleared * 2 + (10 if victory else 0) + (GameState.stat_kills / 25)
+	earned = int(earned * GameState.DIFFICULTY_WEP_MULT[GameState.difficulty])
 	if GameState.manhattan_penalty:
 		earned = int(earned * 0.5)
 	var total := wave_director.wave_count() if wave_director else 9

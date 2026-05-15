@@ -7,6 +7,6 @@ script = ExtResource("1")
 id = &"victory_bond"
 display_name = "Victory Bond"
 cost = 250
-payout = 425
+payout = 360
 maturity_waves = 4
 description = "Mid-term commitment. Pay 250g; receive 425g when the 4th wave from now starts."
