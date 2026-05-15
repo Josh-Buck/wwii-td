@@ -29,6 +29,7 @@ extends CanvasLayer
 @onready var info_sell_btn: Button = $TowerInfoPanel/VBox/ButtonRow/SellButton
 @onready var info_close_btn: Button = $TowerInfoPanel/VBox/CloseButton
 @onready var pause_btn: Button = $TopBar/PauseButton
+@onready var mute_btn: Button = $TopBar/MuteButton
 @onready var pause_overlay: Control = $PauseOverlay
 @onready var resume_btn: Button = $PauseOverlay/Center/VBox/ResumeButton
 @onready var pause_restart_btn: Button = $PauseOverlay/Center/VBox/PauseRestartButton
@@ -170,6 +171,8 @@ func _ready() -> void:
 	info_sell_btn.pressed.connect(_on_sell_btn_pressed)
 	info_close_btn.pressed.connect(_on_close_btn_pressed)
 	pause_btn.pressed.connect(toggle_pause)
+	mute_btn.pressed.connect(_toggle_mute)
+	mute_btn.text = "🔇" if AudioMan.muted else "🔊"
 	resume_btn.pressed.connect(toggle_pause)
 	pause_restart_btn.pressed.connect(_on_pause_restart_pressed)
 	pause_quit_btn.pressed.connect(_on_pause_quit_pressed)
@@ -184,6 +187,9 @@ func _ready() -> void:
 	combo_label.visible = false
 	ach_popup.visible = false
 	EventBus.achievement_earned.connect(_on_achievement_earned)
+	EventBus.wave_started.connect(func(_w): AudioMan.play(&"wave_start"))
+	EventBus.run_ended.connect(func(v): AudioMan.play(&"victory" if v else &"defeat", 2.0))
+	EventBus.tower_placed.connect(func(_t): AudioMan.play(&"click", -4.0))
 	manhattan_btn.pressed.connect(_on_manhattan_btn_pressed)
 	EventBus.wave_ended.connect(_on_wave_ended_manhattan_chain)
 	_refresh_manhattan_button()
@@ -358,8 +364,13 @@ func _on_wave_started_intro(w: int) -> void:
 		header = "ENDLESS +%d" % (w - wd_nodes[0].wave_count() + 1)
 	_show_intro_card(header, Color(0.85, 0.78, 0.4), "", "", 1.2)
 
+func _toggle_mute() -> void:
+	AudioMan.set_muted(not AudioMan.muted)
+	mute_btn.text = "🔇" if AudioMan.muted else "🔊"
+
 func _on_achievement_earned(id: StringName, label: String, wep: int) -> void:
 	_ach_queue.append({"label": label, "wep": wep})
+	AudioMan.play(&"achievement", -2.0)
 	if not ach_popup.visible:
 		_show_next_achievement()
 

@@ -49,6 +49,7 @@ func _ready() -> void:
 	if stats.is_boss:
 		EventBus.boss_spawned.emit(self, stats.id, stats.display_name)
 		EventBus.screen_shake.emit(8.0, 0.45)
+		AudioMan.play(&"boss_roar", 2.0)
 	queue_redraw()
 
 func _on_summon_tick() -> void:
@@ -114,6 +115,7 @@ func take_damage(dmg: float, pierce_armor: bool = false) -> void:
 		health_bar.visible = hp < max_hp - 0.5  ## stays hidden until first hit
 	_spawn_damage_number(int(effective))
 	_flash_white()
+	AudioMan.play(&"hit", -12.0)
 	if hp <= 0.0:
 		_die()
 
@@ -143,6 +145,9 @@ func _die() -> void:
 		_spawn_gold_floater(reward)
 	if stats.is_boss:
 		EventBus.screen_shake.emit(18.0, 0.7)
+		AudioMan.play(&"death", 4.0)
+	else:
+		AudioMan.play(&"death", -8.0)
 	EventBus.enemy_killed.emit(self, reward)
 	queue_free()
 

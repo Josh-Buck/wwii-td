@@ -364,6 +364,12 @@ func _fire_at(target: Node) -> void:
 		return
 	_spawn_muzzle_flash()
 	_play_recoil(target)
+	var sfx_tag: StringName = &"fire_bullet"
+	match _projectile_style():
+		&"shell": sfx_tag = &"fire_shell"
+		&"laser": sfx_tag = &"fire_laser"
+		&"drop":  sfx_tag = &"fire_drop"
+	AudioMan.play(sfx_tag, -10.0)
 	var projectile := _PROJECTILE_SCENE.instantiate()
 	var opts: Dictionary = {
 		"aoe": effective_aoe_radius(),

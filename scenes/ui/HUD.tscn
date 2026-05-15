@@ -58,6 +58,10 @@ text = "Speed: 1x"
 [node name="CodexButton" type="Button" parent="TopBar"]
 text = "Codex (C)"
 
+[node name="MuteButton" type="Button" parent="TopBar"]
+text = "🔊"
+tooltip_text = "Mute / unmute sound"
+
 [node name="PauseButton" type="Button" parent="TopBar"]
 text = "Pause (P)"
 
