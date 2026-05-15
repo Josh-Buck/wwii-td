@@ -1349,6 +1349,7 @@ func _on_bond_matured_toast(bond: Resource, payout: int) -> void:
 
 func show_end_screen(victory: bool, waves_cleared: int = 0, earned: int = 0, total_waves: int = 9) -> void:
 	end_label.text = "VICTORY" if victory else "DEFEAT"
+	end_label.modulate = Color(0.9, 0.85, 0.4, 1) if victory else Color(0.9, 0.3, 0.3, 1)
 	end_waves_label.text = "Waves cleared: %d / %d" % [waves_cleared, total_waves]
 	end_earned_label.text = "+%d War Effort earned" % earned
 	end_total_label.text = "Total War Effort: %d" % MetaProgress.war_effort_points
@@ -1361,6 +1362,13 @@ func show_end_screen(victory: bool, waves_cleared: int = 0, earned: int = 0, tot
 	]
 	_refresh_perk_button()
 	end_screen.visible = true
+	# Scale-punch the title label.
+	end_label.scale = Vector2(2.0, 2.0)
+	end_label.modulate.a = 0
+	var t := create_tween()
+	t.set_parallel(true)
+	t.tween_property(end_label, "scale", Vector2.ONE, 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	t.tween_property(end_label, "modulate:a", 1.0, 0.4)
 
 func _refresh_perk_button() -> void:
 	var perk_id: StringName = MetaProgress.PERK_STARTING_GOLD_BONUS
