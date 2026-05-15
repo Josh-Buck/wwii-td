@@ -5,6 +5,11 @@ var is_valid: bool = true
 
 const RADIUS: float = 30.0
 
+func _process(_delta: float) -> void:
+	# Ghost follows the mouse; we need every-frame redraws so the synergy
+	# lines and validity ring track the cursor.
+	queue_redraw()
+
 func set_stats(s: Resource) -> void:
 	stats = s
 	queue_redraw()
@@ -32,6 +37,25 @@ func _draw() -> void:
 	# Aura preview ring (for aura towers)
 	if stats.aura_radius > 0:
 		draw_arc(Vector2.ZERO, stats.aura_radius, 0, TAU, 64, Color(1, 0.95, 0.5, 0.40), 1.0)
+	# Synergy preview: faint gold lines to existing same-faction towers in
+	# adjacency range, so the player can plan synergy clusters.
+	if not stats.adjacency_consumes.is_empty():
+		var adj_r: float = AdjacencySystem.RADIUS
+		for tw in get_tree().get_nodes_in_group("towers"):
+			if not is_instance_valid(tw) or tw.stats == null:
+				continue
+			var dist: float = global_position.distance_to(tw.global_position)
+			if dist > adj_r:
+				continue
+			# Same-faction match: stats' consumes tag is in the other's buffs
+			var matches: bool = false
+			for tag in stats.adjacency_consumes:
+				if tag in tw.stats.adjacency_buffs:
+					matches = true
+					break
+			if matches:
+				var to_other: Vector2 = tw.global_position - global_position
+				draw_line(Vector2.ZERO, to_other, Color(1.0, 0.85, 0.30, 0.55), 1.5)
 	if not is_valid:
 		draw_line(Vector2(-12, -12), Vector2(12, 12), Color(1, 0.2, 0.2), 3.0)
 		draw_line(Vector2(-12, 12), Vector2(12, -12), Color(1, 0.2, 0.2), 3.0)
