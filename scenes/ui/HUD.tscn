@@ -58,6 +58,11 @@ text = "Speed: 1x"
 [node name="CodexButton" type="Button" parent="TopBar"]
 text = "Codex (C)"
 
+[node name="DiffBadge" type="Label" parent="TopBar"]
+text = "Normal"
+modulate = Color(0.85, 0.85, 1.0, 0.85)
+theme_override_font_sizes/font_size = 12
+
 [node name="MuteButton" type="Button" parent="TopBar"]
 text = "🔊"
 tooltip_text = "Mute / unmute sound"

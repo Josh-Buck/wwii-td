@@ -8,8 +8,17 @@ Run through these in order after each deploy. If anything breaks, capture the **
 - [ ] Lifetime stats line beneath WEP if you've played before (`N runs · N victories · highest wave X · …`).
 - [ ] Achievements counter shows `N / 11`.
 - [ ] Map picker — click Normandy / Ardennes; selected button greys out, label updates.
+- [ ] **Difficulty picker** — Easy / Normal / Hard. Label below shows the active multipliers (HP, WEP, lives, gold).
+- [ ] **Background music** starts when the menu opens (8-second wartime march loop, low brass + snare).
+- [ ] Mute button on map TopBar silences both SFX and music.
 - [ ] Recruit Center button opens overlay; all 14 figures listed with rank pips. Close with Back.
 - [ ] Start Run launches the chosen map.
+
+## A.5 Difficulty modes (sanity check each)
+
+- [ ] **Easy** — enemies feel softer, +5 lives buffer, +80 starting gold, run earns 0.75× WEP at end.
+- [ ] **Normal** — baseline.
+- [ ] **Hard** — enemies feel meatier (1.3× HP), -5 lives, -30 starting gold, run earns 1.6× WEP at end.
 
 ## B. Tower upgrade panel (the recurring bug — verify thoroughly)
 

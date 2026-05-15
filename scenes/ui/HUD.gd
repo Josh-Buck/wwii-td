@@ -30,6 +30,7 @@ extends CanvasLayer
 @onready var info_close_btn: Button = $TowerInfoPanel/VBox/CloseButton
 @onready var pause_btn: Button = $TopBar/PauseButton
 @onready var mute_btn: Button = $TopBar/MuteButton
+@onready var diff_badge: Label = $TopBar/DiffBadge
 @onready var pause_overlay: Control = $PauseOverlay
 @onready var resume_btn: Button = $PauseOverlay/Center/VBox/ResumeButton
 @onready var pause_restart_btn: Button = $PauseOverlay/Center/VBox/PauseRestartButton
@@ -173,6 +174,7 @@ func _ready() -> void:
 	pause_btn.pressed.connect(toggle_pause)
 	mute_btn.pressed.connect(_toggle_mute)
 	mute_btn.text = "🔇" if AudioMan.muted else "🔊"
+	diff_badge.text = GameState.DIFFICULTY_LABELS[GameState.difficulty]
 	resume_btn.pressed.connect(toggle_pause)
 	pause_restart_btn.pressed.connect(_on_pause_restart_pressed)
 	pause_quit_btn.pressed.connect(_on_pause_quit_pressed)
