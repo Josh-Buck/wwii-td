@@ -697,9 +697,38 @@ func _refresh_upgrades_grid() -> void:
 			btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			btn.text = _format_upgrade_btn_text(step, tier_idx, branch)
 			btn.disabled = not _can_purchase_upgrade(branch, tier_idx, step)
-			btn.tooltip_text = step.get("desc", "")
+			btn.tooltip_text = _format_upgrade_tooltip(step, branch, tier_idx)
 			btn.pressed.connect(_on_upgrade_btn_pressed.bind(branch, tier_idx))
 			def_upgrades_grid.add_child(btn)
+
+func _format_upgrade_tooltip(step: Dictionary, branch: StringName, tier_idx: int) -> String:
+	var lines: Array[String] = []
+	lines.append(step.get("desc", ""))
+	# Only preview deltas when this is the next purchasable tier on a placed tower.
+	if _info_active_tower == null or not is_instance_valid(_info_active_tower):
+		return "\n".join(lines)
+	var current_tier: int = _info_active_tower.upgrade_a_tier if branch == &"branch_a" else _info_active_tower.upgrade_b_tier
+	if tier_idx != current_tier:
+		return "\n".join(lines)
+	# Project effective stats with this tier added.
+	var dm: float = step.get("damage_mult", 1.0)
+	var fm: float = step.get("fire_rate_mult", 1.0)
+	var rm: float = step.get("range_mult", 1.0)
+	var cur_d: float = _info_active_tower.effective_damage()
+	var cur_f: float = _info_active_tower.effective_fire_rate()
+	var cur_r: float = _info_active_tower.effective_range()
+	var new_d: float = cur_d * dm
+	var new_f: float = cur_f * fm
+	var new_r: float = cur_r * rm
+	if dm != 1.0:
+		lines.append("Damage:  %d → %d  (%+d)" % [int(cur_d), int(new_d), int(new_d - cur_d)])
+	if fm != 1.0:
+		lines.append("Fire rate:  %.1f → %.1f  (%+.1f /s)" % [cur_f, new_f, new_f - cur_f])
+	if rm != 1.0:
+		lines.append("Range:  %d → %d  (%+d)" % [int(cur_r), int(new_r), int(new_r - cur_r)])
+	if step.has("aoe_radius_add") and float(step.aoe_radius_add) > 0.0:
+		lines.append("AoE radius:  +%d" % int(step.aoe_radius_add))
+	return "\n".join(lines)
 
 func _format_upgrade_btn_text(step: Dictionary, tier_idx: int, branch: StringName) -> String:
 	var owned := false
