@@ -27,6 +27,7 @@ var _selected_map: String = _MAP_NORMANDY
 @onready var codex_overlay: Control = $CodexOverlay
 @onready var codex_progress: Label = $CodexOverlay/Panel/VBox/Progress
 @onready var codex_list: VBoxContainer = $CodexOverlay/Panel/VBox/HSplit/ListScroll/EntryList
+@onready var codex_portrait: TextureRect = $CodexOverlay/Panel/VBox/HSplit/ContentScroll/ContentVBox/EntryPortrait
 @onready var codex_title: Label = $CodexOverlay/Panel/VBox/HSplit/ContentScroll/ContentVBox/EntryTitle
 @onready var codex_body: Label = $CodexOverlay/Panel/VBox/HSplit/ContentScroll/ContentVBox/EntryBody
 @onready var codex_sources: Label = $CodexOverlay/Panel/VBox/HSplit/ContentScroll/ContentVBox/EntrySources
@@ -171,6 +172,17 @@ func _show_codex_entry(entry: Resource) -> void:
 	codex_title.text = entry.title
 	codex_body.text = entry.body
 	codex_sources.text = entry.sources
+	# Try to load a matching portrait from the figure or enemy bank.
+	var portrait_paths: Array[String] = [
+		"res://art/figures/%s.jpg" % String(entry.id),
+		"res://art/enemies/%s.jpg" % String(entry.id),
+	]
+	codex_portrait.visible = false
+	for p in portrait_paths:
+		if ResourceLoader.exists(p):
+			codex_portrait.texture = load(p)
+			codex_portrait.visible = true
+			break
 	MetaProgress.mark_codex_seen(entry.id)
 	_refresh_codex_list()
 
