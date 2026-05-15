@@ -24,6 +24,36 @@ var _selected_map: String = _MAP_NORMANDY
 @onready var recruit_wep: Label = $RecruitOverlay/Panel/VBox/WepLabel
 @onready var recruit_list: VBoxContainer = $RecruitOverlay/Panel/VBox/Scroll/RosterList
 @onready var recruit_close: Button = $RecruitOverlay/Panel/VBox/CloseButton
+@onready var codex_overlay: Control = $CodexOverlay
+@onready var codex_progress: Label = $CodexOverlay/Panel/VBox/Progress
+@onready var codex_list: VBoxContainer = $CodexOverlay/Panel/VBox/HSplit/ListScroll/EntryList
+@onready var codex_title: Label = $CodexOverlay/Panel/VBox/HSplit/ContentScroll/ContentVBox/EntryTitle
+@onready var codex_body: Label = $CodexOverlay/Panel/VBox/HSplit/ContentScroll/ContentVBox/EntryBody
+@onready var codex_sources: Label = $CodexOverlay/Panel/VBox/HSplit/ContentScroll/ContentVBox/EntrySources
+@onready var codex_close_btn: Button = $CodexOverlay/Panel/VBox/CodexCloseButton
+
+const _CODEX_PATHS: Array[String] = [
+	"res://data/codex/patton.tres", "res://data/codex/eisenhower.tres",
+	"res://data/codex/churchill.tres", "res://data/codex/anne_frank.tres",
+	"res://data/codex/montgomery.tres", "res://data/codex/pavlichenko.tres",
+	"res://data/codex/fdr.tres", "res://data/codex/bletchley.tres",
+	"res://data/codex/airborne_101.tres", "res://data/codex/audie_murphy.tres",
+	"res://data/codex/zhukov.tres", "res://data/codex/rosie.tres",
+	"res://data/codex/lemay.tres", "res://data/codex/tuskegee.tres",
+	"res://data/codex/spitfire.tres", "res://data/codex/mustang.tres",
+	"res://data/codex/b17.tres", "res://data/codex/maginot_bunker.tres",
+	"res://data/codex/wehrmacht_infantry.tres", "res://data/codex/panzer_iii.tres",
+	"res://data/codex/stuka.tres", "res://data/codex/waffen_ss.tres",
+	"res://data/codex/tiger_i.tres", "res://data/codex/banzai.tres",
+	"res://data/codex/bersaglieri.tres", "res://data/codex/v2_rocket.tres",
+	"res://data/codex/kamikaze.tres",
+	"res://data/codex/rommel.tres", "res://data/codex/eichmann.tres",
+	"res://data/codex/heydrich.tres", "res://data/codex/mengele.tres",
+	"res://data/codex/himmler.tres", "res://data/codex/tojo.tres",
+	"res://data/codex/hitler.tres",
+	"res://data/codex/oppenheimer.tres", "res://data/codex/trinity.tres",
+	"res://data/codex/hiroshima.tres", "res://data/codex/nagasaki.tres",
+]
 
 const _STARTING_ROSTER: Array[String] = [
 	"res://data/towers/patton.tres",
@@ -49,9 +79,11 @@ const _RECRUIT_ROSTER: Array[String] = [
 
 func _ready() -> void:
 	recruit_overlay.visible = false
+	codex_overlay.visible = false
 	start_btn.pressed.connect(_on_start_pressed)
 	recruit_btn.pressed.connect(_open_recruit)
 	codex_btn.pressed.connect(_on_codex_pressed)
+	codex_close_btn.pressed.connect(_close_codex)
 	recruit_close.pressed.connect(_close_recruit)
 	map_normandy_btn.pressed.connect(_select_map.bind(_MAP_NORMANDY))
 	map_ardennes_btn.pressed.connect(_select_map.bind(_MAP_ARDENNES))
@@ -110,9 +142,37 @@ func _on_start_pressed() -> void:
 	start_run_requested.emit(_selected_map)
 
 func _on_codex_pressed() -> void:
-	# Codex lives inside the HUD during a run. Tell the player how to access it.
-	# (Standalone codex view is a follow-up.)
-	codex_btn.text = "Codex opens during a run (press C)"
+	codex_overlay.visible = true
+	_refresh_codex_list()
+
+func _close_codex() -> void:
+	codex_overlay.visible = false
+
+func _refresh_codex_list() -> void:
+	for c in codex_list.get_children():
+		c.queue_free()
+	var seen_count: int = 0
+	for path in _CODEX_PATHS:
+		var entry: Resource = load(path)
+		if entry == null:
+			continue
+		var seen: bool = entry.id in MetaProgress.codex_seen
+		if seen:
+			seen_count += 1
+		var btn := Button.new()
+		btn.text = ("✓ " if seen else "    ") + entry.title
+		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		btn.modulate = Color(1, 1, 1, 1) if seen else Color(0.6, 0.6, 0.6, 1)
+		btn.pressed.connect(_show_codex_entry.bind(entry))
+		codex_list.add_child(btn)
+	codex_progress.text = "Codex read: %d / %d" % [seen_count, _CODEX_PATHS.size()]
+
+func _show_codex_entry(entry: Resource) -> void:
+	codex_title.text = entry.title
+	codex_body.text = entry.body
+	codex_sources.text = entry.sources
+	MetaProgress.mark_codex_seen(entry.id)
+	_refresh_codex_list()
 
 func _open_recruit() -> void:
 	recruit_overlay.visible = true
