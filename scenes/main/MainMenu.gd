@@ -18,6 +18,11 @@ const _MAP_ARDENNES := "res://scenes/map/maps/ardennes.tscn"
 @onready var start_btn: Button = $Center/Panel/VBox/StartButton
 @onready var recruit_btn: Button = $Center/Panel/VBox/RecruitButton
 @onready var codex_btn: Button = $Center/Panel/VBox/CodexButton
+@onready var ach_btn: Button = $Center/Panel/VBox/AchievementsButton
+@onready var ach_overlay: Control = $AchOverlay
+@onready var ach_progress: Label = $AchOverlay/Panel/VBox/Progress
+@onready var ach_list: VBoxContainer = $AchOverlay/Panel/VBox/Scroll/List
+@onready var ach_close: Button = $AchOverlay/Panel/VBox/CloseButton
 
 var _selected_map: String = _MAP_NORMANDY
 @onready var recruit_overlay: Control = $RecruitOverlay
@@ -85,6 +90,9 @@ func _ready() -> void:
 	recruit_btn.pressed.connect(_open_recruit)
 	codex_btn.pressed.connect(_on_codex_pressed)
 	codex_close_btn.pressed.connect(_close_codex)
+	ach_overlay.visible = false
+	ach_btn.pressed.connect(_open_ach)
+	ach_close.pressed.connect(_close_ach)
 	recruit_close.pressed.connect(_close_recruit)
 	map_normandy_btn.pressed.connect(_select_map.bind(_MAP_NORMANDY))
 	map_ardennes_btn.pressed.connect(_select_map.bind(_MAP_ARDENNES))
@@ -167,6 +175,41 @@ func _refresh_codex_list() -> void:
 		btn.pressed.connect(_show_codex_entry.bind(entry))
 		codex_list.add_child(btn)
 	codex_progress.text = "Codex read: %d / %d" % [seen_count, _CODEX_PATHS.size()]
+
+func _open_ach() -> void:
+	ach_overlay.visible = true
+	_refresh_ach_list()
+
+func _close_ach() -> void:
+	ach_overlay.visible = false
+
+func _refresh_ach_list() -> void:
+	for c in ach_list.get_children():
+		c.queue_free()
+	var earned: int = MetaProgress.achievements_earned.size()
+	var total: int = MetaProgress.ACHIEVEMENTS.size()
+	ach_progress.text = "Earned: %d / %d" % [earned, total]
+	for id in MetaProgress.ACHIEVEMENTS:
+		var entry: Dictionary = MetaProgress.ACHIEVEMENTS[id]
+		var unlocked: bool = id in MetaProgress.achievements_earned
+		var card := PanelContainer.new()
+		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var vb := VBoxContainer.new()
+		vb.add_theme_constant_override("separation", 2)
+		card.add_child(vb)
+		var name_lbl := Label.new()
+		var icon: String = "✓ " if unlocked else "• "
+		name_lbl.text = "%s%s  —  +%d WEP" % [icon, entry.get("label", ""), int(entry.get("wep", 0))]
+		name_lbl.add_theme_font_size_override("font_size", 15)
+		name_lbl.modulate = Color(1, 0.95, 0.55, 1) if unlocked else Color(0.6, 0.6, 0.6, 1)
+		vb.add_child(name_lbl)
+		var desc_lbl := Label.new()
+		desc_lbl.text = entry.get("desc", "")
+		desc_lbl.add_theme_font_size_override("font_size", 11)
+		desc_lbl.modulate = Color(0.85, 0.85, 0.85, 1) if unlocked else Color(0.55, 0.55, 0.55, 1)
+		desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		vb.add_child(desc_lbl)
+		ach_list.add_child(card)
 
 func _show_codex_entry(entry: Resource) -> void:
 	codex_title.text = entry.title

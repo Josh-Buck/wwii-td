@@ -1353,18 +1353,32 @@ func _on_bond_matured_toast(bond: Resource, payout: int) -> void:
 	if bond:
 		_show_toast("%s matured: +%dg" % [bond.display_name, payout])
 
+func _top_defender_line() -> String:
+	var best: Node = null
+	for tw in get_tree().get_nodes_in_group("towers"):
+		if not is_instance_valid(tw) or tw.stats == null:
+			continue
+		if best == null or tw.kills > best.kills:
+			best = tw
+	if best == null or best.kills <= 0:
+		return ""
+	return "Top defender: %s — %d kills · %d dmg dealt" % [
+		best.stats.display_name, best.kills, best.damage_dealt
+	]
+
 func show_end_screen(victory: bool, waves_cleared: int = 0, earned: int = 0, total_waves: int = 9) -> void:
 	end_label.text = "VICTORY" if victory else "DEFEAT"
 	end_label.modulate = Color(0.9, 0.85, 0.4, 1) if victory else Color(0.9, 0.3, 0.3, 1)
 	end_waves_label.text = "Waves cleared: %d / %d" % [waves_cleared, total_waves]
 	end_earned_label.text = "+%d War Effort earned" % earned
 	end_total_label.text = "Total War Effort: %d" % MetaProgress.war_effort_points
-	end_stats_label.text = "%d kills  ·  %dg from kills  ·  %d towers placed  ·  %d bonds bought  ·  %dg from payouts" % [
+	end_stats_label.text = "%d kills  ·  %dg from kills  ·  %d towers placed  ·  %d bonds bought  ·  %dg from payouts\n%s" % [
 		GameState.stat_kills,
 		GameState.stat_gold_from_kills,
 		GameState.stat_towers_placed,
 		GameState.stat_bonds_purchased,
 		GameState.stat_bond_payouts,
+		_top_defender_line(),
 	]
 	_refresh_perk_button()
 	end_screen.visible = true
