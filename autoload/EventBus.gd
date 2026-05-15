@@ -18,6 +18,7 @@ signal screen_shake(intensity: float, duration: float)  ## camera trauma in px /
 signal boss_spawned(boss: Node, boss_id: StringName, display_name: String)  ## HUD intro card
 signal combo_changed(streak: int, bonus_gold: int)  ## kill-streak combo state
 signal achievement_earned(id: StringName, label: String, wep: int)
+signal wave_cleared(wave_index: int, bonus_gold: int, elapsed_s: float)
 
 # Towers
 signal tower_placed(tower: Node)

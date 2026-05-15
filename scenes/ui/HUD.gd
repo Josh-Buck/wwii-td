@@ -196,6 +196,7 @@ func _ready() -> void:
 	ach_popup.visible = false
 	EventBus.achievement_earned.connect(_on_achievement_earned)
 	EventBus.wave_started.connect(func(_w): AudioMan.play(&"wave_start"))
+	EventBus.wave_cleared.connect(_on_wave_cleared)
 	EventBus.run_ended.connect(func(v): AudioMan.play(&"victory" if v else &"defeat", 2.0))
 	EventBus.tower_placed.connect(func(_t): AudioMan.play(&"click", -4.0))
 	manhattan_btn.pressed.connect(_on_manhattan_btn_pressed)
@@ -375,6 +376,12 @@ func _on_wave_started_intro(w: int) -> void:
 func _toggle_mute() -> void:
 	AudioMan.set_muted(not AudioMan.muted)
 	mute_btn.text = "🔇" if AudioMan.muted else "🔊"
+
+func _on_wave_cleared(idx: int, bonus_gold: int, elapsed_s: float) -> void:
+	var msg: String = "Wave %d cleared in %.1fs" % [idx + 1, elapsed_s]
+	if bonus_gold > 0:
+		msg += "  ·  +%dg clear bonus" % bonus_gold
+	_show_toast(msg)
 
 func _on_achievement_earned(id: StringName, label: String, wep: int) -> void:
 	_ach_queue.append({"label": label, "wep": wep})

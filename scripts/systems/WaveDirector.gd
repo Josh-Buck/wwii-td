@@ -225,9 +225,11 @@ func _check_wave_end() -> void:
 		# Threshold scales with wave size so a 50-enemy wave isn't unfair.
 		var elapsed_s: float = (Time.get_ticks_msec() - _wave_start_time_ms) / 1000.0
 		var expected_s: float = 6.0 + _enemies_total_this_wave * 0.8
+		var bonus_gold: int = 0
 		if elapsed_s < expected_s:
 			var ratio: float = clamp(1.0 - (elapsed_s / expected_s), 0.0, 1.0)
-			var bonus_gold: int = int(20 + 60 * ratio)
+			bonus_gold = int(20 + 60 * ratio)
 			GameState.add_gold(bonus_gold)
+		EventBus.wave_cleared.emit(_current_wave_index, bonus_gold, elapsed_s)
 		wave_ended.emit(_current_wave_index)
 		EventBus.wave_ended.emit(_current_wave_index)

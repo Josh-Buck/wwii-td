@@ -86,7 +86,11 @@ func start_music() -> void:
 	if music_muted or _music_player == null or _music_stream == null:
 		return
 	if not _music_player.playing:
+		var target_db: float = music_volume_db
+		_music_player.volume_db = -60.0
 		_music_player.play()
+		var t := create_tween()
+		t.tween_property(_music_player, "volume_db", target_db, 1.2)
 
 func stop_music() -> void:
 	if _music_player:

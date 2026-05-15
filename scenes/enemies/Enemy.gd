@@ -115,7 +115,7 @@ func take_damage(dmg: float, pierce_armor: bool = false) -> void:
 	if health_bar:
 		health_bar.value = hp
 		health_bar.visible = hp < max_hp - 0.5  ## stays hidden until first hit
-	_spawn_damage_number(int(effective))
+	_spawn_damage_number(int(effective), pierce_armor)
 	_flash_white()
 	AudioMan.play(&"hit", -12.0)
 	if hp <= 0.0:
@@ -139,12 +139,20 @@ func _flash_white() -> void:
 	var tween := create_tween()
 	tween.tween_property(self, "modulate", Color.WHITE, 0.12)
 
-func _spawn_damage_number(dmg: int) -> void:
+func _spawn_damage_number(dmg: int, pierce: bool = false) -> void:
 	if dmg <= 0:
 		return
 	var scene: PackedScene = preload("res://scenes/effects/DamageNumber.tscn")
 	var node: Node2D = scene.instantiate()
-	node.setup(dmg)
+	# Color signals: pierce-armour hits orange-red, big hits brighter, small hits yellow.
+	var col: Color
+	if pierce:
+		col = Color(1.0, 0.45, 0.30)
+	elif dmg >= 80:
+		col = Color(1.0, 0.85, 0.30)
+	else:
+		col = Color(0.95, 0.95, 0.55)
+	node.setup(dmg, col)
 	# Place above the enemy in world space. Add to scene root so it doesn't
 	# move with the enemy (looks more natural).
 	node.global_position = global_position + Vector2(0, -stats.radius - 4.0)
