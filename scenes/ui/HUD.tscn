@@ -536,7 +536,9 @@ WAR ROOM (between waves):  bonds, stocks, field offers.
 The dash (—) button minimizes it so you can see the map.
 
 ACHIEVEMENTS unlock automatically and grant bonus War Effort.
-STARS are earned per map: 1 win, +1 no lives lost, +1 no Manhattan/Bombing Run."
+STARS are earned per map: 1 win, +1 no lives lost, +1 no Manhattan/Bombing Run.
+
+F1:  toggle the in-game diagnostic overlay (click logs etc)."
 theme_override_font_sizes/font_size = 13
 
 [node name="CloseButton" type="Button" parent="HelpPanel/VBox"]

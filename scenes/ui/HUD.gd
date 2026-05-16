@@ -1076,14 +1076,16 @@ func _on_enemy_unhovered(_enemy: Node) -> void:
 	tooltip.visible = false
 
 func _on_tower_clicked(tower: Node) -> void:
-	print("[HUD] _on_tower_clicked received for: ", tower.stats.id if (tower and tower.stats) else "<nil>")
+	var sid: String = String(tower.stats.id) if (tower and tower.stats) else "<nil>"
+	print("[HUD] _on_tower_clicked received for: ", sid)
+	Diag.log("[HUD] tower_clicked received: " + sid)
 	_selected_tower = tower
 	if is_instance_valid(tower) and tower.stats:
 		_show_defender_info(tower.stats, tower)
 		_show_toast("Selected %s — upgrade panel open" % tower.stats.display_name)
-		print("[HUD] def_info_panel.visible=", def_info_panel.visible,
-			" pos=", def_info_panel.offset_left, ",", def_info_panel.offset_top,
-			" size=", def_info_panel.offset_right - def_info_panel.offset_left, "x", def_info_panel.offset_bottom - def_info_panel.offset_top)
+		Diag.log("[HUD] panel.visible=" + str(def_info_panel.visible) +
+			" at (" + str(int(def_info_panel.offset_left)) + "," + str(int(def_info_panel.offset_top)) + ")")
+		print("[HUD] def_info_panel.visible=", def_info_panel.visible)
 
 func _refresh_info_panel() -> void:
 	if _selected_tower == null or not is_instance_valid(_selected_tower):

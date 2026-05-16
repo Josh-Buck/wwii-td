@@ -219,6 +219,45 @@ func _process(delta: float) -> void:
 	else:
 		_camera.offset = Vector2.ZERO
 
+func _unhandled_input(event: InputEvent) -> void:
+	# Defensive fallback: if the player left-clicks somewhere on the map and a
+	# placed tower is right under the cursor, dispatch tower_clicked manually.
+	# Covers the case where the Area2D input-picking misses for any reason
+	# (Godot 4 sometimes ignores Area2D mouse picking on the same frame as a
+	# UI control click).
+	if not (event is InputEventMouseButton):
+		return
+	if not (event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
+		return
+	if _placement_active:
+		return  # placement flow already handled in _input
+	if _bombing_run and _bombing_run.is_targeting():
+		return
+	var pos: Vector2 = get_global_mouse_position()
+	# Skip if click is outside the playable area.
+	if pos.x < _MAP_LEFT or pos.x > _MAP_RIGHT or pos.y < _MAP_TOP or pos.y > _MAP_BOTTOM:
+		return
+	var tw := _tower_at_click(pos)
+	if tw != null:
+		var sid: String = String(tw.stats.id) if tw.stats else "<no stats>"
+		print("[Map] fallback click → ", sid)
+		Diag.log("[Map] fallback caught click on " + sid + " at (" + str(int(pos.x)) + "," + str(int(pos.y)) + ")")
+		EventBus.tower_clicked.emit(tw)
+		get_viewport().set_input_as_handled()
+
+func _tower_at_click(pos: Vector2) -> Node:
+	# Slightly looser radius than _tower_at() so the click is forgiving.
+	var best: Node = null
+	var best_d: float = 999999.0
+	for tw in get_tree().get_nodes_in_group("towers"):
+		if not is_instance_valid(tw):
+			continue
+		var d: float = pos.distance_to(tw.global_position)
+		if d <= 40.0 and d < best_d:
+			best = tw
+			best_d = d
+	return best
+
 func _select_tower_index(idx: int) -> void:
 	if idx < 0 or idx >= available_towers.size():
 		return
