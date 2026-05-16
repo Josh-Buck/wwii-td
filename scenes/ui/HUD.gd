@@ -369,13 +369,32 @@ func _show_intro_card(header: String, header_color: Color, name_text: String, su
 
 func _on_wave_started_intro(w: int) -> void:
 	var wd_nodes := get_tree().get_nodes_in_group("wave_director")
-	var sub: String = ""
-	if not wd_nodes.is_empty() and wd_nodes[0].has_method("get_next_wave_summary"):
-		pass  # next-wave summary would describe the NEXT wave, not this one
 	var header := "WAVE %d" % (w + 1)
 	if wd_nodes.size() > 0 and w >= wd_nodes[0].wave_count():
 		header = "ENDLESS +%d" % (w - wd_nodes[0].wave_count() + 1)
-	_show_intro_card(header, Color(0.85, 0.78, 0.4), "", "", 1.2)
+	var briefing: String = _wave_briefing(w)
+	_show_intro_card(header, Color(0.85, 0.78, 0.4), "", briefing, 1.6 if briefing != "" else 1.2)
+
+func _wave_briefing(w: int) -> String:
+	# Brief historical context per wave (one line). Ties gameplay to the
+	# 1944-45 European timeline.
+	match w:
+		0:  return "June 1944. The Atlantic Wall holds. The Wehrmacht probes the Norman coast."
+		1:  return "Reconnaissance in force — Bersaglieri scouts move along the bocage hedgerows."
+		2:  return "First armor in the field — Panzer IIIs reach the lines."
+		3:  return "Luftwaffe presence. Stuka dive-bombers overhead."
+		4:  return "Operation Overlord — the Allied invasion of Normandy, 6 June 1944."
+		5:  return "Operation Cobra. The Allied breakout from the Cotentin peninsula."
+		6:  return "Tiger Is rolling forward — Wittmann's heavy armor doctrine."
+		7:  return "August 1944. Field Marshal Erwin Rommel is rushed to Normandy to stop the bleeding."
+		8:  return "Falaise Pocket — the Wehrmacht in retreat. SS rearguards form."
+		9:  return "Operation Market Garden. Banzai-style infantry rush the line."
+		10: return "November 1944. Adolf Eichmann's deportation transports reach the front."
+		11: return "May 1942. Reinhard Heydrich — accelerating the SS terror apparatus."
+		12: return "Auschwitz. Josef Mengele will escape if not pressured. He must not."
+		13: return "April 1945. Heinrich Himmler — the Reichsführer-SS deploys his bodyguards."
+		14: return "Berlin, 30 April 1945. The Führerbunker. End of the Reich."
+	return ""
 
 func _toggle_mute() -> void:
 	AudioMan.set_muted(not AudioMan.muted)
