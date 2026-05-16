@@ -128,6 +128,13 @@ Run through these in order after each deploy. If anything breaks, capture the **
 - [ ] **Heydrich / Himmler aura** — when these bosses are on the map, nearby enemies move noticeably faster (1.4x for Heydrich, 1.2x for Himmler).
 - [ ] **Codex viewer on main menu** — Codex button opens an overlay with all 37 entries; selecting one marks it read and shows the portrait + body + sources.
 
+## O. Audio upgrade
+
+- [ ] **Music** — when the main menu loads you should hear an orchestral wartime march loop (4-min track, CC0 by Spring Spring). Quality is night-and-day better than the previous procedural march.
+- [ ] **SFX** — fire / hit / death / wave-start / boss-roar / victory / defeat all play crunchier WAV files now rather than thin in-engine sine waves.
+- [ ] If music doesn't play, confirm the file exists: `ls audio/music/battlefield_loop.ogg`. Fall back to procedural if file missing (intentional).
+- [ ] Browser tab needs a user click before audio can start (web autoplay policy). The first click on the main menu unblocks it.
+
 ## N. Latest additions (post-Section M)
 
 - [ ] **Hero abilities** — click any of these placed towers and use the new "Activate Ability" button on the info panel:
