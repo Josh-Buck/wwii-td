@@ -1410,6 +1410,16 @@ func _on_bond_matured_toast(bond: Resource, payout: int) -> void:
 	if bond:
 		_show_toast("%s matured: +%dg" % [bond.display_name, payout])
 
+func _format_score(n: int) -> String:
+	# Thousands separators for the final score.
+	var s: String = str(n)
+	var out: String = ""
+	for i in s.length():
+		if i > 0 and (s.length() - i) % 3 == 0:
+			out += ","
+		out += s[i]
+	return out
+
 func _top_defender_line() -> String:
 	var best: Node = null
 	for tw in get_tree().get_nodes_in_group("towers"):
@@ -1423,12 +1433,18 @@ func _top_defender_line() -> String:
 		best.stats.display_name, best.kills, best.damage_dealt
 	]
 
-func show_end_screen(victory: bool, waves_cleared: int = 0, earned: int = 0, total_waves: int = 9) -> void:
+func show_end_screen(victory: bool, waves_cleared: int = 0, earned: int = 0, total_waves: int = 9, final_score: int = 0, rank: int = 0) -> void:
 	end_label.text = "VICTORY" if victory else "DEFEAT"
 	end_label.modulate = Color(0.9, 0.85, 0.4, 1) if victory else Color(0.9, 0.3, 0.3, 1)
 	end_waves_label.text = "Waves cleared: %d / %d" % [waves_cleared, total_waves]
 	end_earned_label.text = "+%d War Effort earned" % earned
 	end_total_label.text = "Total War Effort: %d" % MetaProgress.war_effort_points
+	if final_score > 0:
+		var score_line: String = "  ·  Final score: %s" % _format_score(final_score)
+		if rank > 0:
+			var medals: Array = ["🥇 #1", "🥈 #2", "🥉 #3"]
+			score_line += "  ·  %s ALL-TIME" % medals[rank - 1]
+		end_total_label.text += score_line
 	end_stats_label.text = "%d kills  ·  %dg from kills  ·  %d towers placed  ·  %d bonds bought  ·  %dg from payouts\n%s" % [
 		GameState.stat_kills,
 		GameState.stat_gold_from_kills,

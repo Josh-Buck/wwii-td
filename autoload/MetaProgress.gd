@@ -16,6 +16,8 @@ var lifetime_victories: int = 0
 var lifetime_bosses_killed: int = 0
 var highest_wave: int = 0
 var highest_combo: int = 0
+# High scores: dictionary "<map_id>_<difficulty>" -> Array[int] of top-3 scores (descending).
+var high_scores: Dictionary = {}
 
 # id -> {label, desc, wep, check}. check is evaluated at signal points.
 const ACHIEVEMENTS: Dictionary = {
@@ -163,6 +165,25 @@ func award_war_effort(points: int) -> void:
 	war_effort_points += points
 	SaveSystem.save_async()
 
+func record_score(map_id: String, difficulty: int, score: int) -> int:
+	# Stores top-3 scores for the (map, difficulty) pair. Returns the rank
+	# achieved (1, 2, 3) or 0 if the score didn't break top-3.
+	var key: String = "%s_%d" % [map_id, difficulty]
+	var list: Array = high_scores.get(key, [])
+	list.append(score)
+	list.sort()
+	list.reverse()
+	while list.size() > 3:
+		list.pop_back()
+	high_scores[key] = list
+	SaveSystem.save_async()
+	var rank: int = list.find(score) + 1
+	return rank if rank <= 3 else 0
+
+func get_top_scores(map_id: String, difficulty: int) -> Array:
+	var key: String = "%s_%d" % [map_id, difficulty]
+	return high_scores.get(key, [])
+
 func spend_war_effort(points: int) -> bool:
 	if war_effort_points < points:
 		return false
@@ -185,6 +206,7 @@ func to_dict() -> Dictionary:
 		"lifetime_bosses_killed": lifetime_bosses_killed,
 		"highest_wave": highest_wave,
 		"highest_combo": highest_combo,
+		"high_scores": high_scores,
 	}
 
 func from_dict(d: Dictionary) -> void:
@@ -210,3 +232,4 @@ func from_dict(d: Dictionary) -> void:
 	lifetime_bosses_killed = d.get("lifetime_bosses_killed", 0)
 	highest_wave = d.get("highest_wave", 0)
 	highest_combo = d.get("highest_combo", 0)
+	high_scores = d.get("high_scores", {})

@@ -333,8 +333,16 @@ func _on_run_ended(victory: bool) -> void:
 	if victory:
 		MetaProgress.lifetime_victories += 1
 	MetaProgress.award_war_effort(earned)
+	# Final score: waves * 200 + kills * 5 + lives * 100 + best combo * 25, then
+	# scaled by difficulty. Top-3 tracked per map + difficulty.
+	var raw_score: int = waves_cleared * 200 + GameState.stat_kills * 5 + GameState.lives * 100 + GameState.stat_kills  ## include kill chain bias
+	raw_score += MetaProgress.highest_combo * 25
+	var diff_mult: float = [0.7, 1.0, 1.5][GameState.difficulty]
+	var final_score: int = int(raw_score * diff_mult)
+	var map_id: String = name  ## scene root name; "M0Field" / "Ardennes"
+	var rank: int = MetaProgress.record_score(map_id, GameState.difficulty, final_score)
 	if hud and hud.has_method("show_end_screen"):
-		hud.show_end_screen(victory, waves_cleared, earned, total)
+		hud.show_end_screen(victory, waves_cleared, earned, total, final_score, rank)
 
 func _on_tower_placed_for_synergy(tower: Node) -> void:
 	AdjacencySystem.recompute_in_radius(tower)
