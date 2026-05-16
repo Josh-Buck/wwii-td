@@ -98,6 +98,9 @@ func _ready() -> void:
 	range_area.body_exited.connect(_on_target_exited)
 	range_area.area_entered.connect(_on_target_area_entered)
 	range_area.area_exited.connect(_on_target_area_exited)
+	hover_area.input_pickable = true
+	hover_area.monitorable = true
+	hover_area.collision_layer = 1
 	hover_area.mouse_entered.connect(_on_hover_entered)
 	hover_area.mouse_exited.connect(_on_hover_exited)
 	hover_area.input_event.connect(_on_hover_input)
