@@ -57,6 +57,7 @@ func fire_at(pos: Vector2) -> void:
 	_telegraph_left = TELEGRAPH_TIME
 	_telegraph_active = true
 	_cooldown_left = COOLDOWN
+	GameState.bombing_run_used = true
 	global_position = Vector2.ZERO
 	queue_redraw()
 

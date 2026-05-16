@@ -23,6 +23,8 @@ var has_free_upgrade: bool = false  ## roguelike shop: consume on next upgrade
 var free_tower_pending: StringName = &""  ## roguelike shop: free placement queued
 var manhattan_used: bool = false  ## true after the player uses the Manhattan Project once
 var manhattan_penalty: bool = false  ## halves WEP earned this run if true
+var bombing_run_used: bool = false  ## true after the player triggers Bombing Run once this run
+var fully_upgraded_this_run: int = 0  ## count of towers fully upgraded (both branches at T3) this run
 
 # Kill-streak combo: chained kills within COMBO_WINDOW grant escalating bonus gold.
 const COMBO_WINDOW: float = 1.5
@@ -47,6 +49,8 @@ func reset_run() -> void:
 	free_tower_pending = &""
 	manhattan_used = false
 	manhattan_penalty = false
+	bombing_run_used = false
+	fully_upgraded_this_run = 0
 	stat_kills = 0
 	stat_gold_from_kills = 0
 	stat_bonds_purchased = 0
@@ -90,6 +94,9 @@ func _on_tower_placed_stats(_t: Node) -> void:
 
 func _on_bond_purchased_stats(_b: Resource) -> void:
 	stat_bonds_purchased += 1
+	MetaProgress.lifetime_bonds_bought += 1
+	if MetaProgress.lifetime_bonds_bought >= 10:
+		MetaProgress.grant_achievement(&"bond_buyer")
 
 func _on_bond_matured_stats(_b: Resource, payout: int) -> void:
 	stat_bond_payouts += payout
@@ -105,6 +112,8 @@ func _on_wave_started_track_index(idx: int) -> void:
 		var scripted: int = wd_nodes[0].wave_count() if wd_nodes[0].has_method("wave_count") else 15
 		if idx - scripted + 1 >= 5:
 			MetaProgress.grant_achievement(&"endless_5")
+		if idx - scripted + 1 >= 15:
+			MetaProgress.grant_achievement(&"endless_15")
 
 func _on_wave_ended_track_inprogress(_idx: int) -> void:
 	wave_in_progress = false
@@ -172,20 +181,40 @@ func _on_enemy_killed(enemy: Node, reward: int) -> void:
 	MetaProgress.lifetime_kills += 1
 	if _combo_count > MetaProgress.highest_combo:
 		MetaProgress.highest_combo = _combo_count
-	# Achievements: kills + combo + boss / Hitler.
+	# Achievements: kill counters
 	MetaProgress.grant_achievement(&"first_blood")
 	if stat_kills >= 100:
 		MetaProgress.grant_achievement(&"hundred_down")
+	if MetaProgress.lifetime_kills >= 500:
+		MetaProgress.grant_achievement(&"five_hundred")
+	if MetaProgress.lifetime_kills >= 2000:
+		MetaProgress.grant_achievement(&"two_thousand")
+	if MetaProgress.lifetime_kills >= 10000:
+		MetaProgress.grant_achievement(&"ten_thousand")
+	# Combo tiers
 	if _combo_count >= 10:
 		MetaProgress.grant_achievement(&"combo_10")
+	if _combo_count >= 25:
+		MetaProgress.grant_achievement(&"combo_25")
+	if _combo_count >= 50:
+		MetaProgress.grant_achievement(&"combo_50")
+	# Bosses
 	if enemy and enemy.stats and enemy.stats.is_boss:
 		MetaProgress.lifetime_bosses_killed += 1
 		MetaProgress.grant_achievement(&"boss_fall")
+		if MetaProgress.lifetime_bosses_killed >= 5:
+			MetaProgress.grant_achievement(&"five_bosses")
 		if enemy.stats.id == &"hitler":
 			MetaProgress.grant_achievement(&"hitler_falls")
-	# Gold-hoarder achievement: 2000+ after the kill credit.
+			if not bombing_run_used:
+				MetaProgress.grant_achievement(&"no_bombing_win")
+			if difficulty == Difficulty.HARD:
+				MetaProgress.grant_achievement(&"hard_win")
+	# Eco thresholds
 	if gold >= 2000:
 		MetaProgress.grant_achievement(&"gold_hoarder")
+	if gold >= 5000:
+		MetaProgress.grant_achievement(&"gold_baron")
 	EventBus.combo_changed.emit(_combo_count, bonus)
 
 func _on_enemy_reached_end(_enemy: Node) -> void:

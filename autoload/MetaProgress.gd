@@ -14,6 +14,7 @@ var lifetime_kills: int = 0
 var lifetime_runs: int = 0
 var lifetime_victories: int = 0
 var lifetime_bosses_killed: int = 0
+var lifetime_bonds_bought: int = 0
 var highest_wave: int = 0
 var highest_combo: int = 0
 # High scores: dictionary "<map_id>_<difficulty>" -> Array[int] of top-3 scores (descending).
@@ -21,17 +22,42 @@ var high_scores: Dictionary = {}
 
 # id -> {label, desc, wep, check}. check is evaluated at signal points.
 const ACHIEVEMENTS: Dictionary = {
+	# Combat tiers
 	&"first_blood":      {"label": "First Blood",      "desc": "Kill your first enemy.",                      "wep": 1},
 	&"hundred_down":     {"label": "Hundred Down",     "desc": "Kill 100 enemies in one run.",                "wep": 3},
+	&"five_hundred":     {"label": "Five Hundred",     "desc": "Kill 500 enemies (lifetime).",                "wep": 5},
+	&"two_thousand":     {"label": "Two Thousand",     "desc": "Kill 2000 enemies (lifetime).",               "wep": 10},
+	&"ten_thousand":     {"label": "Ten Thousand",     "desc": "Kill 10,000 enemies (lifetime).",             "wep": 25},
+	# Bosses
 	&"boss_fall":        {"label": "Boss Fall",        "desc": "Defeat a named boss.",                        "wep": 5},
+	&"five_bosses":      {"label": "Boss Hunter",      "desc": "Defeat 5 bosses (lifetime).",                 "wep": 8},
 	&"hitler_falls":     {"label": "VE Day",           "desc": "Defeat Hitler at wave 15.",                   "wep": 20},
+	# Combos
 	&"combo_10":         {"label": "Streak x10",       "desc": "Reach a kill combo of 10.",                   "wep": 5},
+	&"combo_25":         {"label": "Streak x25",       "desc": "Reach a kill combo of 25.",                   "wep": 10},
+	&"combo_50":         {"label": "Streak x50",       "desc": "Reach a kill combo of 50.",                   "wep": 20},
+	# Upgrades
 	&"fully_upgraded":   {"label": "Fully Decorated",  "desc": "Fully upgrade both branches of a tower.",     "wep": 5},
+	&"three_fully":      {"label": "Brass Hat",        "desc": "Fully upgrade 3 towers in one run.",          "wep": 10},
+	# Eco
 	&"gold_hoarder":     {"label": "Gold Hoarder",     "desc": "Hold 2000 gold at once.",                     "wep": 4},
+	&"gold_baron":       {"label": "Gold Baron",       "desc": "Hold 5000 gold at once.",                     "wep": 10},
+	&"bond_buyer":       {"label": "Bond Buyer",       "desc": "Purchase 10 war bonds (lifetime).",           "wep": 5},
+	# History / Codex
 	&"codex_chain":      {"label": "Manhattan Read",   "desc": "Read all four Manhattan codex entries.",      "wep": 5},
+	&"codex_half":       {"label": "Half-Briefed",     "desc": "Read 20 codex entries.",                      "wep": 8},
+	&"codex_complete":   {"label": "Historian",        "desc": "Read every codex entry.",                     "wep": 25},
+	# Meta progression
 	&"first_recruit":    {"label": "Roll Call",        "desc": "Recruit your first figure.",                  "wep": 2},
+	&"five_recruits":    {"label": "Coalition",        "desc": "Recruit 5 figures.",                          "wep": 6},
 	&"first_promotion":  {"label": "Field Promotion",  "desc": "Promote a figure to Rank 2.",                 "wep": 3},
+	&"rank_three":       {"label": "Decorated Veteran","desc": "Promote a figure to Rank 3 (max).",           "wep": 8},
+	# Endurance
 	&"endless_5":        {"label": "Beyond the End",   "desc": "Reach Endless +5.",                           "wep": 10},
+	&"endless_15":       {"label": "Trench Veteran",   "desc": "Reach Endless +15.",                          "wep": 25},
+	# Skill challenges
+	&"no_bombing_win":   {"label": "Conventional War", "desc": "Beat Hitler without using Bombing Run.",      "wep": 15},
+	&"hard_win":         {"label": "On Hard",          "desc": "Beat Hitler on Hard difficulty.",             "wep": 25},
 }
 
 const MAX_RANK: int = 3
@@ -105,6 +131,9 @@ func recruit_figure(figure_id: StringName) -> bool:
 		return false
 	unlocked_starting_figures.append(figure_id)
 	grant_achievement(&"first_recruit")
+	# Count recruits beyond the 5 default starters.
+	if unlocked_starting_figures.size() >= 10:
+		grant_achievement(&"five_recruits")
 	SaveSystem.save_async()
 	return true
 
@@ -120,6 +149,8 @@ func promote_figure(figure_id: StringName) -> bool:
 	figure_ranks[figure_id] = r + 1
 	if r + 1 >= 2:
 		grant_achievement(&"first_promotion")
+	if r + 1 >= 3:
+		grant_achievement(&"rank_three")
 	SaveSystem.save_async()
 	return true
 
@@ -147,6 +178,10 @@ func mark_codex_seen(entry_id: StringName) -> void:
 			break
 	if all_seen:
 		grant_achievement(&"codex_chain")
+	if codex_seen.size() >= 20:
+		grant_achievement(&"codex_half")
+	if codex_seen.size() >= 37:  ## total entries in main menu list
+		grant_achievement(&"codex_complete")
 	SaveSystem.save_async()
 
 func grant_achievement(id: StringName) -> bool:
@@ -204,6 +239,7 @@ func to_dict() -> Dictionary:
 		"lifetime_runs": lifetime_runs,
 		"lifetime_victories": lifetime_victories,
 		"lifetime_bosses_killed": lifetime_bosses_killed,
+		"lifetime_bonds_bought": lifetime_bonds_bought,
 		"highest_wave": highest_wave,
 		"highest_combo": highest_combo,
 		"high_scores": high_scores,
@@ -230,6 +266,7 @@ func from_dict(d: Dictionary) -> void:
 	lifetime_runs = d.get("lifetime_runs", 0)
 	lifetime_victories = d.get("lifetime_victories", 0)
 	lifetime_bosses_killed = d.get("lifetime_bosses_killed", 0)
+	lifetime_bonds_bought = d.get("lifetime_bonds_bought", 0)
 	highest_wave = d.get("highest_wave", 0)
 	highest_combo = d.get("highest_combo", 0)
 	high_scores = d.get("high_scores", {})
