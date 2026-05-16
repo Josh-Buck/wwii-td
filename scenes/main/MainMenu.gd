@@ -108,6 +108,9 @@ func _select_difficulty(d: int) -> void:
 	_refresh_difficulty_buttons()
 
 func _refresh_difficulty_buttons() -> void:
+	# Stars are difficulty-specific, so refresh map labels too.
+	if has_node("Center/Panel/VBox/MapRow/NormandyButton"):
+		_refresh_map_buttons()
 	diff_easy_btn.disabled = GameState.difficulty == GameState.Difficulty.EASY
 	diff_normal_btn.disabled = GameState.difficulty == GameState.Difficulty.NORMAL
 	diff_hard_btn.disabled = GameState.difficulty == GameState.Difficulty.HARD
@@ -126,10 +129,14 @@ func _select_map(path: String) -> void:
 func _refresh_map_buttons() -> void:
 	map_normandy_btn.disabled = _selected_map == _MAP_NORMANDY
 	map_ardennes_btn.disabled = _selected_map == _MAP_ARDENNES
-	if _selected_map == _MAP_NORMANDY:
-		map_label.text = "Map: Normandy Field"
-	else:
-		map_label.text = "Map: Ardennes (winding forest path)"
+	var n_stars: int = MetaProgress.get_stars("M0Field", GameState.difficulty)
+	var a_stars: int = MetaProgress.get_stars("Ardennes", GameState.difficulty)
+	var name_for_map: String = "Normandy Field" if _selected_map == _MAP_NORMANDY else "Ardennes (winding forest path)"
+	var s: int = n_stars if _selected_map == _MAP_NORMANDY else a_stars
+	var rating: String = "★".repeat(s) + "☆".repeat(3 - s)
+	map_label.text = "Map: %s   %s" % [name_for_map, rating]
+	map_normandy_btn.text = "Normandy %s" % ("★".repeat(n_stars) + "☆".repeat(3 - n_stars))
+	map_ardennes_btn.text = "Ardennes %s" % ("★".repeat(a_stars) + "☆".repeat(3 - a_stars))
 
 func _refresh_top() -> void:
 	wep_label.text = "War Effort: %d" % MetaProgress.war_effort_points

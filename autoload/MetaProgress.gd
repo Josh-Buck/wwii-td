@@ -19,6 +19,8 @@ var highest_wave: int = 0
 var highest_combo: int = 0
 # High scores: dictionary "<map_id>_<difficulty>" -> Array[int] of top-3 scores (descending).
 var high_scores: Dictionary = {}
+# Stars: "<map_id>_<difficulty>" -> int 0-3.
+var stars: Dictionary = {}
 
 # id -> {label, desc, wep, check}. check is evaluated at signal points.
 const ACHIEVEMENTS: Dictionary = {
@@ -219,6 +221,19 @@ func get_top_scores(map_id: String, difficulty: int) -> Array:
 	var key: String = "%s_%d" % [map_id, difficulty]
 	return high_scores.get(key, [])
 
+func record_stars(map_id: String, difficulty: int, n: int) -> int:
+	var key: String = "%s_%d" % [map_id, difficulty]
+	var prev: int = int(stars.get(key, 0))
+	if n > prev:
+		stars[key] = n
+		SaveSystem.save_async()
+		return n - prev  ## newly earned count
+	return 0
+
+func get_stars(map_id: String, difficulty: int) -> int:
+	var key: String = "%s_%d" % [map_id, difficulty]
+	return int(stars.get(key, 0))
+
 func spend_war_effort(points: int) -> bool:
 	if war_effort_points < points:
 		return false
@@ -243,6 +258,7 @@ func to_dict() -> Dictionary:
 		"highest_wave": highest_wave,
 		"highest_combo": highest_combo,
 		"high_scores": high_scores,
+		"stars": stars,
 	}
 
 func from_dict(d: Dictionary) -> void:
@@ -270,3 +286,4 @@ func from_dict(d: Dictionary) -> void:
 	highest_wave = d.get("highest_wave", 0)
 	highest_combo = d.get("highest_combo", 0)
 	high_scores = d.get("high_scores", {})
+	stars = d.get("stars", {})

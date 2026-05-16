@@ -341,8 +341,20 @@ func _on_run_ended(victory: bool) -> void:
 	var final_score: int = int(raw_score * diff_mult)
 	var map_id: String = name  ## scene root name; "M0Field" / "Ardennes"
 	var rank: int = MetaProgress.record_score(map_id, GameState.difficulty, final_score)
+	# Star rating: 1 for win, +1 if no lives lost, +1 if neither Manhattan
+	# nor Bombing Run used (or victory on Hard difficulty).
+	var stars: int = 0
+	if victory:
+		stars = 1
+		if GameState.lives >= GameState.STARTING_LIVES + GameState.DIFFICULTY_LIVES_BONUS[GameState.difficulty]:
+			stars += 1
+		if not GameState.manhattan_used and not GameState.bombing_run_used:
+			stars += 1
+		elif GameState.difficulty == GameState.Difficulty.HARD:
+			stars += 1
+	var new_stars: int = MetaProgress.record_stars(map_id, GameState.difficulty, stars)
 	if hud and hud.has_method("show_end_screen"):
-		hud.show_end_screen(victory, waves_cleared, earned, total, final_score, rank)
+		hud.show_end_screen(victory, waves_cleared, earned, total, final_score, rank, stars, new_stars)
 
 func _on_tower_placed_for_synergy(tower: Node) -> void:
 	AdjacencySystem.recompute_in_radius(tower)

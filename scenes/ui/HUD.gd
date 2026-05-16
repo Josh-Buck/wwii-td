@@ -1452,7 +1452,7 @@ func _top_defender_line() -> String:
 		best.stats.display_name, best.kills, best.damage_dealt
 	]
 
-func show_end_screen(victory: bool, waves_cleared: int = 0, earned: int = 0, total_waves: int = 9, final_score: int = 0, rank: int = 0) -> void:
+func show_end_screen(victory: bool, waves_cleared: int = 0, earned: int = 0, total_waves: int = 9, final_score: int = 0, rank: int = 0, stars: int = 0, new_stars: int = 0) -> void:
 	end_label.text = "VICTORY" if victory else "DEFEAT"
 	end_label.modulate = Color(0.9, 0.85, 0.4, 1) if victory else Color(0.9, 0.3, 0.3, 1)
 	end_waves_label.text = "Waves cleared: %d / %d" % [waves_cleared, total_waves]
@@ -1464,6 +1464,10 @@ func show_end_screen(victory: bool, waves_cleared: int = 0, earned: int = 0, tot
 			var medals: Array = ["🥇 #1", "🥈 #2", "🥉 #3"]
 			score_line += "  ·  %s ALL-TIME" % medals[rank - 1]
 		end_total_label.text += score_line
+	if stars > 0:
+		var star_str: String = "★".repeat(stars) + "☆".repeat(3 - stars)
+		var sfx: String = "  ·  NEW STAR EARNED" if new_stars > 0 else ""
+		end_total_label.text += "\nMap rating: %s%s" % [star_str, sfx]
 	end_stats_label.text = "%d kills  ·  %dg from kills  ·  %d towers placed  ·  %d bonds bought  ·  %dg from payouts\n%s" % [
 		GameState.stat_kills,
 		GameState.stat_gold_from_kills,
