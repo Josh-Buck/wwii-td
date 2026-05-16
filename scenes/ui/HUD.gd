@@ -206,6 +206,7 @@ func _ready() -> void:
 	EventBus.wave_cleared.connect(_on_wave_cleared)
 	EventBus.run_ended.connect(func(v): AudioMan.play(&"victory" if v else &"defeat", 2.0))
 	EventBus.tower_placed.connect(func(_t): AudioMan.play(&"click", -4.0))
+	EventBus.screenshot_taken.connect(_on_screenshot_taken)
 	manhattan_btn.pressed.connect(_on_manhattan_btn_pressed)
 	EventBus.wave_ended.connect(_on_wave_ended_manhattan_chain)
 	_refresh_manhattan_button()
@@ -414,6 +415,12 @@ func _on_wave_cleared(idx: int, bonus_gold: int, elapsed_s: float) -> void:
 	if bonus_gold > 0:
 		msg += "  ·  +%dg clear bonus" % bonus_gold
 	_show_toast(msg)
+
+func _on_screenshot_taken(filename: String) -> void:
+	if OS.has_feature("web"):
+		_show_toast("Screenshot saved to your Downloads: %s" % filename)
+	else:
+		_show_toast("Screenshot saved to /tmp/wwii-td-screen.png")
 
 func _on_achievement_earned(id: StringName, label: String, wep: int) -> void:
 	_ach_queue.append({"label": label, "wep": wep})
