@@ -1,162 +1,193 @@
-# WWII Tower Defense — Test Plan
+# WWII Tower Defense — Test Plan (Priority-Ranked)
 
-Run through these in order after each deploy. If anything breaks, capture the **browser DevTools Console** output (F12 → Console) — many click / signal flows print there now.
+Walk these top-to-bottom. The order is from "if this is broken, the game is unplayable" down to "minor polish edge case." Stop and capture detail any time something fails — especially the **DevTools console output** (F12 → Console) for click-related issues.
 
-## A. Main menu (first thing you see)
+---
 
-- [ ] Title "WWII Tower Defense" displays with War Effort total.
-- [ ] Lifetime stats line beneath WEP if you've played before (`N runs · N victories · highest wave X · …`).
-- [ ] Achievements counter shows `N / 11`.
-- [ ] Map picker — click Normandy / Ardennes; selected button greys out, label updates.
-- [ ] **Difficulty picker** — Easy / Normal / Hard. Label below shows the active multipliers (HP, WEP, lives, gold).
-- [ ] **Background music** starts when the menu opens (8-second wartime march loop, low brass + snare).
-- [ ] Mute button on map TopBar silences both SFX and music.
-- [ ] Recruit Center button opens overlay; all 14 figures listed with rank pips. Close with Back.
-- [ ] Start Run launches the chosen map.
+## P1 — CRITICAL: must work or the game is broken
 
-## A.5 Difficulty modes (sanity check each)
+### P1.1  Click a placed tower → upgrade panel opens
+*Largest recurring bug. Verify thoroughly.*
 
-- [ ] **Easy** — enemies feel softer, +5 lives buffer, +80 starting gold, run earns 0.75× WEP at end.
-- [ ] **Normal** — baseline.
-- [ ] **Hard** — enemies feel meatier (1.3× HP), -5 lives, -30 starting gold, run earns 1.6× WEP at end.
+1. Start any run, place any tower.
+2. **Left-click the placed tower** (the figure itself, not the sidebar).
+3. All three should happen at once:
+   - Bottom toast: `Selected <Name> — upgrade panel open`
+   - Cyan halo ring around the tower
+   - Defender Info Panel appears on the **opposite side of the screen** from the tower (auto-clamped)
+4. **DevTools (F12 → Console)** must print on every click:
+   ```
+   [Tower] click registered: patton
+   [HUD] _on_tower_clicked received for: patton
+   [HUD] def_info_panel.visible=true pos=... size=...
+   ```
+5. Buy upgrades (T1 → T2 → T3) — pips appear on top of the tower, become a star at T3.
 
-## B. Tower upgrade panel (the recurring bug — verify thoroughly)
+**If `[Tower] click registered` doesn't appear in console → click isn't reaching the tower (Area2D / mouse_filter regression).**
+**If `[Tower] click registered` appears but no `[HUD] ... received` → signal-routing bug.**
+**If panel becomes visible but you can't see it → off-screen positioning bug.**
 
-- [ ] Place any tower (palette card → click map). Verify drop-in pop animation.
-- [ ] Click the placed tower (the figure, not the sidebar). All three should happen at once:
-  - [ ] Bottom toast: `Selected <Name> — upgrade panel open`
-  - [ ] Cyan halo around the tower
-  - [ ] Defender Info Panel pops up near the tower (opposite side of screen edge)
-- [ ] Panel shows: name `<Figure> #1 (this unit)`, faction, stats, Hits/Strengths/Weaknesses, lore, Upgrades grid (2×3), Target / Sell buttons at the bottom.
-- [ ] Buy upgrade T1 in either branch → gold pip appears on top edge of tower.
-- [ ] Buy T2 → 2 pips. Buy T3 → pips become a star.
-- [ ] Close panel via the × button.
-- [ ] Open DevTools (F12) → Console before clicking. On each tower click you should see:
-  - `[Tower] click registered: <id>`
-  - `[HUD] _on_tower_clicked received for: <id>`
-  - `[HUD] def_info_panel.visible=true pos=… size=…`
-- [ ] If `[Tower] click registered` appears but no `[HUD] ... received` follows → signal-routing bug.
-- [ ] If nothing appears in the console → click isn't reaching the tower (Area2D / mouse_filter issue).
+### P1.2  Main menu loads and starts a run
+1. App opens to the WWII Tower Defense title.
+2. War Effort total, lifetime stats, achievements count all show.
+3. Pick a map (Normandy / Ardennes) and a difficulty (Easy / Normal / Hard) — buttons disable for the active selection.
+4. Start Run loads the chosen map without errors in console.
 
-## C. Combat juice (start a wave, watch closely)
+### P1.3  Place / sell / target on a tower
+1. Pick a tower from the sidebar, click on the map to place. Drop-in pop animation plays.
+2. Click placed tower → Sell button refunds correctly (75% of base + every upgrade).
+3. Cycle Target: First → Last → Strong → Close.
+4. Right-click a sidebar card → opens the info panel without entering placement.
 
-- [ ] Tower recoil — visible kickback every shot, scale punch.
-- [ ] Projectile smoke trail behind every moving projectile (not laser).
-- [ ] Hit flash — enemy briefly turns white when hit.
-- [ ] Damage numbers float up from hits.
-- [ ] Impact spark — small yellow star burst at every projectile hit.
-- [ ] Death poof with debris specks flying outward + inner smoke puff.
-- [ ] +Ng gold floater rises from killed enemies.
-- [ ] Kill streaks — kill 3+ enemies fast → top-left `Combo x3 (+2g bonus)` appears for ~1.5s.
-- [ ] Health bars hidden on full-HP enemies; show only after first damage.
+### P1.4  Hero abilities fire (newest big system)
+1. Place a Patton, Churchill, Eisenhower, or Pavlichenko.
+2. Click it → an **Activate Ability** button appears at the top of the panel.
+3. Press it.
+   - **Patton CHARGE!** — all placed Pattons should briefly fire much faster.
+   - **Churchill Finest Hour** — all UK towers fire faster for 10s.
+   - **Eisenhower D-Day Strike** — big AoE burst at the current target, screen shake.
+   - **Pavlichenko White Death** — next 5 shots crit (look for big damage numbers).
+4. Button shows `<Label> — ready in Xs` while cooldown counts down.
+5. Cooldown should *not* tick between waves.
 
-## D. Wave / boss intro cards
+---
 
-- [ ] Every wave start → center band shows `WAVE N` for ~1.2s (or `ENDLESS +N` past wave 15).
-- [ ] Wave 8 (Rommel) → BOSS card: name + subtitle `Desert Fox — regenerates on the move`. Brief screen shake.
-- [ ] Waves 11–15 each get a unique boss intro card with subtitle.
+## P2 — IMPORTANT: core loop quality
 
-## E. Shop / War Room
+### P2.1  Audio loads correctly
+1. Main menu loads → orchestral march music starts within a couple seconds.
+2. Click anywhere if there's no audio (web autoplay policy blocks audio until first click).
+3. SFX play on tower fire (per-style), enemy hit, enemy kill, wave start.
+4. Mute button (🔊 / 🔇) silences both SFX and music.
+5. Pause overlay has Master / Music volume sliders that adjust live.
 
-- [ ] Survive past wave 1. Shop drawer slides in on the left.
-- [ ] Minimize button (`—` next to "War Room") hides shop; `▸ War Room` tab appears bottom-left to reopen.
-- [ ] Field Offers appear ~40% of shops with up to 3 cards. Claim one — the others lock. Reroll (25g) works once per visit.
-- [ ] Bonds — buy War Loan (100g → 150g in 3 waves). Shows in "Held Bonds".
-- [ ] Stocks — see "Risk: HIGH/MED/LOW" and drift % per stock. Buy 1 / Buy 5 / Sell 1 / Sell all all work.
-- [ ] Next Wave closes shop, starts wave.
+### P2.2  Combat juice
+1. Tower fires → recoil animation + muzzle flash flare + projectile with smoke trail.
+2. Projectile impacts → spark burst at hit point.
+3. Enemy gets hit → flashes white briefly + colored damage number floats up.
+4. Enemy dies → death poof with debris specks + `+Ng` gold floater rises.
+5. Kill streak → top-left `Combo xN (+Mg bonus)` pops with a scale punch.
+6. Health bars only appear on damaged enemies.
 
-## F. Bombing Run
+### P2.3  Wave + boss intro cards
+1. Each wave starts with a `WAVE N` card AND a one-line historical briefing (W1 mentions Atlantic Wall, W5 mentions D-Day, W15 mentions Berlin / end of Reich).
+2. Bosses (W8/11/12/13/14/15) get a dedicated `BOSS` card with their name and a subtitle, plus brief screen shake + low growl SFX.
 
-- [ ] Press B during a wave (or click TopBar button) → enter targeting mode.
-- [ ] Cursor shows blast-radius circle indicator.
-- [ ] Click on the map → red telegraph circle holds 1.5s → big AoE damage + screen shake.
-- [ ] Button now reads `Bombing Run: 90s`.
-- [ ] Between waves the timer does NOT tick — button reads `Bombing Run: Xs (during wave)`.
-- [ ] Start next wave → cooldown resumes.
+### P2.4  Shop / War Room between waves
+1. After wave 1, shop opens on the left.
+2. **Minimize** button (`—`) hides it, leaves a `▸ War Room` tab at bottom-left to reopen.
+3. War Bonds + Stocks tabs show prices and let you transact.
+4. Stocks show `Risk: HIGH/MED/LOW` and drift %.
+5. Field Offers panel appears ~40% of shops with up to 3 cards. You can claim ONE; others lock.
+6. Reroll button (25g) shuffles offers once per visit.
+7. Next Wave button advances.
 
-## G. Achievements (most should fire in a single full run)
+### P2.5  Bombing Run global ability
+1. Press **B** during a wave or click the TopBar button → targeting mode.
+2. Cursor shows the blast circle.
+3. Click on the map → red telegraph for 1.5s → AoE damage + screen shake.
+4. Button shows cooldown; **does not tick between waves** (button reads "during wave").
 
-- [ ] First kill → `First Blood`, +1 WEP.
-- [ ] 100 kills in a run → `Hundred Down`, +3 WEP.
-- [ ] Kill any boss → `Boss Fall`, +5 WEP.
-- [ ] Hit combo 10 → `Streak x10`, +5 WEP.
-- [ ] Fully upgrade both branches of a tower → `Fully Decorated`, +5 WEP.
-- [ ] Hold 2000+ gold → `Gold Hoarder`, +4 WEP.
-- [ ] Recruit a figure → `Roll Call`, +2 WEP.
-- [ ] Promote any figure to Rank 2 → `Field Promotion`, +3 WEP.
-- [ ] Read all 4 Manhattan entries (clear waves 5/8/11/13) → `Manhattan Read`, +5 WEP.
-- [ ] Reach Endless +5 (wave 20) → `Beyond the End`, +10 WEP.
-- [ ] Defeat Hitler at wave 15 → `VE Day`, +20 WEP.
+### P2.6  End screen
+1. Die or beat wave 15 → end screen shows.
+2. VICTORY (gold) or DEFEAT (red) title scale-punches in.
+3. Shows: waves cleared, WEP earned, lifetime WEP, run stats line, **Top defender**, **Final score** with thousands separators, **map star rating**, `NEW STAR EARNED` callout if applicable.
+4. Restart returns to main menu.
+5. Main menu now shows updated lifetime stats + new star count on map buttons.
 
-## H. Manhattan Project
+---
 
-- [ ] Survive past wave 13 (after reading the 4 codex entries) → button appears in TopBar.
-- [ ] Click → confirmation dialog. Confirm → all enemies clear + massive screen shake + toast.
-- [ ] End screen shows -50% WEP penalty applied.
+## P3 — IMPORTANT: retention hooks (newer systems)
 
-## I. End-of-run
+### P3.1  Achievements firing
+- 26 achievements total. Most should fire in a single full run. Pop-up at top-left for each + WEP awarded.
+- Tier examples: kill 1 / 100 / 500 / 2000 / 10000. Combo 10 / 25 / 50. Recruit 1 / 5. Codex 1 / 20 / all.
+- Skill challenges: beat Hitler without using Bombing Run, beat Hitler on Hard.
 
-- [ ] Die or beat wave 15 → end screen shows Victory/Defeat, waves cleared, WEP earned, stats line, Recruit Center button, perk button, Restart.
-- [ ] Restart returns to main menu.
-- [ ] Lifetime stats updated on main menu after the run ends.
+### P3.2  Star ratings on maps
+- Victory earns 1-3 stars: 1 for win, +1 for no lives lost, +1 for no Manhattan + no Bombing Run (or Hard win).
+- Stars persist; map buttons on main menu show `★★☆ Normandy` etc.
+- Star count refreshes when you switch difficulty.
 
-## J. Maps
+### P3.3  Final score + top-3 leaderboard
+- End screen prints final score (`waves * 200 + kills * 5 + lives * 100 + best_combo * 25 × diff_mult`).
+- If you make top-3 for that (map, difficulty), a medal tag (🥇/🥈/🥉) shows.
 
-- [ ] Pick Ardennes — winding 11-point path, snow palette, snow-capped pines + rocks.
-- [ ] Pick Normandy — bocage hedgerows, sandbags, craters, grass tufts.
-- [ ] Path drawn with dark outline + faint centerline (not one flat colour).
+### P3.4  Codex viewer
+- Main menu → Codex button opens overlay listing 37 entries with read/unread status + portrait + body + sources.
+- Selecting an entry marks it read.
+- Reading entries can unlock achievements (codex chain, half-briefed, historian).
 
-## K. Known fragile spots / common breakages
+### P3.5  Recruit Center
+- End screen + main menu both have a Recruit Center button.
+- 14 figures listed with current rank pips. Buttons say Recruit (NN WEP) or Promote to Rank N (M WEP).
+- Promoting to Rank 2 / 3 fires achievements.
 
-- The tower-click bug has been chased multiple times. The DevTools console prints are the ground truth — if they fire, the click is reaching the tower and the issue is elsewhere.
-- Achievement pop-ups should queue if multiple fire at once.
-- Endless mode after wave 15 — verify HP scaling is felt but not punishing past +3 or so.
-- Manhattan button visibility depends on persistent codex_seen — needs all 4 entries in user:// save.
+### P3.6  Manhattan Project
+- After reading all 4 Manhattan codex entries (auto-unlocked at waves 5/8/11/13), a Manhattan Project button appears in the TopBar.
+- Click → confirmation dialog. Confirm → all enemies clear, massive screen shake, -50% WEP penalty flag set.
 
-## M. Newest additions to test
+---
 
-- [ ] **Tiled terrain** — Normandy shows real grass texture, Ardennes shows snow texture (not flat colour).
-- [ ] **Weather** — Ardennes has falling snowflakes, Normandy has drifting brown leaves.
-- [ ] **Tower target line** — click a placed tower; faint cyan line draws from the tower to its current target. Tracks as the enemy moves.
-- [ ] **Wave-clear bonus** — clear a wave quickly; toast at the bottom reads "Wave N cleared in X.Xs · +Yg clear bonus". Gold balance jumps.
-- [ ] **Damage number colors** — small hits are pale yellow, big hits (80+) are bright gold, armour-piercing hits are orange-red.
-- [ ] **Music** — short march loop plays from launch with a 1.2s fade in. Volume sliders in pause overlay adjust it live.
-- [ ] **Upgrade preview** — hover an upgrade button on a placed tower; tooltip shows "Damage 37 → 65 (+28)" instead of just the description.
-- [ ] **Synergy preview ghost** — when placing a same-faction tower near existing ones, faint gold lines draw from the cursor to each in-range neighbour.
-- [ ] **Achievements gallery** — main menu Achievements button lists all 11 with earned/locked styling.
-- [ ] **Top defender** — end screen shows which placed tower had the most kills.
-- [ ] **Heydrich / Himmler aura** — when these bosses are on the map, nearby enemies move noticeably faster (1.4x for Heydrich, 1.2x for Himmler).
-- [ ] **Codex viewer on main menu** — Codex button opens an overlay with all 37 entries; selecting one marks it read and shows the portrait + body + sources.
+## P4 — IMPORTANT: visuals + atmosphere
 
-## O. Audio upgrade
+### P4.1  Maps look distinct
+- Normandy: tiled grass background, brown dirt-road path with dark outline, bocage hedgerows + sandbags + craters + oil barrels + tank treads, drifting brown leaves.
+- Ardennes: tiled snow background, lighter dirt path with snow centerline, snow-capped pines + rocks + bushes, falling snowflakes.
 
-- [ ] **Music** — when the main menu loads you should hear an orchestral wartime march loop (4-min track, CC0 by Spring Spring). Quality is night-and-day better than the previous procedural march.
-- [ ] **SFX** — fire / hit / death / wave-start / boss-roar / victory / defeat all play crunchier WAV files now rather than thin in-engine sine waves.
-- [ ] If music doesn't play, confirm the file exists: `ls audio/music/battlefield_loop.ogg`. Fall back to procedural if file missing (intentional).
-- [ ] Browser tab needs a user click before audio can start (web autoplay policy). The first click on the main menu unblocks it.
+### P4.2  Tower base plates render
+- Each ground tower sits on the octagonal Kenney CC0 stone base sprite.
+- Air units (Spitfire / Mustang / B-17) skip the base and draw a flying shadow ellipse instead.
 
-## N. Latest additions (post-Section M)
+### P4.3  Synergy preview on placement ghost
+- Pick a tower with matching faction tags (Patton, Eisenhower, Audie Murphy, etc. all share `us`).
+- Move the ghost near an existing same-faction tower.
+- Faint gold line connects them showing the would-be synergy.
 
-- [ ] **Hero abilities** — click any of these placed towers and use the new "Activate Ability" button on the info panel:
-  - **Patton CHARGE!** (35s cd) — all Pattons fire 2x for 5s.
-  - **Churchill Their Finest Hour** (50s cd) — all UK towers +50% fire rate for 10s.
-  - **Eisenhower D-Day Strike** (60s cd) — single 350-damage pierce-AoE r=140 at the current target with screen shake.
-  - **Pavlichenko White Death** (40s cd) — next 5 shots deal 2x + pierce armor.
-- [ ] Ability cooldown counts down only while a wave is active and shows live on the button text.
-- [ ] **Final score on end screen** — `Final score: 15,840` with thousands separators. Top-3 per (map, difficulty) tagged `🥇 #1 ALL-TIME`.
-- [ ] **Map star ratings** — main menu shows `★★☆ Normandy` / `Ardennes`; selecting difficulty refreshes them. End screen shows the rating and a `NEW STAR EARNED` callout if a star just unlocked.
-- [ ] **Achievements gallery** — 26 entries total (was 11). Tiered: 100 / 500 / 2000 / 10000 lifetime kills, combo 10/25/50, codex 1/20/all, recruit 1/5, etc. Pop-up + WEP reward fires on unlock.
-- [ ] **Wave mission briefings** — every wave start card shows a one-line historical context (W5 = D-Day, W11 = Eichmann, W15 = Berlin/end of Reich).
-- [ ] **Codex viewer on main menu** — Codex button opens the full list; selecting an entry shows the portrait + body + sources and marks it read.
+### P4.4  Tower target line + idle bob
+- Selected tower draws a faint cyan line to its current target (tracks as enemies move).
+- All towers gently bob ~1 px when not firing.
 
-## L. Diagnostic dump
+---
 
-If you need to share state with me, the browser console will show:
+## P5 — NICE TO HAVE: edge cases + smaller features
 
-```
-[Tower] click registered: <id>
-[HUD] _on_tower_clicked received for: <id>
-[HUD] def_info_panel.visible=<bool> pos=<x>,<y> size=<w>x<h>
-```
+### P5.1  Difficulty actually scales
+- Easy: enemies feel softer, +5 lives buffer, +80 starting gold, -25% WEP at end.
+- Hard: enemies feel tankier, -5 lives, -30 starting gold, +60% WEP at end.
 
-Paste those lines verbatim — they answer almost any "did the click fire" question without further investigation.
+### P5.2  Endless mode
+- After wave 15, header reads `ENDLESS +N`. Each subsequent wave has +10% enemy HP. Bosses recur from the boss pool every 5 endless waves.
+
+### P5.3  Stock market
+- 4 stocks with different volatility / drift profiles. Prices walk on each wave start. Trend arrows update.
+
+### P5.4  Pause / settings / help
+- P pause. Pause overlay shows volume sliders + restart + quit-to-menu.
+- ? button on TopBar opens a controls cheat sheet.
+
+### P5.5  Map decorations distribute well
+- No decor sprites overlap the path corridor.
+- Decor doesn't overlap with tower placement spots (towers can still be placed in their slots).
+
+---
+
+## P6 — DIAGNOSTIC
+
+If anything in P1 fails, paste:
+- The contents of the DevTools console (F12 → Console)
+- A brief description of which step failed and what happened
+- Browser + OS version
+
+The console prints will tell us exactly where the failure is in the chain.
+
+---
+
+## Reporting back
+
+For each failing item, just give me:
+- Section number (e.g. P1.1)
+- What you saw vs what was expected
+- Any console error / print
+
+That's enough for me to diagnose and fix.
