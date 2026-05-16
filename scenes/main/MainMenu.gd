@@ -18,6 +18,7 @@ const _MAP_ARDENNES := "res://scenes/map/maps/ardennes.tscn"
 @onready var start_btn: Button = $Center/Panel/VBox/StartButton
 @onready var recruit_btn: Button = $Center/Panel/VBox/RecruitButton
 @onready var codex_btn: Button = $Center/Panel/VBox/CodexButton
+@onready var build_label: Label = $Center/Panel/VBox/BuildLabel
 @onready var ach_btn: Button = $Center/Panel/VBox/AchievementsButton
 @onready var ach_overlay: Control = $AchOverlay
 @onready var ach_progress: Label = $AchOverlay/Panel/VBox/Progress
@@ -102,6 +103,21 @@ func _ready() -> void:
 	_refresh_map_buttons()
 	_refresh_difficulty_buttons()
 	_refresh_top()
+	_refresh_build_label()
+
+func _refresh_build_label() -> void:
+	# data/build.txt is written by the deploy workflow with one short SHA
+	# per line + a timestamp. Lets us tell whether the browser is loading
+	# the latest deploy. Missing in local-editor runs.
+	var path: String = "res://data/build.txt"
+	if ResourceLoader.exists(path) or FileAccess.file_exists(path):
+		var f := FileAccess.open(path, FileAccess.READ)
+		if f:
+			var sha: String = f.get_line().strip_edges()
+			var when: String = f.get_line().strip_edges()
+			build_label.text = "build: %s  ·  %s" % [sha, when]
+			return
+	build_label.text = "build: dev (local)"
 
 func _select_difficulty(d: int) -> void:
 	GameState.difficulty = d

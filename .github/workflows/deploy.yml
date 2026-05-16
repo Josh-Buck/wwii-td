@@ -39,6 +39,14 @@ jobs:
           unzip -q /tmp/templates.tpz -d /tmp/templates_unzip
           mv /tmp/templates_unzip/templates/* "$HOME/.local/share/godot/export_templates/${TEMPLATE_DIR_NAME}/"
 
+      - name: Stamp build version
+        run: |
+          # Write the short git SHA + date into a small file the game reads
+          # so the main menu can show 'v <sha>' and we can tell if the
+          # browser is loading the latest deploy.
+          mkdir -p data
+          printf '%s\n%s\n' "$(git rev-parse --short HEAD)" "$(date -u +%Y-%m-%dT%H:%MZ)" > data/build.txt
+
       - name: Import resources
         run: |
           # First-run import on a clean clone needs a separate pass; export

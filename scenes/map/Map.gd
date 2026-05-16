@@ -130,6 +130,9 @@ func _ready() -> void:
 	# Wave 1 no longer auto-starts; HUD's Start Wave button drives it.
 
 func _input(event: InputEvent) -> void:
+	# Try a tower-click dispatch first so a click on a placed tower never
+	# gets swallowed by a Control's mouse_filter=STOP further down the tree.
+	_try_tower_click_dispatch(event)
 	# Hotkey selection (1-9 picks from palette, B toggles bombing run targeting)
 	if event is InputEventKey and event.pressed and not event.echo:
 		var idx := -1
@@ -220,28 +223,25 @@ func _process(delta: float) -> void:
 		_camera.offset = Vector2.ZERO
 
 func _unhandled_input(event: InputEvent) -> void:
-	# Defensive fallback: if the player left-clicks somewhere on the map and a
-	# placed tower is right under the cursor, dispatch tower_clicked manually.
-	# Covers the case where the Area2D input-picking misses for any reason
-	# (Godot 4 sometimes ignores Area2D mouse picking on the same frame as a
-	# UI control click).
+	_try_tower_click_dispatch(event)
+
+func _try_tower_click_dispatch(event: InputEvent) -> void:
+	# Tower-click dispatch tried from BOTH _input (high priority, before any
+	# Control consumes) AND _unhandled_input (low priority, catch-all). Either
+	# path works; whichever fires first wins.
 	if not (event is InputEventMouseButton):
 		return
 	if not (event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
 		return
 	if _placement_active:
-		return  # placement flow already handled in _input
+		return
 	if _bombing_run and _bombing_run.is_targeting():
 		return
 	var pos: Vector2 = get_global_mouse_position()
-	# Skip if click is outside the playable area.
 	if pos.x < _MAP_LEFT or pos.x > _MAP_RIGHT or pos.y < _MAP_TOP or pos.y > _MAP_BOTTOM:
 		return
 	var tw := _tower_at_click(pos)
 	if tw != null:
-		var sid: String = String(tw.stats.id) if tw.stats else "<no stats>"
-		print("[Map] fallback click → ", sid)
-		Diag.log("[Map] fallback caught click on " + sid + " at (" + str(int(pos.x)) + "," + str(int(pos.y)) + ")")
 		EventBus.tower_clicked.emit(tw)
 		get_viewport().set_input_as_handled()
 
