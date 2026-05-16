@@ -113,6 +113,21 @@ Run through these in order after each deploy. If anything breaks, capture the **
 - Endless mode after wave 15 — verify HP scaling is felt but not punishing past +3 or so.
 - Manhattan button visibility depends on persistent codex_seen — needs all 4 entries in user:// save.
 
+## M. Newest additions to test
+
+- [ ] **Tiled terrain** — Normandy shows real grass texture, Ardennes shows snow texture (not flat colour).
+- [ ] **Weather** — Ardennes has falling snowflakes, Normandy has drifting brown leaves.
+- [ ] **Tower target line** — click a placed tower; faint cyan line draws from the tower to its current target. Tracks as the enemy moves.
+- [ ] **Wave-clear bonus** — clear a wave quickly; toast at the bottom reads "Wave N cleared in X.Xs · +Yg clear bonus". Gold balance jumps.
+- [ ] **Damage number colors** — small hits are pale yellow, big hits (80+) are bright gold, armour-piercing hits are orange-red.
+- [ ] **Music** — short march loop plays from launch with a 1.2s fade in. Volume sliders in pause overlay adjust it live.
+- [ ] **Upgrade preview** — hover an upgrade button on a placed tower; tooltip shows "Damage 37 → 65 (+28)" instead of just the description.
+- [ ] **Synergy preview ghost** — when placing a same-faction tower near existing ones, faint gold lines draw from the cursor to each in-range neighbour.
+- [ ] **Achievements gallery** — main menu Achievements button lists all 11 with earned/locked styling.
+- [ ] **Top defender** — end screen shows which placed tower had the most kills.
+- [ ] **Heydrich / Himmler aura** — when these bosses are on the map, nearby enemies move noticeably faster (1.4x for Heydrich, 1.2x for Himmler).
+- [ ] **Codex viewer on main menu** — Codex button opens an overlay with all 37 entries; selecting one marks it read and shows the portrait + body + sources.
+
 ## L. Diagnostic dump
 
 If you need to share state with me, the browser console will show:
