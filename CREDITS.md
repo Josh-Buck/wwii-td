@@ -166,3 +166,11 @@ License: **CC0 1.0 Universal**. Kenney's standard blurb: "Pack: <name>, Author: 
 - War Theme by Spring Spring (CC0). Source: https://opengameart.org/content/war-theme
   - File: `audio/music/boss_theme.ogg`
   - Description: Dramatic orchestral war theme. Used as boss encounter music.
+
+## Sound effects
+
+All sound effects in `audio/sfx/` were synthesized in-house with a short Python script using only `numpy` and the stdlib `wave` module (no third-party samples). The aesthetic targets BFXR / sfxr-style chip SFX: filtered noise, exponential AD envelopes, frequency sweeps, and simple additive/FM tones. Output spec: 22050 Hz, 16-bit, mono, WAV.
+
+- License: **CC0 1.0 Universal** (public domain dedication — no attribution required).
+- Method: Procedural synthesis. Generator script kept locally; deterministic via a fixed RNG seed so files are reproducible.
+- Files: `click.wav`, `fire_bullet.wav`, `fire_shell.wav`, `fire_laser.wav`, `fire_drop.wav`, `hit.wav`, `death.wav`, `wave_start.wav`, `boss_roar.wav`, `victory.wav`, `defeat.wav`, `achievement.wav`.

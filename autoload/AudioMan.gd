@@ -51,18 +51,27 @@ func _ready() -> void:
 	start_music()
 
 func _build_bank() -> void:
-	_streams[&"click"]        = _bake(_click_pcm())
-	_streams[&"fire_bullet"]  = _bake(_bullet_pcm())
-	_streams[&"fire_shell"]   = _bake(_shell_pcm())
-	_streams[&"fire_laser"]   = _bake(_laser_pcm())
-	_streams[&"fire_drop"]    = _bake(_drop_pcm())
-	_streams[&"hit"]          = _bake(_hit_pcm())
-	_streams[&"death"]        = _bake(_death_pcm())
-	_streams[&"wave_start"]   = _bake(_wave_start_pcm())
-	_streams[&"boss_roar"]    = _bake(_boss_roar_pcm())
-	_streams[&"victory"]      = _bake(_victory_pcm())
-	_streams[&"defeat"]       = _bake(_defeat_pcm())
-	_streams[&"achievement"]  = _bake(_ach_pcm())
+	# Prefer real WAV files in audio/sfx/ when present; fall back to procedural.
+	_streams[&"click"]        = _load_or_bake(&"click", _click_pcm)
+	_streams[&"fire_bullet"]  = _load_or_bake(&"fire_bullet", _bullet_pcm)
+	_streams[&"fire_shell"]   = _load_or_bake(&"fire_shell", _shell_pcm)
+	_streams[&"fire_laser"]   = _load_or_bake(&"fire_laser", _laser_pcm)
+	_streams[&"fire_drop"]    = _load_or_bake(&"fire_drop", _drop_pcm)
+	_streams[&"hit"]          = _load_or_bake(&"hit", _hit_pcm)
+	_streams[&"death"]        = _load_or_bake(&"death", _death_pcm)
+	_streams[&"wave_start"]   = _load_or_bake(&"wave_start", _wave_start_pcm)
+	_streams[&"boss_roar"]    = _load_or_bake(&"boss_roar", _boss_roar_pcm)
+	_streams[&"victory"]      = _load_or_bake(&"victory", _victory_pcm)
+	_streams[&"defeat"]       = _load_or_bake(&"defeat", _defeat_pcm)
+	_streams[&"achievement"]  = _load_or_bake(&"achievement", _ach_pcm)
+
+func _load_or_bake(tag: StringName, fallback: Callable) -> AudioStream:
+	var path: String = "res://audio/sfx/%s.wav" % String(tag)
+	if ResourceLoader.exists(path):
+		var s: AudioStream = load(path)
+		if s != null:
+			return s
+	return _bake(fallback.call())
 
 func play(tag: StringName, volume_offset_db: float = 0.0) -> void:
 	if muted:
