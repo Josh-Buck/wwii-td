@@ -20,3 +20,7 @@ adjacency_buffs = Array[StringName]([&"ussr"])
 adjacency_consumes = Array[StringName]([&"ussr"])
 tooltip_lore = "Soviet sniper at Odessa and Sevastopol, 309 confirmed kills. Long-range single-shot devastation; sees camouflage."
 codex_id = &"pavlichenko"
+hero_ability_id = &"pavlichenko_whitedeath"
+hero_ability_label = "White Death"
+hero_ability_desc = "Next 5 shots deal 2× damage and pierce armor."
+hero_ability_cooldown = 40.0

@@ -32,6 +32,12 @@ class_name TowerStats extends Resource
 @export_range(0.0, 1.0) var slow_aura_factor: float = 0.0  ## enemies in aura_radius move at this fraction of speed (0 = no slow)
 @export var is_air_unit: bool = false  ## true → no ground footprint; can be placed over path and overlapping ground towers
 
+@export_group("Hero Ability")
+@export var hero_ability_id: StringName = &""  ## empty = no ability; e.g. patton_charge / churchill_finest / eisenhower_dday / pavlichenko_whitedeath
+@export var hero_ability_label: String = ""    ## button label
+@export var hero_ability_desc: String = ""     ## tooltip + intro text
+@export var hero_ability_cooldown: float = 30.0
+
 @export_group("Lore")
 @export_multiline var tooltip_lore: String = ""
 @export var codex_id: StringName

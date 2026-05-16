@@ -21,3 +21,7 @@ adjacency_buffs = Array[StringName]([&"us"])
 adjacency_consumes = Array[StringName]([&"us"])
 tooltip_lore = "Supreme Commander of Allied Expeditionary Forces. Planned and approved Operation Overlord (D-Day, 6 June 1944), the largest amphibious assault in history."
 codex_id = &"eisenhower"
+hero_ability_id = &"eisenhower_dday"
+hero_ability_label = "D-Day Strike"
+hero_ability_desc = "Massive AoE strike at the current target — 350 dmg, r=140, pierces armor."
+hero_ability_cooldown = 60.0

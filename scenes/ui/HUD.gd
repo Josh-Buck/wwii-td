@@ -81,6 +81,7 @@ var _waves_completed: int = 0
 @onready var def_upgrades_grid: GridContainer = $DefenderInfoPanel/VBox/UpgradesGrid
 @onready var def_target_btn: Button = $DefenderInfoPanel/VBox/ActionRow/TargetButton
 @onready var def_sell_btn: Button = $DefenderInfoPanel/VBox/ActionRow/SellButton
+@onready var def_ability_btn: Button = $DefenderInfoPanel/VBox/AbilityButton
 
 var _info_active_tower: Node = null  ## tower currently shown in info panel (if placed)
 var _info_active_stats: Resource = null  ## stats currently shown (palette card or placed tower)
@@ -213,6 +214,7 @@ func _ready() -> void:
 	def_close_btn.pressed.connect(_hide_defender_info)
 	def_target_btn.pressed.connect(_on_def_target_pressed)
 	def_sell_btn.pressed.connect(_on_def_sell_pressed)
+	def_ability_btn.pressed.connect(_on_def_ability_pressed)
 	wave_preview_panel.visible = false
 	EventBus.tower_placed.connect(_refresh_wave_preview_from_signal)
 	EventBus.tower_sold.connect(_refresh_wave_preview_after_sell)
@@ -263,6 +265,8 @@ func _process(delta: float) -> void:
 	_process_bombing_button()
 	_process_combo(delta)
 	_process_achievement_queue(delta)
+	if def_info_panel.visible and _info_active_tower and is_instance_valid(_info_active_tower):
+		_refresh_action_row()
 	if tooltip.visible:
 		var mp := get_viewport().get_mouse_position()
 		# Offset so cursor doesn't overlap; flip to left of cursor near right edge.
@@ -760,12 +764,29 @@ func _refresh_action_row() -> void:
 	var has_placed: bool = _info_active_tower != null and is_instance_valid(_info_active_tower)
 	def_target_btn.visible = has_placed
 	def_sell_btn.visible = has_placed
+	def_ability_btn.visible = false
 	if not has_placed:
 		return
 	def_target_btn.text = "Target: %s" % String(_info_active_tower.targeting_mode).capitalize()
 	var base_cost: int = _info_active_stats.cost if _info_active_stats else 0
 	var refund: int = int((base_cost + _info_active_tower.total_invested) * 0.75)
 	def_sell_btn.text = "Sell (+%dg)" % refund
+	if _info_active_stats and _info_active_stats.hero_ability_id != &"":
+		def_ability_btn.visible = true
+		var cd: float = _info_active_tower.ability_cd_left
+		if cd > 0.0:
+			def_ability_btn.text = "%s — ready in %ds" % [_info_active_stats.hero_ability_label, int(ceil(cd))]
+			def_ability_btn.disabled = true
+		else:
+			def_ability_btn.text = "%s  ▶  ready" % _info_active_stats.hero_ability_label
+			def_ability_btn.disabled = false
+		def_ability_btn.tooltip_text = _info_active_stats.hero_ability_desc
+
+func _on_def_ability_pressed() -> void:
+	if _info_active_tower and is_instance_valid(_info_active_tower):
+		if _info_active_tower.activate_ability():
+			_show_toast("%s — activated" % _info_active_stats.hero_ability_label)
+		_refresh_action_row()
 
 func _on_def_target_pressed() -> void:
 	if _info_active_tower and is_instance_valid(_info_active_tower):

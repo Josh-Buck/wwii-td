@@ -22,3 +22,7 @@ aura_radius = 160.0
 aura_fire_rate_bonus = 0.15
 tooltip_lore = "British PM during the Battle of Britain. His broadcasts (\"We shall fight on the beaches\") sustained UK morale through the war's darkest hours."
 codex_id = &"churchill"
+hero_ability_id = &"churchill_finest"
+hero_ability_label = "Their Finest Hour"
+hero_ability_desc = "All UK towers +50% fire rate for 10s. The radio broadcast that rallied a nation."
+hero_ability_cooldown = 50.0

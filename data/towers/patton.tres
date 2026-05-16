@@ -20,3 +20,7 @@ adjacency_buffs = Array[StringName]([&"us"])
 adjacency_consumes = Array[StringName]([&"us"])
 tooltip_lore = "George S. Patton — commanded the U.S. Third Army's breakout from Normandy in 1944. Aggressive armor doctrine reshaped Allied tank tactics."
 codex_id = &"patton"
+hero_ability_id = &"patton_charge"
+hero_ability_label = "CHARGE!"
+hero_ability_desc = "All Pattons +100% fire rate for 5s. \"L'audace, l'audace, toujours l'audace.\""
+hero_ability_cooldown = 35.0

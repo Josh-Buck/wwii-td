@@ -22,6 +22,10 @@ var upgrade_b_tier: int = 0  ## branch B tiers purchased (0..3)
 var total_invested: int = 0  ## base cost + all upgrade costs (for sell refund)
 var kills: int = 0  ## enemies killed by this tower's projectiles
 var damage_dealt: int = 0  ## total damage dealt by this tower's projectiles
+var ability_cd_left: float = 0.0     ## seconds until hero ability ready again
+var _temp_buff_mult: float = 1.0     ## temporary fire-rate multiplier from hero abilities
+var _temp_buff_until: float = 0.0    ## absolute time (sec) the buff expires
+var crit_shots_remaining: int = 0    ## Pavlichenko White Death: next N shots crit
 var _eco_timer: Timer = null
 var _gold_accumulator: float = 0.0
 
@@ -142,6 +146,16 @@ func _refresh_fire_timer() -> void:
 
 var _idle_phase: float = 0.0
 
+func activate_ability() -> bool:
+	if stats == null or stats.hero_ability_id == &"":
+		return false
+	if ability_cd_left > 0.0:
+		return false
+	if HeroAbilities.activate(stats.hero_ability_id, self):
+		ability_cd_left = stats.hero_ability_cooldown
+		return true
+	return false
+
 func _process(delta: float) -> void:
 	# When this tower is selected, redraw every frame so the target line tracks
 	# the enemy as it moves. Always apply a subtle idle bob so the field feels
@@ -155,6 +169,9 @@ func _process(delta: float) -> void:
 		_idle_phase += delta * 1.6
 		var bob_y: float = sin(_idle_phase) * 0.9
 		position = _rest_position + Vector2(0, bob_y)
+	# Hero ability cooldown tick — wave-locked so it doesn't farm between rounds.
+	if ability_cd_left > 0.0 and GameState.wave_in_progress:
+		ability_cd_left = max(0.0, ability_cd_left - delta)
 
 func _on_slow_aura_tick() -> void:
 	if stats == null or stats.slow_aura_factor <= 0.0:
@@ -227,7 +244,14 @@ func effective_fire_rate() -> float:
 		multiplier += source.get("fire_rate_bonus", 0.0)
 	# Enemy debuff auras (e.g., Hitler) slow tower fire rate inside their radius.
 	var debuff: float = _enemy_debuff_factor()
-	return rate * multiplier * debuff
+	# Temporary hero-ability buff.
+	var now: float = Time.get_ticks_msec() / 1000.0
+	var buff: float = _temp_buff_mult if now < _temp_buff_until else 1.0
+	return rate * multiplier * debuff * buff
+
+func apply_temp_buff(mult: float, duration: float) -> void:
+	_temp_buff_mult = mult
+	_temp_buff_until = Time.get_ticks_msec() / 1000.0 + duration
 
 func _enemy_debuff_factor() -> float:
 	var factor: float = 1.0
@@ -404,7 +428,12 @@ func _fire_at(target: Node) -> void:
 		"pierce_armor": _effective_pierce_armor(),
 		"instakill_below_hp": _effective_instakill_threshold(),
 	}
-	projectile.setup(target, damage_for_target(target), opts)
+	var dmg: float = damage_for_target(target)
+	if crit_shots_remaining > 0:
+		dmg *= 2.0
+		opts["pierce_armor"] = true
+		crit_shots_remaining -= 1
+	projectile.setup(target, dmg, opts)
 	projectile.owner_tower = self
 	projectile.global_position = global_position
 	var container := _find_projectiles_container()
