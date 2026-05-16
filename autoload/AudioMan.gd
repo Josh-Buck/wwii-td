@@ -33,10 +33,20 @@ func _ready() -> void:
 	_music_player.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_music_player)
 	_build_bank()
-	_music_stream = _bake(_march_loop_pcm())
-	_music_stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
-	_music_stream.loop_end = _music_stream.data.size() / 2  ## sample count
-	_music_player.stream = _music_stream
+	# Prefer real CC0 orchestral tracks if present; fall back to procedural march.
+	var music_path: String = "res://audio/music/battlefield_loop.ogg"
+	var loaded: AudioStream = null
+	if ResourceLoader.exists(music_path):
+		loaded = load(music_path)
+	if loaded != null:
+		if loaded is AudioStreamOggVorbis:
+			loaded.loop = true
+		_music_player.stream = loaded
+	else:
+		_music_stream = _bake(_march_loop_pcm())
+		_music_stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+		_music_stream.loop_end = _music_stream.data.size() / 2
+		_music_player.stream = _music_stream
 	_music_player.volume_db = music_volume_db
 	start_music()
 
