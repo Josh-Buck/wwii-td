@@ -140,11 +140,21 @@ func _refresh_fire_timer() -> void:
 	if fire_timer:
 		fire_timer.wait_time = 1.0 / max(0.0001, effective_fire_rate())
 
-func _process(_delta: float) -> void:
-	# When this tower is selected by the info panel, redraw every frame so
-	# the target line tracks the enemy as it moves.
+var _idle_phase: float = 0.0
+
+func _process(delta: float) -> void:
+	# When this tower is selected, redraw every frame so the target line tracks
+	# the enemy as it moves. Always apply a subtle idle bob so the field feels
+	# alive — masked by the recoil tween when firing.
 	if selected:
 		queue_redraw()
+	if not _rest_position_set:
+		_rest_position = position
+		_rest_position_set = true
+	if _recoil_tween == null or not _recoil_tween.is_valid() or not _recoil_tween.is_running():
+		_idle_phase += delta * 1.6
+		var bob_y: float = sin(_idle_phase) * 0.9
+		position = _rest_position + Vector2(0, bob_y)
 
 func _on_slow_aura_tick() -> void:
 	if stats == null or stats.slow_aura_factor <= 0.0:
