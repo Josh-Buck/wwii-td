@@ -128,6 +128,20 @@ Run through these in order after each deploy. If anything breaks, capture the **
 - [ ] **Heydrich / Himmler aura** — when these bosses are on the map, nearby enemies move noticeably faster (1.4x for Heydrich, 1.2x for Himmler).
 - [ ] **Codex viewer on main menu** — Codex button opens an overlay with all 37 entries; selecting one marks it read and shows the portrait + body + sources.
 
+## N. Latest additions (post-Section M)
+
+- [ ] **Hero abilities** — click any of these placed towers and use the new "Activate Ability" button on the info panel:
+  - **Patton CHARGE!** (35s cd) — all Pattons fire 2x for 5s.
+  - **Churchill Their Finest Hour** (50s cd) — all UK towers +50% fire rate for 10s.
+  - **Eisenhower D-Day Strike** (60s cd) — single 350-damage pierce-AoE r=140 at the current target with screen shake.
+  - **Pavlichenko White Death** (40s cd) — next 5 shots deal 2x + pierce armor.
+- [ ] Ability cooldown counts down only while a wave is active and shows live on the button text.
+- [ ] **Final score on end screen** — `Final score: 15,840` with thousands separators. Top-3 per (map, difficulty) tagged `🥇 #1 ALL-TIME`.
+- [ ] **Map star ratings** — main menu shows `★★☆ Normandy` / `Ardennes`; selecting difficulty refreshes them. End screen shows the rating and a `NEW STAR EARNED` callout if a star just unlocked.
+- [ ] **Achievements gallery** — 26 entries total (was 11). Tiered: 100 / 500 / 2000 / 10000 lifetime kills, combo 10/25/50, codex 1/20/all, recruit 1/5, etc. Pop-up + WEP reward fires on unlock.
+- [ ] **Wave mission briefings** — every wave start card shows a one-line historical context (W5 = D-Day, W11 = Eichmann, W15 = Berlin/end of Reich).
+- [ ] **Codex viewer on main menu** — Codex button opens the full list; selecting an entry shows the portrait + body + sources and marks it read.
+
 ## L. Diagnostic dump
 
 If you need to share state with me, the browser console will show:
