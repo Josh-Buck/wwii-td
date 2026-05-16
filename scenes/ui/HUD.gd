@@ -31,6 +31,9 @@ extends CanvasLayer
 @onready var pause_btn: Button = $TopBar/PauseButton
 @onready var mute_btn: Button = $TopBar/MuteButton
 @onready var diff_badge: Label = $TopBar/DiffBadge
+@onready var help_btn: Button = $TopBar/HelpButton
+@onready var help_panel: PanelContainer = $HelpPanel
+@onready var help_close: Button = $HelpPanel/VBox/CloseButton
 @onready var pause_overlay: Control = $PauseOverlay
 @onready var resume_btn: Button = $PauseOverlay/Center/VBox/ResumeButton
 @onready var master_vol_slider: HSlider = $PauseOverlay/Center/VBox/MasterVolSlider
@@ -178,6 +181,9 @@ func _ready() -> void:
 	mute_btn.pressed.connect(_toggle_mute)
 	mute_btn.text = "🔇" if AudioMan.muted else "🔊"
 	diff_badge.text = GameState.DIFFICULTY_LABELS[GameState.difficulty]
+	help_btn.pressed.connect(_toggle_help)
+	help_close.pressed.connect(_toggle_help)
+	help_panel.visible = false
 	resume_btn.pressed.connect(toggle_pause)
 	master_vol_slider.value = AudioMan.master_volume_db
 	music_vol_slider.value = AudioMan.music_volume_db
@@ -399,6 +405,9 @@ func _wave_briefing(w: int) -> String:
 func _toggle_mute() -> void:
 	AudioMan.set_muted(not AudioMan.muted)
 	mute_btn.text = "🔇" if AudioMan.muted else "🔊"
+
+func _toggle_help() -> void:
+	help_panel.visible = not help_panel.visible
 
 func _on_wave_cleared(idx: int, bonus_gold: int, elapsed_s: float) -> void:
 	var msg: String = "Wave %d cleared in %.1fs" % [idx + 1, elapsed_s]

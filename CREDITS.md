@@ -157,3 +157,12 @@ The following 64×64 PNG tiles were sourced from Kenney.nl asset packs, all rele
   - `art/terrain/snow.png` (snow base tile_0000, upscaled to 64×64)
 
 License: **CC0 1.0 Universal**. Kenney's standard blurb: "Pack: <name>, Author: Kenney Vleugels (kenney.nl), License: CC0 1.0 Universal".
+
+## Music
+
+- Some Militaristic Tune by Spring Spring (CC0). Source: https://opengameart.org/content/some-militaristic-tune
+  - File: `audio/music/battlefield_loop.ogg`
+  - Description: Orchestral march with brass, drums, and balalaika. Used as ambient battlefield loop.
+- War Theme by Spring Spring (CC0). Source: https://opengameart.org/content/war-theme
+  - File: `audio/music/boss_theme.ogg`
+  - Description: Dramatic orchestral war theme. Used as boss encounter music.

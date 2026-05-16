@@ -63,6 +63,11 @@ text = "Normal"
 modulate = Color(0.85, 0.85, 1.0, 0.85)
 theme_override_font_sizes/font_size = 12
 
+[node name="HelpButton" type="Button" parent="TopBar"]
+text = "?"
+tooltip_text = "Controls + key bindings"
+custom_minimum_size = Vector2(32, 0)
+
 [node name="MuteButton" type="Button" parent="TopBar"]
 text = "🔊"
 tooltip_text = "Mute / unmute sound"
@@ -496,6 +501,46 @@ offset_bottom = 92.0
 text = ""
 theme_override_font_sizes/font_size = 18
 modulate = Color(1, 0.85, 0.40, 1)
+
+[node name="HelpPanel" type="PanelContainer" parent="."]
+visible = false
+offset_left = 320.0
+offset_top = 120.0
+offset_right = 960.0
+offset_bottom = 600.0
+
+[node name="VBox" type="VBoxContainer" parent="HelpPanel"]
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="HelpPanel/VBox"]
+text = "Controls"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+
+[node name="HSep" type="HSeparator" parent="HelpPanel/VBox"]
+
+[node name="Body" type="Label" parent="HelpPanel/VBox"]
+text = "Sidebar:  left-click to pick a tower, right-click for full info.
+Map:  left-click to place a selected tower.  Esc to cancel.
+1-9:  pick the matching sidebar slot.
+P:  pause / resume.
+B:  Bombing Run targeting.  Esc to cancel.
+C:  toggle codex.
+Space:  cycle game speed (1x / 2x / 4x).
+
+PLACED TOWER:  click it to open the upgrade / target / sell panel.
+Heroes (Patton, Churchill, Eisenhower, Pavlichenko) have an
+Activate Ability button at the top of that panel.
+
+WAR ROOM (between waves):  bonds, stocks, field offers.
+The dash (—) button minimizes it so you can see the map.
+
+ACHIEVEMENTS unlock automatically and grant bonus War Effort.
+STARS are earned per map: 1 win, +1 no lives lost, +1 no Manhattan/Bombing Run."
+theme_override_font_sizes/font_size = 13
+
+[node name="CloseButton" type="Button" parent="HelpPanel/VBox"]
+text = "Close"
 
 [node name="BossIntro" type="Control" parent="."]
 visible = false
