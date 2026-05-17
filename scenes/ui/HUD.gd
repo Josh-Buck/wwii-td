@@ -531,6 +531,8 @@ func _on_map_ready(towers: Array) -> void:
 		var card := _build_sidebar_card(i, stats)
 		sidebar_list.add_child(card)
 		_palette_btns.append(card)
+	# Show next-wave preview immediately so the player can plan wave 1.
+	call_deferred("_refresh_wave_preview")
 
 func _build_sidebar_card(idx: int, stats: Resource) -> Button:
 	var btn := Button.new()
@@ -966,33 +968,36 @@ func _humanize_id(id: StringName) -> String:
 	return s.capitalize()
 
 func _refresh_wave_preview() -> void:
-	var providers := get_tree().get_nodes_in_group("wave_preview_providers")
-	if providers.is_empty():
-		wave_preview_panel.visible = false
-		return
+	# Wave preview is always on — players need it to plan eco vs. defense.
+	# Bletchley (provides_wave_preview) extends the preview to 3 waves.
 	var wd_nodes := get_tree().get_nodes_in_group("wave_director")
 	if wd_nodes.is_empty():
 		wave_preview_panel.visible = false
 		return
 	var wd: Node = wd_nodes[0]
-	if not wd.has_method("get_next_wave_spawns"):
+	if not wd.has_method("get_wave_spawns"):
 		return
+	var depth: int = 3 if not get_tree().get_nodes_in_group("wave_preview_providers").is_empty() else 1
 	# Clear existing icons.
 	for c in wave_preview_icons.get_children():
 		c.queue_free()
-	# Aggregate by enemy id.
-	var spawns: Array = wd.get_next_wave_spawns()
+	# Aggregate enemy counts across the requested depth of upcoming waves.
 	var counts: Dictionary = {}
-	for s in spawns:
-		var id: StringName = StringName(s.get("enemy", ""))
-		if id == &"":
-			continue
-		counts[id] = counts.get(id, 0) + int(s.get("count", 1))
-	if counts.is_empty():
-		wave_preview_label.text = "Next: (final wave cleared)"
+	var any: bool = false
+	for off in depth:
+		var idx: int = wd._current_wave_index + 1 + off
+		var spawns: Array = wd.get_wave_spawns(idx)
+		for s in spawns:
+			var id: StringName = StringName(s.get("enemy", ""))
+			if id == &"":
+				continue
+			counts[id] = counts.get(id, 0) + int(s.get("count", 1))
+			any = true
+	if not any:
+		wave_preview_label.text = "Next: (none queued)"
 		wave_preview_panel.visible = true
 		return
-	wave_preview_label.text = "Next:"
+	wave_preview_label.text = "Next %d wave%s:" % [depth, "" if depth == 1 else "s"]
 	for id in counts:
 		var stats: Resource = wd.enemy_registry.get(id, null) if "enemy_registry" in wd else null
 		var entry := HBoxContainer.new()

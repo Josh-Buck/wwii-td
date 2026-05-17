@@ -110,7 +110,13 @@ func take_damage(dmg: float, pierce_armor: bool = false) -> void:
 		return
 	var effective: float = dmg
 	if not pierce_armor:
-		effective = dmg * (1.0 - clampf(stats.armor, 0.0, 0.95))
+		var armor: float = clampf(stats.armor, 0.0, 0.95)
+		# Bletchley intel: reduce effective armor for enemies within an
+		# armor_pierce_aura. Highest debuff wins.
+		var pierce: float = _armor_pierce_aura()
+		if pierce > 0.0:
+			armor *= max(0.0, 1.0 - pierce)
+		effective = dmg * (1.0 - armor)
 	hp -= effective
 	if health_bar:
 		health_bar.value = hp
@@ -120,6 +126,19 @@ func take_damage(dmg: float, pierce_armor: bool = false) -> void:
 	AudioMan.play(&"hit", -12.0)
 	if hp <= 0.0:
 		_die()
+
+func _armor_pierce_aura() -> float:
+	# Highest armor-debuff aura among nearby towers (e.g., Bletchley).
+	var best: float = 0.0
+	for t in get_tree().get_nodes_in_group("towers"):
+		if not is_instance_valid(t) or t.stats == null:
+			continue
+		if t.stats.armor_pierce_aura_factor <= 0.0 or t.stats.aura_radius <= 0.0:
+			continue
+		if global_position.distance_squared_to(t.global_position) <= t.stats.aura_radius * t.stats.aura_radius:
+			if t.stats.armor_pierce_aura_factor > best:
+				best = t.stats.armor_pierce_aura_factor
+	return best
 
 func _speed_aura_mult() -> float:
 	# Highest aura wins. Skips self.

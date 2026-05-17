@@ -65,6 +65,9 @@ func get_boss_id_for_current_wave() -> StringName:
 func get_next_wave_spawns() -> Array:
 	return _wave_spawns_at(_current_wave_index + 1)
 
+func get_wave_spawns(idx: int) -> Array:
+	return _wave_spawns_at(idx)
+
 func get_next_wave_summary() -> String:
 	var spawns: Array = get_next_wave_spawns()
 	if spawns.is_empty():

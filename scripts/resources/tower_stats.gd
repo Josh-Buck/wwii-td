@@ -30,6 +30,7 @@ class_name TowerStats extends Resource
 @export var gold_per_sec: float = 0.0  ## passive eco generation while alive
 @export var provides_wave_preview: bool = false  ## enables the next-wave HUD panel
 @export_range(0.0, 1.0) var slow_aura_factor: float = 0.0  ## enemies in aura_radius move at this fraction of speed (0 = no slow)
+@export_range(0.0, 1.0) var armor_pierce_aura_factor: float = 0.0  ## enemies in aura_radius have effective armor reduced by this fraction (Bletchley intel)
 @export var is_air_unit: bool = false  ## true → no ground footprint; can be placed over path and overlapping ground towers
 
 @export_group("Hero Ability")
