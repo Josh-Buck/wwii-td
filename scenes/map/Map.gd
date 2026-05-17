@@ -237,6 +237,10 @@ func _try_tower_click_dispatch(event: InputEvent) -> void:
 		return
 	if _bombing_run and _bombing_run.is_targeting():
 		return
+	# Don't dispatch if the click is inside any visible HUD menu / overlay.
+	# Otherwise menus and tower-clicks would both fire on the same click.
+	if _click_over_hud_modal():
+		return
 	var pos: Vector2 = get_global_mouse_position()
 	if pos.x < _MAP_LEFT or pos.x > _MAP_RIGHT or pos.y < _MAP_TOP or pos.y > _MAP_BOTTOM:
 		return
@@ -244,6 +248,29 @@ func _try_tower_click_dispatch(event: InputEvent) -> void:
 	if tw != null:
 		EventBus.tower_clicked.emit(tw)
 		get_viewport().set_input_as_handled()
+
+const _BLOCKING_HUD_NODES: Array[String] = [
+	"DefenderInfoPanel", "ShopPanel", "CodexPanel", "EndScreen",
+	"PauseOverlay", "HelpPanel", "TowerSidebar", "ShopTab",
+	"StartWavePanel", "BossIntro",
+]
+
+func _click_over_hud_modal() -> bool:
+	if hud == null:
+		return false
+	var mouse_pos: Vector2 = hud.get_viewport().get_mouse_position()
+	for nname in _BLOCKING_HUD_NODES:
+		var panel: Node = hud.get_node_or_null(nname)
+		if panel == null:
+			continue
+		if not panel is Control:
+			continue
+		if not panel.visible:
+			continue
+		var rect := Rect2(panel.global_position, panel.size)
+		if rect.has_point(mouse_pos):
+			return true
+	return false
 
 func _tower_at_click(pos: Vector2) -> Node:
 	# Slightly looser radius than _tower_at() so the click is forgiving.
