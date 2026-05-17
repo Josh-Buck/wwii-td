@@ -179,7 +179,7 @@ func _ready() -> void:
 	info_close_btn.pressed.connect(_on_close_btn_pressed)
 	pause_btn.pressed.connect(toggle_pause)
 	mute_btn.pressed.connect(_toggle_mute)
-	mute_btn.text = "🔇" if AudioMan.muted else "🔊"
+	mute_btn.text = "Sound: off" if AudioMan.muted else "Sound: on"
 	diff_badge.text = GameState.DIFFICULTY_LABELS[GameState.difficulty]
 	help_btn.pressed.connect(_toggle_help)
 	help_close.pressed.connect(_toggle_help)
@@ -405,7 +405,7 @@ func _wave_briefing(w: int) -> String:
 
 func _toggle_mute() -> void:
 	AudioMan.set_muted(not AudioMan.muted)
-	mute_btn.text = "🔇" if AudioMan.muted else "🔊"
+	mute_btn.text = "Sound: off" if AudioMan.muted else "Sound: on"
 
 func _toggle_help() -> void:
 	help_panel.visible = not help_panel.visible
@@ -1479,11 +1479,11 @@ func show_end_screen(victory: bool, waves_cleared: int = 0, earned: int = 0, tot
 	if final_score > 0:
 		var score_line: String = "  ·  Final score: %s" % _format_score(final_score)
 		if rank > 0:
-			var medals: Array = ["🥇 #1", "🥈 #2", "🥉 #3"]
+			var medals: Array = ["#1", "#2", "#3"]
 			score_line += "  ·  %s ALL-TIME" % medals[rank - 1]
 		end_total_label.text += score_line
 	if stars > 0:
-		var star_str: String = "★".repeat(stars) + "☆".repeat(3 - stars)
+		var star_str: String = "[%s]" % ("X".repeat(stars) + "-".repeat(3 - stars))
 		var sfx: String = "  ·  NEW STAR EARNED" if new_stars > 0 else ""
 		end_total_label.text += "\nMap rating: %s%s" % [star_str, sfx]
 	end_stats_label.text = "%d kills  ·  %dg from kills  ·  %d towers placed  ·  %d bonds bought  ·  %dg from payouts\n%s" % [

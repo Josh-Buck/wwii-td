@@ -31,8 +31,15 @@ func _draw() -> void:
 		return
 	var alpha: float = 1.0 - (_t / lifetime)
 	var col: Color = Color(1.0, 0.92, 0.40, alpha)
-	var fs: int = 13
+	var fs: int = 14
 	var size: Vector2 = font.get_string_size(_text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
 	var origin: Vector2 = Vector2(-size.x / 2.0, 0)
-	draw_string(font, origin + Vector2(1, 1), _text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(0, 0, 0, alpha * 0.75))
+	# Thick black outline (8 surrounding offsets) so the text reads on any
+	# background — bright snow, dark grass, light path, whatever.
+	var shadow := Color(0, 0, 0, alpha * 0.9)
+	for ox in [-1, 0, 1]:
+		for oy in [-1, 0, 1]:
+			if ox == 0 and oy == 0:
+				continue
+			draw_string(font, origin + Vector2(ox, oy), _text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, shadow)
 	draw_string(font, origin, _text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, col)

@@ -149,10 +149,14 @@ func _refresh_map_buttons() -> void:
 	var a_stars: int = MetaProgress.get_stars("Ardennes", GameState.difficulty)
 	var name_for_map: String = "Normandy Field" if _selected_map == _MAP_NORMANDY else "Ardennes (winding forest path)"
 	var s: int = n_stars if _selected_map == _MAP_NORMANDY else a_stars
-	var rating: String = "★".repeat(s) + "☆".repeat(3 - s)
+	var rating: String = _star_glyph(s)
 	map_label.text = "Map: %s   %s" % [name_for_map, rating]
-	map_normandy_btn.text = "Normandy %s" % ("★".repeat(n_stars) + "☆".repeat(3 - n_stars))
-	map_ardennes_btn.text = "Ardennes %s" % ("★".repeat(a_stars) + "☆".repeat(3 - a_stars))
+	map_normandy_btn.text = "Normandy  %s" % _star_glyph(n_stars)
+	map_ardennes_btn.text = "Ardennes  %s" % _star_glyph(a_stars)
+
+func _star_glyph(n: int) -> String:
+	# ASCII stars — survive any fallback font. 'X' is filled, '-' is empty.
+	return "[%s]" % ("X".repeat(n) + "-".repeat(3 - n))
 
 func _refresh_top() -> void:
 	wep_label.text = "War Effort: %d" % MetaProgress.war_effort_points
