@@ -1,6 +1,6 @@
 extends Node
 
-const STARTING_GOLD := 200
+const STARTING_GOLD := 140
 const STARTING_LIVES := 20
 
 enum Difficulty { EASY, NORMAL, HARD }

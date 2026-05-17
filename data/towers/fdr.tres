@@ -18,6 +18,6 @@ can_hit = 0
 default_targeting = &"first"
 adjacency_buffs = Array[StringName]([&"us"])
 adjacency_consumes = Array[StringName]([&"us"])
-gold_per_sec = 1.0
+gold_per_sec = 0.6
 tooltip_lore = "32nd U.S. President. Lend-Lease shipped war materiel to UK / USSR before American entry. Generates +1 gold per second while present."
 codex_id = &"fdr"

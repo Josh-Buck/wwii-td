@@ -174,8 +174,13 @@ func _spawn_enemy(enemy_id: StringName) -> void:
 		return
 	var enemy = enemy_scene.instantiate()
 	enemy.stats = enemy_registry[enemy_id]
-	enemy.hp_mult = _difficulty_mult * GameState.DIFFICULTY_HP_MULT[GameState.difficulty]
-	enemy.reward_mult = 1.0 + _ENDLESS_REWARD_PER_WAVE * max(0, _current_wave_index - _waves.size() + 1)
+	# Scripted late waves (10+) get a small bite so they don't feel trivial.
+	var late_bump: float = 1.0
+	if _current_wave_index >= 9 and _current_wave_index < _waves.size():
+		late_bump = 1.0 + 0.05 * (_current_wave_index - 8)  ## +5% per wave from 10 → +30% at 15
+	enemy.hp_mult = _difficulty_mult * GameState.DIFFICULTY_HP_MULT[GameState.difficulty] * late_bump
+	# Endless rewards scaled DOWN slightly per wave so income doesn't snowball forever.
+	enemy.reward_mult = max(0.6, 1.0 - 0.02 * max(0, _current_wave_index - _waves.size() + 1))
 	if _path:
 		_path.add_child(enemy)
 	else:
@@ -228,7 +233,7 @@ func _check_wave_end() -> void:
 		var bonus_gold: int = 0
 		if elapsed_s < expected_s:
 			var ratio: float = clamp(1.0 - (elapsed_s / expected_s), 0.0, 1.0)
-			bonus_gold = int(20 + 60 * ratio)
+			bonus_gold = int(10 + 25 * ratio)  ## was 20 + 60, halved
 			GameState.add_gold(bonus_gold)
 		EventBus.wave_cleared.emit(_current_wave_index, bonus_gold, elapsed_s)
 		wave_ended.emit(_current_wave_index)
