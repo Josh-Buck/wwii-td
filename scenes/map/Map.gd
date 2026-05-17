@@ -32,6 +32,7 @@ var _placement_active: bool = false
 var _path_baked_points: PackedVector2Array
 var _bombing_run: BombingRun = null
 var _camera: Camera2D = null
+var _pending_run_state: Dictionary = {}  ## populated by Main before _ready if continuing
 var _shake_remaining: float = 0.0
 var _shake_intensity: float = 0.0
 var _shake_rng := RandomNumberGenerator.new()
@@ -126,6 +127,10 @@ func _ready() -> void:
 	EventBus.tower_palette_pick.connect(_select_tower_index)
 	EventBus.start_wave_requested.connect(_on_start_wave_requested)
 	EventBus.map_ready.emit(available_towers)
+	# Apply continue-run state if Main passed one in before adding us to the tree.
+	if not _pending_run_state.is_empty():
+		_apply_run_state(_pending_run_state)
+		_pending_run_state = {}
 
 	# Wave 1 no longer auto-starts; HUD's Start Wave button drives it.
 
@@ -371,6 +376,9 @@ func _on_start_wave_requested() -> void:
 func _on_wave_ended(idx: int) -> void:
 	if not GameState.run_active:
 		return
+	# Persist a mid-run snapshot at every wave end so a closed tab / browser
+	# crash doesn't destroy the run.
+	_save_run_snapshot()
 	if not wave_director.has_more_waves():
 		return  # all_waves_completed signal fires elsewhere
 	if idx == 0:
@@ -381,12 +389,106 @@ func _on_wave_ended(idx: int) -> void:
 	await EventBus.shop_closed
 	# After shop closes, control returns; HUD's Start Wave button starts next.
 
+func _apply_run_state(state: Dictionary) -> void:
+	# Restore a previously-saved mid-run state. Called after _ready so the
+	# WaveDirector, HUD, and bombing-run systems all exist.
+	GameState.gold = int(state.get("gold", 200))
+	GameState.lives = int(state.get("lives", 20))
+	GameState.wave_index = int(state.get("wave_index", 0))
+	GameState.held_bonds = state.get("held_bonds", [])
+	GameState.held_shares = state.get("held_shares", {})
+	GameState.stat_kills = int(state.get("stat_kills", 0))
+	GameState.stat_gold_from_kills = int(state.get("stat_gold_from_kills", 0))
+	GameState.stat_towers_placed = int(state.get("stat_towers_placed", 0))
+	GameState.stat_bonds_purchased = int(state.get("stat_bonds_purchased", 0))
+	GameState.stat_bond_payouts = int(state.get("stat_bond_payouts", 0))
+	GameState.manhattan_used = bool(state.get("manhattan_used", false))
+	GameState.manhattan_penalty = bool(state.get("manhattan_penalty", false))
+	GameState.bombing_run_used = bool(state.get("bombing_run_used", false))
+	GameState.fully_upgraded_this_run = int(state.get("fully_upgraded_this_run", 0))
+	# Stocks
+	for k in state.get("stock_prices", {}):
+		StockMarket.prices[k] = state.stock_prices[k]
+	for k in state.get("stock_prev_prices", {}):
+		StockMarket.prev_prices[k] = state.stock_prev_prices[k]
+	# Re-broadcast state so the HUD updates labels.
+	EventBus.gold_changed.emit(GameState.gold)
+	EventBus.lives_changed.emit(GameState.lives)
+	# WaveDirector wave index — keep it consistent so next wave starts correctly.
+	if wave_director and wave_director.has_method("set"):
+		wave_director._current_wave_index = GameState.wave_index
+	# Re-place every tower from the saved snapshot.
+	for t in state.get("towers", []):
+		var sid: StringName = StringName(t.get("id", ""))
+		var stats_res: TowerStats = null
+		for s in available_towers:
+			if s and s.id == sid:
+				stats_res = s
+				break
+		if stats_res == null:
+			continue
+		var tower = tower_scene.instantiate()
+		tower.stats = stats_res
+		tower.global_position = Vector2(float(t.get("x", 100)), float(t.get("y", 100)))
+		tower.upgrade_a_tier = int(t.get("upgrade_a_tier", 0))
+		tower.upgrade_b_tier = int(t.get("upgrade_b_tier", 0))
+		tower.targeting_mode = StringName(t.get("targeting_mode", "first"))
+		tower.total_invested = int(t.get("total_invested", 0))
+		tower.kills = int(t.get("kills", 0))
+		tower.damage_dealt = int(t.get("damage_dealt", 0))
+		tower.ability_cd_left = float(t.get("ability_cd_left", 0.0))
+		towers_container.add_child(tower)
+		EventBus.tower_placed.emit(tower)
+
+func _save_run_snapshot() -> void:
+	var towers: Array = []
+	for tw in get_tree().get_nodes_in_group("towers"):
+		if not is_instance_valid(tw) or tw.stats == null:
+			continue
+		towers.append({
+			"id": String(tw.stats.id),
+			"x": tw.global_position.x,
+			"y": tw.global_position.y,
+			"upgrade_a_tier": tw.upgrade_a_tier,
+			"upgrade_b_tier": tw.upgrade_b_tier,
+			"targeting_mode": String(tw.targeting_mode),
+			"total_invested": tw.total_invested,
+			"kills": tw.kills,
+			"damage_dealt": tw.damage_dealt,
+			"ability_cd_left": tw.ability_cd_left,
+		})
+	var state: Dictionary = {
+		"map_id": name,
+		"difficulty": GameState.difficulty,
+		"gold": GameState.gold,
+		"lives": GameState.lives,
+		"wave_index": GameState.wave_index,
+		"held_bonds": GameState.held_bonds.duplicate(true),
+		"held_shares": GameState.held_shares.duplicate(true),
+		"stat_kills": GameState.stat_kills,
+		"stat_gold_from_kills": GameState.stat_gold_from_kills,
+		"stat_towers_placed": GameState.stat_towers_placed,
+		"stat_bonds_purchased": GameState.stat_bonds_purchased,
+		"stat_bond_payouts": GameState.stat_bond_payouts,
+		"manhattan_used": GameState.manhattan_used,
+		"manhattan_penalty": GameState.manhattan_penalty,
+		"bombing_run_used": GameState.bombing_run_used,
+		"fully_upgraded_this_run": GameState.fully_upgraded_this_run,
+		"towers": towers,
+		"stock_prices": StockMarket.prices.duplicate(),
+		"stock_prev_prices": StockMarket.prev_prices.duplicate(),
+	}
+	SaveSystem.save_run(state)
+
 func _on_all_waves_completed() -> void:
 	if GameState.run_active:
 		GameState.run_active = false
 		EventBus.run_ended.emit(true)
 
 func _on_run_ended(victory: bool) -> void:
+	# Run is over (win or lose) — discard any mid-run save so the main menu
+	# doesn't offer Continue Run on a finished run.
+	SaveSystem.clear_run_save()
 	var waves_cleared := GameState.wave_index + (1 if victory else 0)
 	# 2 WEP per wave + 10 victory bonus + 1 per kill / 25 so a real run earns
 	# enough to recruit a figure (5-18 WEP) without grinding 4 runs each time.

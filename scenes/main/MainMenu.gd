@@ -1,6 +1,7 @@
 extends Control
 
 signal start_run_requested(map_path: String)
+signal continue_run_requested
 
 const _MAP_NORMANDY := "res://scenes/map/maps/m0_field.tscn"
 const _MAP_ARDENNES := "res://scenes/map/maps/ardennes.tscn"
@@ -16,6 +17,7 @@ const _MAP_ARDENNES := "res://scenes/map/maps/ardennes.tscn"
 @onready var diff_normal_btn: Button = $Center/Panel/VBox/DiffRow/NormalButton
 @onready var diff_hard_btn: Button = $Center/Panel/VBox/DiffRow/HardButton
 @onready var start_btn: Button = $Center/Panel/VBox/StartButton
+@onready var continue_btn: Button = $Center/Panel/VBox/ContinueButton
 @onready var recruit_btn: Button = $Center/Panel/VBox/RecruitButton
 @onready var codex_btn: Button = $Center/Panel/VBox/CodexButton
 @onready var build_label: Label = $Center/Panel/VBox/BuildLabel
@@ -88,6 +90,8 @@ func _ready() -> void:
 	recruit_overlay.visible = false
 	codex_overlay.visible = false
 	start_btn.pressed.connect(_on_start_pressed)
+	continue_btn.pressed.connect(_on_continue_pressed)
+	continue_btn.visible = SaveSystem.has_run_save()
 	recruit_btn.pressed.connect(_open_recruit)
 	codex_btn.pressed.connect(_on_codex_pressed)
 	codex_close_btn.pressed.connect(_close_codex)
@@ -176,6 +180,9 @@ func _refresh_top() -> void:
 
 func _on_start_pressed() -> void:
 	start_run_requested.emit(_selected_map)
+
+func _on_continue_pressed() -> void:
+	continue_run_requested.emit()
 
 func _on_codex_pressed() -> void:
 	codex_overlay.visible = true
