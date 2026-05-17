@@ -78,6 +78,14 @@ func _resolve_hit(impact_pos: Vector2) -> void:
 		if impact_pos.distance_to(enemy.global_position) <= aoe_radius:
 			_apply_to(enemy, impact_pos)
 
+func _xp_for(enemy: Node) -> int:
+	# Bosses worth more XP. Otherwise scale loosely with kill_reward.
+	if enemy == null or enemy.stats == null:
+		return 1
+	if enemy.stats.is_boss:
+		return 20
+	return max(1, int(enemy.stats.kill_reward / 4))
+
 func _spawn_impact_spark(at: Vector2) -> void:
 	var scene: PackedScene = preload("res://scenes/effects/ImpactSpark.tscn")
 	var node: Node2D = scene.instantiate()
@@ -97,6 +105,8 @@ func _apply_to(enemy: Node, _impact: Vector2) -> void:
 			enemy.take_damage(99999.0, true)
 			if was_alive and enemy.dead and owner_tower and is_instance_valid(owner_tower):
 				owner_tower.kills += 1
+				if owner_tower.has_method("grant_hero_xp"):
+					owner_tower.grant_hero_xp(_xp_for(enemy))
 		return
 	if enemy.has_method("take_damage"):
 		var was_alive: bool = not enemy.dead
@@ -106,6 +116,8 @@ func _apply_to(enemy: Node, _impact: Vector2) -> void:
 			owner_tower.damage_dealt += int(max(0.0, pre_hp - max(0.0, enemy.hp)))
 			if was_alive and enemy.dead:
 				owner_tower.kills += 1
+				if owner_tower.has_method("grant_hero_xp"):
+					owner_tower.grant_hero_xp(_xp_for(enemy))
 	if slow_factor < 1.0 and slow_duration > 0.0 and enemy.has_method("apply_slow"):
 		enemy.apply_slow(slow_factor, slow_duration)
 	if knockback > 0.0 and enemy.has_method("apply_knockback"):

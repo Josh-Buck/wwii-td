@@ -808,12 +808,18 @@ func _refresh_action_row() -> void:
 	def_sell_btn.text = "Sell (+%dg)" % refund
 	if _info_active_stats and _info_active_stats.hero_ability_id != &"":
 		def_ability_btn.visible = true
+		var lvl: int = _info_active_tower.hero_level
+		var xp: int = _info_active_tower.hero_xp
+		var next_at: int = 0
+		if lvl < _info_active_tower.MAX_HERO_LEVEL:
+			next_at = _info_active_tower.HERO_LEVEL_THRESHOLDS[lvl]
+		var lvl_label: String = "Lv %d  ·  XP %d/%d" % [lvl, xp, next_at] if next_at > 0 else "Lv %d  ·  MAX" % lvl
 		var cd: float = _info_active_tower.ability_cd_left
 		if cd > 0.0:
-			def_ability_btn.text = "%s — ready in %ds" % [_info_active_stats.hero_ability_label, int(ceil(cd))]
+			def_ability_btn.text = "%s  ·  %s — ready in %ds" % [lvl_label, _info_active_stats.hero_ability_label, int(ceil(cd))]
 			def_ability_btn.disabled = true
 		else:
-			def_ability_btn.text = "%s  ▶  ready" % _info_active_stats.hero_ability_label
+			def_ability_btn.text = "%s  ·  %s  ▶  ready" % [lvl_label, _info_active_stats.hero_ability_label]
 			def_ability_btn.disabled = false
 		def_ability_btn.tooltip_text = _info_active_stats.hero_ability_desc
 

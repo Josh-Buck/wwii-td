@@ -26,6 +26,14 @@ var ability_cd_left: float = 0.0     ## seconds until hero ability ready again
 var _temp_buff_mult: float = 1.0     ## temporary fire-rate multiplier from hero abilities
 var _temp_buff_until: float = 0.0    ## absolute time (sec) the buff expires
 var crit_shots_remaining: int = 0    ## Pavlichenko White Death: next N shots crit
+var hero_xp: int = 0                 ## per-run XP for hero towers
+var hero_level: int = 1              ## 1..MAX_HERO_LEVEL
+
+const MAX_HERO_LEVEL: int = 10
+## XP needed to reach level N+1 (cumulative). Geometric-ish curve.
+const HERO_LEVEL_THRESHOLDS: Array[int] = [0, 8, 20, 40, 70, 110, 160, 220, 300, 400, 999999]
+const HERO_DAMAGE_PER_LEVEL: float = 0.05    ## +5% damage per level
+const HERO_FIRE_RATE_PER_LEVEL: float = 0.03 ## +3% fire rate per level
 var _eco_timer: Timer = null
 var _gold_accumulator: float = 0.0
 
@@ -151,6 +159,29 @@ func _refresh_fire_timer() -> void:
 
 var _idle_phase: float = 0.0
 
+func grant_hero_xp(amount: int) -> void:
+	if not is_hero() or hero_level >= MAX_HERO_LEVEL:
+		return
+	hero_xp += amount
+	while hero_level < MAX_HERO_LEVEL and hero_xp >= HERO_LEVEL_THRESHOLDS[hero_level]:
+		hero_level += 1
+		_spawn_level_up_floater()
+		if fire_timer:
+			fire_timer.wait_time = 1.0 / max(0.0001, effective_fire_rate())
+
+func _spawn_level_up_floater() -> void:
+	# Yellow text "LEVEL N" rising above the hero.
+	var scene: PackedScene = preload("res://scenes/effects/GoldFloater.tscn")
+	var node: Node2D = scene.instantiate()
+	node.setup(0)  ## reuse the floater, then override text
+	if node.has_method("set"):
+		node._text = "LEVEL %d" % hero_level
+	node.global_position = global_position + Vector2(0, -TOWER_RADIUS - 14.0)
+	var parent: Node = get_tree().current_scene
+	if parent:
+		parent.add_child(node)
+	AudioMan.play(&"achievement", -2.0)
+
 func activate_ability() -> bool:
 	if stats == null or stats.hero_ability_id == &"":
 		return false
@@ -235,7 +266,21 @@ func effective_damage() -> float:
 	for step in _active_upgrade_steps():
 		dmg *= step.get("damage_mult", 1.0)
 	dmg *= MetaProgress.damage_bonus_for(stats.id)
+	dmg *= _hero_level_damage_mult()
 	return dmg
+
+func is_hero() -> bool:
+	return stats != null and stats.hero_ability_id != &""
+
+func _hero_level_damage_mult() -> float:
+	if not is_hero():
+		return 1.0
+	return 1.0 + HERO_DAMAGE_PER_LEVEL * (hero_level - 1)
+
+func _hero_level_rate_mult() -> float:
+	if not is_hero():
+		return 1.0
+	return 1.0 + HERO_FIRE_RATE_PER_LEVEL * (hero_level - 1)
 
 func effective_fire_rate() -> float:
 	if stats == null:
@@ -244,6 +289,7 @@ func effective_fire_rate() -> float:
 	for step in _active_upgrade_steps():
 		rate *= step.get("fire_rate_mult", 1.0)
 	rate *= MetaProgress.fire_rate_bonus_for(stats.id)
+	rate *= _hero_level_rate_mult()
 	var multiplier := 1.0 + AdjacencySystem.RATE_BONUS_PER_BUFF * active_buffs.size()
 	for source in aura_buffs.values():
 		multiplier += source.get("fire_rate_bonus", 0.0)
